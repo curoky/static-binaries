@@ -30,3 +30,6 @@ jobs:
       - name: install formula
         run: brew install --verbose --keep-tmp llvm-static@${{ matrix.version }}
 
+      - name: test formula
+        run: brew test llvm-static@${{ matrix.version }}
+
