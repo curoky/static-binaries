@@ -1,0 +1,32 @@
+name: build llvm static
+on:
+  schedule:
+    - cron: '0 16 * * *'
+  push:
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        os: [macos-latest, ubuntu-20.04]
+        version: [3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: setup bazel tap
+        run: |
+          mkdir -p $(brew --repo)/Library/Taps/curoky
+          ln -s $PWD $(brew --repo)/Library/Taps/curoky/homebrew-llvm-static
+
+      - name: install formula
+        run: brew install --verbose --keep-tmp llvm-static@${{ matrix.version }}
+
