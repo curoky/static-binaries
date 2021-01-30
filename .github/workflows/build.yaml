@@ -33,12 +33,11 @@ jobs:
       - name: test formula
         run: brew test llvm-static@${{ matrix.version }}
 
+      - name: get llvm install path
+        id: get_brew_llvm_path
+        run: echo ::set-env name=BREW_LLVM_PATH::$(brew --prefix llvm-static@${{ matrix.version }})
+
       - uses: actions/upload-artifact@v2
         with:
           name: llvm-@${{ matrix.version }}-${{ matrix.os }}
-          path: path/to/artifact/world.txt
-
-      - uses: actions/upload-artifact@v1
-        with:
-          name: vcpkg-out
-          path: $(brew --prefix llvm-static@${{ matrix.version }})/bin
+          path: ${{ env.BREW_LLVM_PATH}}/bin
