@@ -1,7 +1,5 @@
 name: build llvm static
 on:
-  schedule:
-    - cron: '0 16 * * *'
   push:
 
 jobs:
@@ -25,16 +23,9 @@ jobs:
       - name: uninstall some pre installed packages
         run: sudo apt purge -y libz3-4 libz3-dev || echo "skip"
 
-      - name: setup bazel tap
-        run: |
-          mkdir -p $(brew --repo)/Library/Taps/curoky
-          ln -s $PWD $(brew --repo)/Library/Taps/curoky/homebrew-llvm-static
-
-      - name: install formula
-        run: brew install --verbose --keep-tmp llvm-static@${{ matrix.version }}
-
-      - name: test formula
-        run: brew test llvm-static@${{ matrix.version }}
+      - uses: curoky/actions/brew-tap-install-test@master
+        with:
+          formula: llvm-static@${{ matrix.version }}
 
       - name: get llvm install path
         id: get_brew_llvm_path
