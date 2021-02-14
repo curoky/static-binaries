@@ -1,4 +1,4 @@
-name: build llvm static
+name: build llvm tools
 on:
   push:
 
@@ -29,12 +29,12 @@ jobs:
       - name: Build llvm static binary
         uses: curoky/actions/brew-tap-install-test@master
         with:
-          formula: llvm-static@${{ matrix.version }}
+          formula: llvm-tools@${{ matrix.version }}
 
       - name: Set target env
         id: set_target_env
         run: |
-          echo "TARGET_PATH=$(brew --prefix llvm-static@${{ matrix.version }})/bin" >> $GITHUB_ENV
+          echo "TARGET_PATH=$(brew --prefix llvm-tools@${{ matrix.version }})/bin" >> $GITHUB_ENV
           echo "TARGET_VERSION=${{ matrix.version }}-$(uname)-$(uname -m)" >> $GITHUB_ENV
 
       - name: Upload artifact
