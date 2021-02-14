@@ -20,6 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install some tools
+        run: brew install openssl@1.1
+
       - name: Uninstall some pre installed packages
         run: sudo apt purge -y libz3-4 libz3-dev || echo "skip"
 
@@ -41,7 +44,9 @@ jobs:
           path: ${{ env.TARGET_PATH }}
 
       - name: Prepare binaries
-        run: find ${{ env.TARGET_PATH }} -type f -exec bash -c 'mv $0 $0-${{ env.TARGET_VERSION }}' {} \;
+        run: |
+          find ${{ env.TARGET_PATH }} -type f -exec bash -c 'mv $0 $0-${{ env.TARGET_VERSION }}' {} \;
+          find ${{ env.TARGET_PATH }} -type f -exec bash -c 'openssl sha256 -r -out $0.sha256 $0' {} \;
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
