@@ -20,18 +20,35 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: uninstall some pre installed packages
+      - name: Uninstall some pre installed packages
         run: sudo apt purge -y libz3-4 libz3-dev || echo "skip"
 
-      - uses: curoky/actions/brew-tap-install-test@master
+      - name: Build llvm static binary
+        uses: curoky/actions/brew-tap-install-test@master
         with:
           formula: llvm-static@${{ matrix.version }}
 
-      - name: get llvm install path
-        id: get_brew_llvm_path
-        run: echo ::set-env name=BREW_LLVM_PATH::$(brew --prefix llvm-static@${{ matrix.version }})
+      - name: Set target env
+        id: set_target_env
+        run: |
+          echo "TARGET_PATH=$(brew --prefix llvm-static@${{ matrix.version }})/bin" >> $GITHUB_ENV
+          echo "TARGET_VERSION=${{ matrix.version }}-$(uname)-$(uname -m)" >> $GITHUB_ENV
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
         with:
-          name: llvm-@${{ matrix.version }}-${{ matrix.os }}
-          path: ${{ env.BREW_LLVM_PATH}}/bin
+          name: llvm-${{ matrix.version }}-${{ matrix.os }}
+          path: ${{ env.TARGET_PATH }}
+
+      - name: Prepare binaries
+        run: find ${{ env.TARGET_PATH }} -type f -exec bash -c 'mv $0 $0-${{ env.TARGET_VERSION }}' {} \;
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.TARGET_PATH }}/**
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
