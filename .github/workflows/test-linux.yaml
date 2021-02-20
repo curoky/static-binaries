@@ -29,11 +29,6 @@ jobs:
       - name: setup tap
         run: brew tap curoky/curoky
 
-      - name: fix openssl
-        run: |
-          brew install openssl@1.1
-          brew unlink openssl@1.1
-
       - uses: curoky/actions/brew-tap-install-test@master
         with:
-          formula: llvm-static@${{ matrix.version }}
+          formula: ${{ matrix.package }}
