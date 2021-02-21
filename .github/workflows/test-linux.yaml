@@ -11,6 +11,7 @@ jobs:
         os: [macos-latest, ubuntu-20.04]
         package:
           - fbthrift
+          - thrift@0.2.0
           - thrift@0.8.0
           - thrift@0.9.0
           - thrift@0.9.1
@@ -21,6 +22,9 @@ jobs:
           - thrift@0.11.0
           - thrift@0.12.0
           - thrift@0.13.0
+        exclude:
+          - os: macos-latest
+            package: thrift@0.2.0
 
     runs-on: ${{ matrix.os }}
 
