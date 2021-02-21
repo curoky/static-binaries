@@ -1,23 +1,28 @@
-name: test on linux
+name: build thrift generator
 on:
-  schedule:
-    - cron: '0 16 * * *'
   push:
 
 jobs:
   install:
     strategy:
       fail-fast: false
-      max-parallel: 20
+      max-parallel: 100
       matrix:
-        os: [ubuntu16.04, ubuntu18.04, ubuntu20.04]
+        os: [macos-latest, ubuntu-20.04]
         package:
-          - thrift@0.9.3
+          - fbthrift
+          - thrift@0.8.0
+          - thrift@0.9.0
+          - thrift@0.9.1
+          - thrift@0.9.2
+          - thrift@0.9.3.0
+          - thrift@0.9.3.1
+          - thrift@0.10.0
+          - thrift@0.11.0
+          - thrift@0.12.0
+          - thrift@0.13.0
 
-    runs-on: ubuntu-latest
-
-    container:
-      image: homebrew/${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
     env:
       HOMEBREW_NO_ANALYTICS: 1
@@ -26,9 +31,40 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: setup tap
-        run: brew tap curoky/curoky
+      - name: Install some tools
+        run: brew install openssl@1.1
 
-      - uses: curoky/actions/brew-tap-install-test@master
+      - name: Build thrift generator
+        uses: curoky/actions/brew-tap-install-test@master
         with:
           formula: ${{ matrix.package }}
+          install_args: '--verbose'
+
+      - name: Set target env
+        id: set_target_env
+        run: |
+          echo "TARGET_PATH=$(brew --prefix ${{ matrix.package }})" >> $GITHUB_ENV
+          echo "TARGET_NAME=${{ matrix.package }}-$(uname)-$(uname -m)" >> $GITHUB_ENV
+
+      - name: Prepare binaries
+        run: |
+          tar -czvf ${{ env.TARGET_NAME }}.tar.gz ${{ env.TARGET_PATH }}
+          openssl sha256 -r -out ${{ env.TARGET_NAME }}.tar.gz.sha256 ${{ env.TARGET_NAME }}.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.package }}-${{ matrix.os }}
+          path: |
+            ${{ env.TARGET_NAME }}.tar.gz
+            ${{ env.TARGET_NAME }}.tar.gz.sha256
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.TARGET_NAME }}*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
