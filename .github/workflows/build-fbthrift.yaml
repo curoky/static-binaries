@@ -1,0 +1,49 @@
+name: build fbthrift
+on:
+  push:
+    paths:
+      - 'Formula/fbthrift@*'
+      - '.github/workflows/build-fbthrift.yaml'
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        os: [ubuntu20.04]
+        version:
+          - '2019.06.03'
+          - '2019.12.30'
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: homebrew/${{ matrix.os }}
+
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install and test
+        uses: curoky/actions/brew-tap-install-test@master
+        with:
+          formula: fbthrift@${{ matrix.version }}
+
+      - name: Upload package to Bintray
+        uses: curoky/actions/bintary-upload@dev
+        with:
+          package: fbthrift
+          remote_filepath: ${{ matrix.version }}/thrift1
+          local_filepath: /home/linuxbrew/.linuxbrew/opt/fbthrift@${{ matrix.version }}/bin/thrift1
+
+          api_user: ${{ secrets.BINTRAY_USERNAME }}
+          api_key: ${{ secrets.BINTRAY_API_KEY }}
+          repository_user: curoky
+          repository: prebuild-binary
+          version: ${{ matrix.version }}
+          publish: 1
+          override: 1
