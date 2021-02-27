@@ -1,0 +1,53 @@
+name: build {{ ctx.name }}
+on:
+  push:
+    paths:
+      - 'Formula/{{ ctx.name }}@*'
+      - '.github/workflows/build-{{ ctx.name }}.yaml'
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        os: [ubuntu20.04]
+        version:
+{% for v in ctx.versions %}
+          - '{{ v }}'
+{% endfor %}
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: {{ 'homebrew/${{ matrix.os }}' }}
+
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install and test
+        uses: curoky/actions/brew-tap-install-test@master
+        with:
+          formula: {{ ctx.name }}@{{ '${{ matrix.version }}' }}
+
+{% for bin in ctx.bins %}
+      - name: Upload package to Bintray
+        uses: curoky/actions/bintary-upload@dev
+        with:
+          package: {{ ctx.name }}
+          remote_filepath: {{ '${{ matrix.version }}' }}/{{ bin }}
+          local_filepath: /home/linuxbrew/.linuxbrew/opt/{{ ctx.name }}@{{ '${{ matrix.version }}' }}/bin/{{ bin }}
+{% raw %}
+          api_user: ${{ secrets.BINTRAY_USERNAME }}
+          api_key: ${{ secrets.BINTRAY_API_KEY }}
+          repository_user: curoky
+          repository: prebuild-binary
+          version: ${{ matrix.version }}
+          publish: 1
+          override: 1
+{% endraw %}
+{% endfor %}
