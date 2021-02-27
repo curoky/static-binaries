@@ -1,0 +1,84 @@
+name: build llvm
+on:
+  push:
+    paths:
+      - 'Formula/llvm@*'
+      - '.github/workflows/build-llvm.yaml'
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        os: [ubuntu20.04]
+        version:
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - '7'
+          - '8'
+          - '9'
+          - '10'
+          - '11'
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: homebrew/${{ matrix.os }}
+
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install and test
+        uses: curoky/actions/brew-tap-install-test@master
+        with:
+          formula: llvm@${{ matrix.version }}
+
+      - name: Upload package to Bintray
+        uses: curoky/actions/bintary-upload@dev
+        with:
+          package: llvm
+          remote_filepath: ${{ matrix.version }}/clang-format
+          local_filepath: /home/linuxbrew/.linuxbrew/opt/llvm@${{ matrix.version }}/bin/clang-format
+
+          api_user: ${{ secrets.BINTRAY_USERNAME }}
+          api_key: ${{ secrets.BINTRAY_API_KEY }}
+          repository_user: curoky
+          repository: prebuild-binary
+          version: ${{ matrix.version }}
+          publish: 1
+          override: 1
+      - name: Upload package to Bintray
+        uses: curoky/actions/bintary-upload@dev
+        with:
+          package: llvm
+          remote_filepath: ${{ matrix.version }}/clang-query
+          local_filepath: /home/linuxbrew/.linuxbrew/opt/llvm@${{ matrix.version }}/bin/clang-query
+
+          api_user: ${{ secrets.BINTRAY_USERNAME }}
+          api_key: ${{ secrets.BINTRAY_API_KEY }}
+          repository_user: curoky
+          repository: prebuild-binary
+          version: ${{ matrix.version }}
+          publish: 1
+          override: 1
+      - name: Upload package to Bintray
+        uses: curoky/actions/bintary-upload@dev
+        with:
+          package: llvm
+          remote_filepath: ${{ matrix.version }}/clang-tidy
+          local_filepath: /home/linuxbrew/.linuxbrew/opt/llvm@${{ matrix.version }}/bin/clang-tidy
+
+          api_user: ${{ secrets.BINTRAY_USERNAME }}
+          api_key: ${{ secrets.BINTRAY_API_KEY }}
+          repository_user: curoky
+          repository: prebuild-binary
+          version: ${{ matrix.version }}
+          publish: 1
+          override: 1
