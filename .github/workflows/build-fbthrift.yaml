@@ -32,9 +32,10 @@ jobs:
         uses: curoky/actions/brew-tap-install-test@master
         with:
           formula: fbthrift@${{ matrix.version }}
+          upgrade: true
 
       - name: Upload package to Bintray
-        uses: curoky/actions/bintary-upload@dev
+        uses: curoky/actions/bintary-upload@master
         with:
           package: fbthrift
           remote_filepath: ${{ matrix.version }}/thrift1

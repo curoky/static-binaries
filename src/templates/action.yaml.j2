@@ -33,10 +33,11 @@ jobs:
         uses: curoky/actions/brew-tap-install-test@master
         with:
           formula: {{ ctx.name }}@{{ '${{ matrix.version }}' }}
+          upgrade: true
 
 {% for bin in ctx.bins %}
       - name: Upload package to Bintray
-        uses: curoky/actions/bintary-upload@dev
+        uses: curoky/actions/bintary-upload@master
         with:
           package: {{ ctx.name }}
           remote_filepath: {{ '${{ matrix.version }}' }}/{{ bin }}

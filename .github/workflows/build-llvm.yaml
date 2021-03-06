@@ -39,9 +39,10 @@ jobs:
         uses: curoky/actions/brew-tap-install-test@master
         with:
           formula: llvm@${{ matrix.version }}
+          upgrade: true
 
       - name: Upload package to Bintray
-        uses: curoky/actions/bintary-upload@dev
+        uses: curoky/actions/bintary-upload@master
         with:
           package: llvm
           remote_filepath: ${{ matrix.version }}/clang-format
@@ -55,7 +56,7 @@ jobs:
           publish: 1
           override: 1
       - name: Upload package to Bintray
-        uses: curoky/actions/bintary-upload@dev
+        uses: curoky/actions/bintary-upload@master
         with:
           package: llvm
           remote_filepath: ${{ matrix.version }}/clang-query
@@ -69,7 +70,7 @@ jobs:
           publish: 1
           override: 1
       - name: Upload package to Bintray
-        uses: curoky/actions/bintary-upload@dev
+        uses: curoky/actions/bintary-upload@master
         with:
           package: llvm
           remote_filepath: ${{ matrix.version }}/clang-tidy
