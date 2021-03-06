@@ -1,0 +1,62 @@
+name: build xz
+on:
+  push:
+    paths:
+      - 'Formula/xz@*'
+      - '.github/workflows/build-xz.yaml'
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        os: [ubuntu20.04]
+        version:
+          - '5.2.5'
+          - '5.2.4'
+          - '5.2.3'
+          - '5.2.2'
+          - '5.2.1'
+          - '5.2.0'
+          - '5.0.8'
+          - '5.0.7'
+          - '5.0.6'
+          - '5.0.5'
+          - '5.0.4'
+          - '5.0.3'
+          - '5.0.2'
+          - '5.0.1'
+          - '5.0.0'
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: homebrew/${{ matrix.os }}
+
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install and test
+        uses: curoky/actions/brew-tap-install-test@master
+        with:
+          formula: xz@${{ matrix.version }}
+
+      - name: Upload package to Bintray
+        uses: curoky/actions/bintary-upload@dev
+        with:
+          package: xz
+          remote_filepath: ${{ matrix.version }}/xz
+          local_filepath: /home/linuxbrew/.linuxbrew/opt/xz@${{ matrix.version }}/bin/xz
+
+          api_user: ${{ secrets.BINTRAY_USERNAME }}
+          api_key: ${{ secrets.BINTRAY_API_KEY }}
+          repository_user: curoky
+          repository: prebuild-binary
+          version: ${{ matrix.version }}
+          publish: 1
+          override: 1
