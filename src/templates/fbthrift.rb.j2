@@ -53,8 +53,10 @@ class FbthriftAT{{ ctx.class_version }} < Formula
 
   test do
     if OS.linux?
-      output = shell_output("ldd #{bin}/thrift1 2>&1", 1).strip
+{% for bin in ctx.bins %}
+      output = shell_output("ldd #{bin}/{{ bin }} 2>&1", 1).strip
       assert_equal "not a dynamic executable", output
+{% endfor %}
     elsif OS.mac?
       # TODO(@curoky): use `otool -L` to check.
     end

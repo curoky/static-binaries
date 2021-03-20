@@ -43,8 +43,10 @@ class ProtocAT{{ ctx.class_version }} < Formula
   end
 
   test do
+{% for bin in ctx.bins %}
     output = shell_output("ldd #{bin}/protoc 2>&1", 1).strip
     assert_equal "not a dynamic executable", output
+{% endfor %}
 
     output = shell_output("#{bin}/protoc --version")
     assert_equal "libprotoc {{ ctx.test_version }}", output.strip
