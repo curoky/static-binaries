@@ -6,7 +6,31 @@ on:
       - '.github/workflows/build-{{ ctx.name }}.yaml'
 
 jobs:
+  prepare_bintary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: delete package
+        shell: bash
+        run: |
+          curl --request DELETE \
+{%- raw %}
+            --user "${{ secrets.BINTRAY_USERNAME }}:${{ secrets.BINTRAY_API_KEY }}" \
+{% endraw %}
+            --url https://api.bintray.com/packages/curoky/prebuild-binary/{{ ctx.name }}
+
+      - name: create package
+        shell: bash
+        run: |
+          curl --request POST \
+{%- raw %}
+            --user "${{ secrets.BINTRAY_USERNAME }}:${{ secrets.BINTRAY_API_KEY }}" \
+{% endraw %}
+            --url https://api.bintray.com/packages/curoky/prebuild-binary \
+            --header 'content-type: application/json' \
+            --data '{"name": "{{ ctx.name }}","licenses": ["GPL-3.0"],"vcs_url": "https://github.com/curoky/prebuild-binary","website_url": "https://github.com/curoky/prebuild-binary","issue_tracker_url": "https://github.com/curoky/prebuild-binary/issues","public_download_numbers": true,"public_stats": true}'
+
   install:
+    needs: [prepare_bintary]
     strategy:
       fail-fast: false
       max-parallel: 20
