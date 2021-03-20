@@ -1,3 +1,6 @@
+{% import 'utils.j2' as utils %}
+{% call utils.autogen() %} {% endcall %}
+
 name: build {{ ctx.name }}
 on:
   push:

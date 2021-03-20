@@ -1,3 +1,6 @@
+{% import 'utils.j2' as utils %}
+{% call utils.autogen() %} {% endcall %}
+
 class ThriftAT{{ ctx.class_version }} < Formula
   desc "Framework for scalable cross-language services development"
   homepage "https://thrift.apache.org"

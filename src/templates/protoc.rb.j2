@@ -1,3 +1,6 @@
+{% import 'utils.j2' as utils %}
+{% call utils.autogen() %} {% endcall %}
+
 class ProtocAT{{ ctx.class_version }} < Formula
   desc "Protocol buffers (Google's data interchange format)"
   homepage "https://github.com/protocolbuffers/protobuf/"

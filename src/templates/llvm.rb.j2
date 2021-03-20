@@ -1,3 +1,6 @@
+{% import 'utils.j2' as utils %}
+{% call utils.autogen() %} {% endcall %}
+
 class LlvmAT{{ ctx.class_version }} < Formula
   desc "Formatting tools for C, C++, Obj-C, Java, JavaScript, TypeScript"
   homepage "https://clang.llvm.org/docs/ClangFormat.html"

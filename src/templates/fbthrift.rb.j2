@@ -1,3 +1,6 @@
+{% import 'utils.j2' as utils %}
+{% call utils.autogen() %} {% endcall %}
+
 class FbthriftAT{{ ctx.class_version }} < Formula
   desc "Facebook's branch of Apache Thrift, including a new C++ server."
   homepage "https://github.com/facebook/fbthrift"
