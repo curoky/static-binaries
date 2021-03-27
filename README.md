@@ -1,33 +1,36 @@
-# LLVM-tools prebuild static executables
+# Prebuild static executables
 
-![build llvm tools](https://github.com/curoky/llvm-tool-binary/workflows/build%20llvm%20tools/badge.svg)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![release](https://img.shields.io/github/v/release/curoky/llvm-tool-binary)](https://github.com/curoky/llvm-tool-binary/releases)
-
-## Why we need this
-
-Inspired by [clang-tools-static-binaries](https://github.com/muttleyxd/clang-tools-static-binaries) and [Homebrew](https://brew.sh)
-
-From [clang-tools-static-binaries](https://github.com/muttleyxd/clang-tools-static-binaries).
-
-> I use to contribute to different repositories and they often use different versions of clang-format.
->
-> I could either compile clang-format for each one I want to have or I could try messing up with my package system (I use Arch Linux btw) and try installing all of them on my system. This can very quickly get out of hand, hence I created this repository.
->
-> These binaries aim to:
->
-> - be as small as possible
-> - not require any additional dependencies apart from OS itself
-
-For more convenient maintenance, I migrate the compilation process to homebrew.
+![build thrift](https://github.com/curoky/prebuild-binary/workflows/build%20thrift/badge.svg)
+![build fbthrift](https://github.com/curoky/prebuild-binary/workflows/build%20fbthrift/badge.svg)
+![build llvm](https://github.com/curoky/prebuild-binary/workflows/build%20llvm/badge.svg)
+![build protoc](https://github.com/curoky/prebuild-binary/workflows/build%20protoc/badge.svg)
+![build xz](https://github.com/curoky/prebuild-binary/workflows/build%20xz/badge.svg)
 
 ## Download
 
-1. download binary from [Releases](https://github.com/curoky/llvm-tool-binary/releases)
+- [thrift](https://bintray.com/curoky/prebuild-binary/thrift#files)
+- [fbthrift](https://bintray.com/curoky/prebuild-binary/fbthrift#files)
+- [llvm](https://bintray.com/curoky/prebuild-binary/llvm#files)
+  - clang-format
+  - clang-query
+  - clang-tidy
+- [protoc](https://bintray.com/curoky/prebuild-binary/protoc#files)
+- [xz](https://bintray.com/curoky/prebuild-binary/xz#files)
 
-2. install with homebrew
+## develop
 
-```bash
-brew tap curoky/llvm-tool-binary https://github.com/curoky/llvm-tool-binary
-brew install llvm-tools@3
-```
+1. tap this repo
+
+   ```bash
+   ln -s prebuild-binary "$(brew --prefix)/Homebrew/Library/Taps/local/homebrew-prebuild-binary"
+   ```
+
+2. build static binary from source
+
+   ```bash
+   brew install <name>@<version>
+   ```
+
+## Other
+
+Inspired by [clang-tools-static-binaries](https://github.com/muttleyxd/clang-tools-static-binaries) and [Homebrew](https://brew.sh)
