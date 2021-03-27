@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import sys
 import logging
 from generator import Generator, FormulaContext

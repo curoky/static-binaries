@@ -2,7 +2,6 @@ import os
 import sys
 import jinja2
 import codecs
-import logging
 from typing import List
 from dataclasses import dataclass
 
@@ -49,28 +48,6 @@ class ActionContext:
     name: str
     versions: List[str]
     bins: List[str]
-
-
-# class FormulaGenerator(object):
-
-#     def __init__(self) -> None:
-#         templates_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "templates"))
-
-#         self.env = jinja2.Environment(
-#             trim_blocks=True,
-#             lstrip_blocks=True,
-#             loader=jinja2.FileSystemLoader(templates_folder),
-#         )
-
-#         self.output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Formula"))
-
-#     def write_output(self, filename, content):
-#         with codecs.open(os.path.join(self.output_dir, filename), 'w', 'utf8') as f:
-#             f.write(content)
-
-#     def generate(self, filename, template_name, ctx):
-#         template = self.env.get_template(template_name + '.j2')
-#         self.write_output(filename + '.rb', template.render(ctx=ctx))
 
 
 class Generator(object):
