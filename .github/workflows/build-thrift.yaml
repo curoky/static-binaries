@@ -11,27 +11,7 @@ on:
       - '.github/workflows/build-thrift.yaml'
 
 jobs:
-  prepare_bintary:
-    runs-on: ubuntu-latest
-    steps:
-      - name: delete package
-        shell: bash
-        run: |
-          curl --request DELETE \
-            --user "${{ secrets.BINTRAY_USERNAME }}:${{ secrets.BINTRAY_API_KEY }}" \
-            --url https://api.bintray.com/packages/curoky/prebuild-binary/thrift
-
-      - name: create package
-        shell: bash
-        run: |
-          curl --request POST \
-            --user "${{ secrets.BINTRAY_USERNAME }}:${{ secrets.BINTRAY_API_KEY }}" \
-            --url https://api.bintray.com/packages/curoky/prebuild-binary \
-            --header 'content-type: application/json' \
-            --data '{"name": "thrift","licenses": ["GPL-3.0"],"vcs_url": "https://github.com/curoky/prebuild-binary","website_url": "https://github.com/curoky/prebuild-binary","issue_tracker_url": "https://github.com/curoky/prebuild-binary/issues","public_download_numbers": true,"public_stats": true}'
-
   install:
-    needs: [prepare_bintary]
     strategy:
       fail-fast: false
       max-parallel: 20
@@ -51,7 +31,6 @@ jobs:
           - '0.14.1'
 
     runs-on: ubuntu-latest
-
     container:
       image: homebrew/${{ matrix.os }}
 
@@ -61,24 +40,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+      - run: brew tap curoky/tap
       - name: Install and test
         uses: curoky/actions/brew-tap-install-test@master
         with:
           formula: thrift@${{ matrix.version }}
           upgrade: true
+          install_args: "--verbose"
+          test_args: "--verbose"
 
-      - name: Upload package to Bintray
-        uses: curoky/actions/bintary-upload@master
+      - name: update binary to release
+        uses: svenstaro/upload-release-action@2.2.1
         with:
-          package: thrift
-          remote_filepath: ${{ matrix.version }}/thrift
-          local_filepath: /home/linuxbrew/.linuxbrew/opt/thrift@${{ matrix.version }}/bin/thrift
-
-          api_user: ${{ secrets.BINTRAY_USERNAME }}
-          api_key: ${{ secrets.BINTRAY_API_KEY }}
-          repository_user: curoky
-          repository: prebuild-binary
-          version: ${{ matrix.version }}
-          publish: 1
-          override: 1
+          tag: binary
+          overwrite: true
+          file: /home/linuxbrew/.linuxbrew/opt/thrift@${{ matrix.version }}/bin/thrift
+          asset_name: thrift-${{ matrix.version }}
+          repo_token: ${{ secrets.GH_UPLOAD_KEY }}
