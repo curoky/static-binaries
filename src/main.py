@@ -33,11 +33,14 @@ class ThriftContext(FormulaContext):
 
 
 def main():
-    g = Generator(
-        name='fbthrift',
-        bins=['thrift1'],
-        fctxs=[FormulaContext(version='2019.06.03'),
-               FormulaContext(version='2019.12.30')])
+    g = Generator(name='fbthrift',
+                  bins=['thrift1'],
+                  fctxs=[
+                      FormulaContext(version='2019.06.03'),
+                      FormulaContext(version='2019.12.30'),
+                      FormulaContext(version='2020.12.14'),
+                      FormulaContext(version='2021.03.01'),
+                  ])
     g.generate()
 
     g = Generator(name='llvm',
