@@ -116,6 +116,19 @@ def main():
                       FormulaContext(version='5.0.0'),
                   ])
     g.generate()
+
+    g = Generator(name='tmux',
+                  bins=['tmux'],
+                  fctxs=[
+                      FormulaContext(version='3.1', tag='3.1c'),
+                      FormulaContext(version='3.0', tag='3.0a'),
+                      FormulaContext(version='2.9', tag='2.9a'),
+                      FormulaContext(version='2.8'),
+                      FormulaContext(version='2.7'),
+                      FormulaContext(version='2.6'),
+                      FormulaContext(version='2.5'),
+                  ])
+    g.generate()
     # g = Generator(name='python3', bins=[], fctxs=[])
     # g.generate()
 
