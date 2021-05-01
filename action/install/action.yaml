@@ -1,0 +1,42 @@
+name: 'install formula'
+author: 'curoky'
+inputs:
+  formula:
+    description: formula
+    required: true
+  env:
+    description: 'env'
+    required: false
+    default: ''
+  upload_filepath:
+    description: ''
+    required: false
+    default: ''
+  upload_filename:
+    description: ''
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: setup env
+      shell: bash
+      run: |
+        echo "HOMEBREW_NO_ANALYTICS=1" >> $GITHUB_ENV
+        echo "HOMEBREW_NO_AUTO_UPDATE=1" >> $GITHUB_ENV
+        echo "${{ inputs.env }}" >> $GITHUB_ENV
+
+    - name: setup tap
+      shell: bash
+      run: |
+        mkdir -p $(brew --repo)/Library/Taps/build
+        cp -r $PWD $(brew --repo)/Library/Taps/build/homebrew-tap
+
+    - name: install formula
+      shell: bash
+      run: brew install --verbose build/tap/${{ inputs.formula }}
+
+    - name: test formula
+      shell: bash
+      run: brew test --verbose build/tap/${{ inputs.formula }}
