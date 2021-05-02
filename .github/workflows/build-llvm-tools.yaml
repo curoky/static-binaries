@@ -1,0 +1,39 @@
+name: build llvm tools
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-llvm-tools.yaml'
+      - 'Formula/llvm-tools.rb'
+      - 'action/install/action.yaml'
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        version:
+          - '3.9.1'
+          - '4.0.1'
+          - '5.0.2'
+          - '6.0.1'
+          - '7.1.0'
+          - '8.0.1'
+          - '9.0.1'
+          - '10.0.1'
+          - '11.0.0'
+          - '12.0.1'
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install binary
+        uses: ./action/install
+        with:
+          formula: llvm-tools
+          env: 'HOMEBREW_LLVMTOOLS_VERSION=${{ matrix.version }}'
+
+      - name: check binary
+        run: ls -la /home/linuxbrew/.linuxbrew/opt/llvm-tools/bin
