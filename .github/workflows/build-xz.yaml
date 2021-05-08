@@ -27,4 +27,4 @@ jobs:
           env: 'HOMEBREW_XZ_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -la /home/linuxbrew/.linuxbrew/opt/xz/bin/xz
+        run: ls -lah /home/linuxbrew/.linuxbrew/opt/xz/bin/xz

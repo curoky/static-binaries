@@ -39,4 +39,4 @@ jobs:
           env: 'HOMEBREW_PROTOC_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -la /home/linuxbrew/.linuxbrew/opt/protoc/bin/protoc
+        run: ls -lah /home/linuxbrew/.linuxbrew/opt/protoc/bin/protoc
