@@ -36,4 +36,4 @@ jobs:
           env: 'HOMEBREW_LLVMTOOLS_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah /home/linuxbrew/.linuxbrew/opt/llvm-tools/bin
+        run: ls -lah bin

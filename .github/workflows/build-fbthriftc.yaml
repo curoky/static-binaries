@@ -31,4 +31,4 @@ jobs:
           env: 'HOMEBREW_FBTHRIFTC_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah /home/linuxbrew/.linuxbrew/opt/fbthriftc/bin/thrift1
+        run: ls -lah bin

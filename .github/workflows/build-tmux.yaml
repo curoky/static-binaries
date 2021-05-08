@@ -27,4 +27,4 @@ jobs:
           env: 'HOMEBREW_TMUX_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah /home/linuxbrew/.linuxbrew/opt/tmux/bin/tmux
+        run: ls -lah bin

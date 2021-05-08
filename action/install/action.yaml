@@ -6,15 +6,7 @@ inputs:
     required: true
   env:
     description: 'env'
-    required: false
-    default: ''
-  upload_filepath:
-    description: ''
-    required: false
-    default: ''
-  upload_filename:
-    description: ''
-    required: false
+    required: true
     default: ''
 
 runs:
@@ -40,3 +32,9 @@ runs:
     - name: test formula
       shell: bash
       run: brew test --verbose build/tap/${{ inputs.formula }}
+
+    - name: cp files
+      shell: bash
+      run: |
+        mkdir bin
+        cp $(brew --prefix ${{ inputs.formula }})/bin/* bin/

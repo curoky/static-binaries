@@ -38,4 +38,4 @@ jobs:
           env: 'HOMEBREW_THRIFTC_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah /home/linuxbrew/.linuxbrew/opt/thriftc/bin/thrift
+        run: ls -lah bin
