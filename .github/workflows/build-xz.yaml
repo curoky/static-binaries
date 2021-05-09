@@ -32,7 +32,7 @@ jobs:
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.version }}-binaries
+          name: binaries-${{ matrix.version }}
           path: bin
           retention-days: 1
 
@@ -42,15 +42,17 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: 5.2.5-binaries
+          name: binaries-5.2.5
+          path: bin/5.2.5
 
       - uses: actions/download-artifact@v2
         with:
-          name: 5.0.8-binaries
+          name: binaries-5.0.8
+          path: bin/5.0.8
 
       - name: list files
-        run: ls -laR . && ls bin
+        run: ls -lahR bin
 
       - uses: mxschmitt/action-tmate@v3
-        if: true
+        if: always()
         timeout-minutes: 30
