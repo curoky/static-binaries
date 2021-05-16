@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: brew unlink ncurses
+      - run: brew install ncurses && brew unlink ncurses
 
       - name: install binary
         uses: ./action/install
