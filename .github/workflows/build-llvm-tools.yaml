@@ -6,6 +6,8 @@ on:
       - '.github/workflows/build-llvm-tools.yaml'
       - 'Formula/llvm-tools.rb'
       - 'action/install/action.yaml'
+  release:
+    types: [created]
 
 jobs:
   install:
@@ -39,3 +41,56 @@ jobs:
 
       - name: check binary
         run: ls -lah bin
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: binaries-${{ matrix.version }}
+          path: bin
+          retention-days: 1
+
+  upload-release:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-10.0.1
+          path: bin/10.0.1
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-11.0.0
+          path: bin/11.0.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-12.0.1
+          path: bin/12.0.1
+
+      - name: list files
+        run: ls -lahR bin
+
+      - name: prepare files
+        run: |
+          mkdir dist
+          mv bin/10.0.1/clang-format dist/clang-format-10.0.1
+          mv bin/11.0.0/clang-format dist/clang-format-11.0.0
+          mv bin/12.0.1/clang-format dist/clang-format-12.0.1
+          mv bin/10.0.1/clang-query dist/clang-query-10.0.1
+          mv bin/11.0.0/clang-query dist/clang-query-11.0.0
+          mv bin/12.0.1/clang-query dist/clang-query-12.0.1
+          mv bin/10.0.1/clang-tidy dist/clang-tidy-10.0.1
+          mv bin/11.0.0/clang-tidy dist/clang-tidy-11.0.0
+          mv bin/12.0.1/clang-tidy dist/clang-tidy-12.0.1
+
+      - name: upload binaries to release
+        if: github.event_name == 'release' && github.event.action == 'created'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          overwrite: true
+          file_glob: true
+          tag: ${{ github.ref }}
+          prerelease: true
