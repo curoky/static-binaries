@@ -31,7 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: brew install ncurses && brew unlink ncurses
+      # FIXME(curoky): remove follow trick
+      - name: remove libtinfo
+        run: |
+          brew install ncurses && brew unlink ncurses
+          sudo rm -rf /usr/lib/x86_64-linux-gnu/libtinfo.so
 
       - name: install binary
         uses: ./action/install
