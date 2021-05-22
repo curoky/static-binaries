@@ -35,7 +35,7 @@ jobs:
       - name: remove libtinfo
         run: |
           brew install ncurses && brew unlink ncurses
-          sudo rm -rf /usr/lib/x86_64-linux-gnu/libtinfo.so
+          sudo rm -rf /usr/lib/x86_64-linux-gnu/libtinfo.so /usr/lib/x86_64-linux-gnu/libz3.so
 
       - name: install binary
         uses: ./action/install
