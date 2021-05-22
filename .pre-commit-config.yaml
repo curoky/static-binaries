@@ -27,3 +27,19 @@ repos:
     rev: 'v1.22.3'
     hooks:
       - id: rubocop
+  - repo: https://github.com/pre-commit/mirrors-yapf
+    rev: 'v0.31.0'
+    hooks:
+      - id: yapf
+  - repo: https://github.com/asottile/pyupgrade
+    rev: 'v2.29.0'
+    hooks:
+      - id: pyupgrade
+  - repo: https://github.com/PyCQA/pylint
+    rev: 'v2.11.1'
+    hooks:
+      - id: pylint
+  - repo: https://github.com/PyCQA/isort
+    rev: '5.10.1'
+    hooks:
+      - id: isort
