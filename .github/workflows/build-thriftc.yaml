@@ -33,6 +33,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: tap curoky's tap
+        run: brew tap curoky/tap
+
       - name: install binary
         uses: ./action/install
         with:
