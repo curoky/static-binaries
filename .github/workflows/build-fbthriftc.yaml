@@ -64,10 +64,7 @@ jobs:
         run: ls -lahR bin
 
       - name: prepare files
-        run: |
-          mkdir dist
-          mv bin/2020.12.14/thrift1 dist/fbthrifc-2020.12.14
-          mv bin/2021.06.07/thrift1 dist/fbthrifc-2021.06.07
+        run: ./pack.py bin dist thrift1:fbthrifc
 
       - name: upload binaries to release
         if: github.event_name == 'release' && github.event.action == 'created'

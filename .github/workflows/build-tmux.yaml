@@ -56,10 +56,7 @@ jobs:
         run: ls -lahR bin
 
       - name: prepare files
-        run: |
-          mkdir dist
-          mv bin/3.2a/tmux dist/tmux-3.2a
-          mv bin/2.9a/tmux dist/tmux-2.9a
+        run: ./pack.py bin dist tmux
 
       - name: upload binaries to release
         if: github.event_name == 'release' && github.event.action == 'created'

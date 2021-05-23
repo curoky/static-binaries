@@ -59,6 +59,40 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
+          name: binaries-3.9.1
+          path: bin/3.9.1
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-4.0.1
+          path: bin/4.0.1
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-5.0.2
+          path: bin/5.0.2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-6.0.1
+          path: bin/6.0.1
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-7.1.0
+          path: bin/7.1.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-8.0.1
+          path: bin/8.0.1
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-9.0.1
+          path: bin/9.0.1
+
+      - uses: actions/download-artifact@v2
+        with:
           name: binaries-10.0.1
           path: bin/10.0.1
 
@@ -76,17 +110,7 @@ jobs:
         run: ls -lahR bin
 
       - name: prepare files
-        run: |
-          mkdir dist
-          mv bin/10.0.1/clang-format dist/clang-format-10.0.1
-          mv bin/11.0.0/clang-format dist/clang-format-11.0.0
-          mv bin/12.0.1/clang-format dist/clang-format-12.0.1
-          mv bin/10.0.1/clang-query dist/clang-query-10.0.1
-          mv bin/11.0.0/clang-query dist/clang-query-11.0.0
-          mv bin/12.0.1/clang-query dist/clang-query-12.0.1
-          mv bin/10.0.1/clang-tidy dist/clang-tidy-10.0.1
-          mv bin/11.0.0/clang-tidy dist/clang-tidy-11.0.0
-          mv bin/12.0.1/clang-tidy dist/clang-tidy-12.0.1
+        run: ./pack.py bin dist clang-format clang-query clang-tidy
 
       - name: upload binaries to release
         if: github.event_name == 'release' && github.event.action == 'created'

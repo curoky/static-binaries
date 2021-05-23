@@ -58,13 +58,18 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: binaries-0.15.0
-          path: bin/0.15.0
+          name: binaries-0.8.0
+          path: bin/0.8.0
 
       - uses: actions/download-artifact@v2
         with:
-          name: binaries-0.14.2
-          path: bin/0.14.2
+          name: binaries-0.9.0
+          path: bin/0.9.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.9.1
+          path: bin/0.9.1
 
       - uses: actions/download-artifact@v2
         with:
@@ -73,19 +78,49 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: binaries-0.9.1
-          path: bin/0.9.1
+          name: binaries-0.9.3
+          path: bin/0.9.3
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.9.3.1
+          path: bin/0.9.3.1
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.10.0
+          path: bin/0.10.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.11.0
+          path: bin/0.11.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.12.0
+          path: bin/0.12.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.13.0
+          path: bin/0.13.0
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.14.2
+          path: bin/0.14.2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-0.15.0
+          path: bin/0.15.0
 
       - name: list files
         run: ls -lahR bin
 
       - name: prepare files
-        run: |
-          mkdir dist
-          mv bin/0.9.1/thrift dist/thrift-0.9.1
-          mv bin/0.9.2/thrift dist/thrift-0.9.2
-          mv bin/0.14.2/thrift dist/thrift-0.14.2
-          mv bin/0.15.0/thrift dist/thrift-0.15.0
+        run: ./pack.py bin dist thrift
 
       - name: upload binaries to release
         if: github.event_name == 'release' && github.event.action == 'created'

@@ -56,10 +56,7 @@ jobs:
         run: ls -lahR bin
 
       - name: prepare files
-        run: |
-          mkdir dist
-          mv bin/5.2.5/xz dist/xz-5.2.5
-          mv bin/5.0.8/xz dist/xz-5.0.8
+        run: ./pack.py bin dist xz
 
       - name: upload binaries to release
         if: github.event_name == 'release' && github.event.action == 'created'
