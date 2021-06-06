@@ -55,6 +55,8 @@ jobs:
     needs: install
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip3 install typer
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.1.0
