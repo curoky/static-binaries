@@ -34,8 +34,7 @@ class LlvmTools < Formula
 
   depends_on 'cmake' => :build
   depends_on 'ninja' => :build
-  depends_on 'python@3.9' => :build
-  # depends_on 'gcc@11' => :build
+  depends_on 'python@3' => :build
 
   keg_only :versioned_formula
 
@@ -60,8 +59,6 @@ class LlvmTools < Formula
       args << "-DCMAKE_FIND_LIBRARY_SUFFIXES='.a'"
       args << '-DCMAKE_BUILD_TYPE=MinSizeRel'
       args << "-DCMAKE_CXX_FLAGS_MINSIZEREL='-Os -DNDEBUG -s'"
-      # args << "-DCMAKE_C_COMPILER=#{Formula['gcc@11'].opt_bin}/gcc-11"
-      # args << "-DCMAKE_CXX_COMPILER=#{Formula['gcc@11'].opt_bin}/g++-11"
 
       if version == '3.9.1'
         args << '-DLLVM_EXTERNAL_CLANG_SOURCE_DIR=../clang'

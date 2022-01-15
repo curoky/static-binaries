@@ -20,8 +20,6 @@ class Thriftc < Formula
   depends_on 'cmake' => :build
   depends_on 'libtool' => :build
   depends_on 'ninja' => :build
-  depends_on 'gcc@11' => :build
-
   depends_on 'flex' => :build
   depends_on 'bison' => :build
   # depends_on "node" => :build
@@ -50,8 +48,6 @@ class Thriftc < Formula
     # only need by 0.2.0
     inreplace 'compiler/cpp/src/thriftl.ll', 'thrifty.h', 'thrifty.hh' if version == '0.2.0'
 
-    ENV['CC'] = Formula['gcc@11'].opt_bin / 'gcc-11'
-    ENV['CXX'] = Formula['gcc@11'].opt_bin / 'g++-11'
     ENV.append 'CFLAGS', '-Os -DNDEBUG -s'
     ENV.append 'CXXFLAGS', '-Os -DNDEBUG -s'
     ENV.append 'CPPFLAGS', '-I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'
@@ -92,11 +88,9 @@ class Thriftc < Formula
   end
 
   def cmake_install
-    args = std_cmake_args + %W[
+    args = std_cmake_args + %w[
       -GNinja
       --log-level=STATUS
-      -DCMAKE_C_COMPILER=#{Formula['gcc@11'].opt_bin}/gcc-11
-      -DCMAKE_CXX_COMPILER=#{Formula['gcc@11'].opt_bin}/g++-11
       -DCMAKE_BUILD_TYPE=MinSizeRel
       -DBUILD_TESTING=OFF
       -DBUILD_EXAMPLES=OFF

@@ -6,11 +6,8 @@ class Xz < Formula
   license 'GPL-2.0'
 
   keg_only :versioned_formula
-  depends_on 'gcc@11' => :build
 
   def install
-    ENV['CC'] = Formula['gcc@11'].opt_bin / 'gcc-11'
-    ENV['CXX'] = Formula['gcc@11'].opt_bin / 'g++-11'
     ENV.append 'CFLAGS', '-Os -DNDEBUG -s'
     ENV.append 'CXXFLAGS', '-Os -DNDEBUG -s'
     ENV.append 'CPPFLAGS', '-I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'

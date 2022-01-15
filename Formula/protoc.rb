@@ -7,7 +7,6 @@ class Protoc < Formula
 
   depends_on 'cmake' => :build
   depends_on 'ninja' => :build
-  depends_on 'gcc@11' => :build
 
   keg_only :versioned_formula
 
@@ -16,11 +15,9 @@ class Protoc < Formula
     inreplace 'cmake/install.cmake', 'if (UNIX AND NOT APPLE)', 'if (OFF)', false
 
     mkdir 'build' do
-      args = std_cmake_args + %W[
+      args = std_cmake_args + %w[
         -GNinja
         --log-level=STATUS
-        -DCMAKE_C_COMPILER=#{Formula['gcc@11'].opt_bin}/gcc-11
-        -DCMAKE_CXX_COMPILER=#{Formula['gcc@11'].opt_bin}/g++-11
         -DCMAKE_BUILD_TYPE=MinSizeRel
         -DBUILD_SHARED_LIBS=OFF
         -Dprotobuf_WITH_ZLIB=OFF

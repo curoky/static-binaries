@@ -9,25 +9,19 @@ class Fbthriftc < Formula
   depends_on 'bison' => :build
   depends_on 'cmake' => :build
   depends_on 'ninja' => :build
-  depends_on 'gcc@11' => :build
   depends_on 'mstch' => :build
-  depends_on 'python@3.9' => :build
-  depends_on 'gcc@11' => :build
-
+  depends_on 'python@3' => :build
   depends_on 'boost' => :build
   depends_on 'openssl@1.1' => :build
   depends_on 'libevent' => :build
 
   def install
-    gcc = Formula['gcc@11']
     boost = Formula['boost']
     ENV.append 'CXXFLAGS', "-I#{Formula['boost'].opt_include}"
 
     args = std_cmake_args + %W[
       -GNinja
       --log-level=STATUS
-      -DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-11
-      -DCMAKE_CXX_COMPILER=#{gcc.opt_bin}/g++-11
       -DCMAKE_BUILD_TYPE=MinSizeRel
       -Dcompiler_only=ON
       -Dthriftpy3=OFF
