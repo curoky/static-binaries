@@ -43,13 +43,16 @@ jobs:
           env: 'HOMEBREW_PROTOC_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah bin
+        run: |
+          ls -lah bin
+          mkdir -p dist/bin
+          mv bin dist/bin/${{ matrix.version }}
 
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: binaries-${{ matrix.version }}
-          path: bin
+          path: dist
           retention-days: 1
 
   upload-release:
@@ -62,77 +65,62 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.1.0
-          path: bin/3.1.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.2.0
-          path: bin/3.2.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.3.2
-          path: bin/3.3.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.4.1
-          path: bin/3.4.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.5.2
-          path: bin/3.5.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.7.1
-          path: bin/3.7.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.8.0
-          path: bin/3.8.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.9.2
-          path: bin/3.9.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.13.0.1
-          path: bin/3.13.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.14.0
-          path: bin/3.14.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.15.6
-          path: bin/3.15.6
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.16.0
-          path: bin/3.16.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.17.3
-          path: bin/3.17.3
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.18.2
-          path: bin/3.18.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.19.3
-          path: bin/3.19.3
 
       - name: list files
         run: ls -lahR bin

@@ -45,13 +45,16 @@ jobs:
           env: 'HOMEBREW_LLVMTOOLS_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah bin
+        run: |
+          ls -lah bin
+          mkdir -p dist/bin
+          mv bin dist/bin/${{ matrix.version }}
 
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: binaries-${{ matrix.version }}
-          path: bin
+          path: dist
           retention-days: 1
 
   upload-release:
@@ -64,56 +67,46 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binaries-3.9.1
-          path: bin/3.9.1
+
       - uses: actions/download-artifact@v2
         with:
           name: binaries-4.0.1
-          path: bin/4.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-5.0.2
-          path: bin/5.0.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-6.0.1
-          path: bin/6.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-7.1.0
-          path: bin/7.1.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-8.0.1
-          path: bin/8.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-9.0.1
-          path: bin/9.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-10.0.1
-          path: bin/10.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-11.1.0
-          path: bin/11.1.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-12.0.1
-          path: bin/12.0.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-13.0.1
-          path: bin/13.0.1
 
       - name: list files
         run: ls -lahR bin

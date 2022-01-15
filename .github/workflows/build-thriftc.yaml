@@ -43,13 +43,16 @@ jobs:
           env: 'HOMEBREW_THRIFTC_VERSION=${{ matrix.version }}'
 
       - name: check binary
-        run: ls -lah bin
+        run: |
+          ls -lah bin
+          mkdir -p dist/bin
+          mv bin dist/bin/${{ matrix.version }}
 
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: binaries-${{ matrix.version }}
-          path: bin
+          path: dist
           retention-days: 1
 
   upload-release:
@@ -62,62 +65,50 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.8.0
-          path: bin/0.8.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.9.0
-          path: bin/0.9.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.9.1
-          path: bin/0.9.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.9.2
-          path: bin/0.9.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.9.3
-          path: bin/0.9.3
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.9.3.1
-          path: bin/0.9.3.1
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.10.0
-          path: bin/0.10.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.11.0
-          path: bin/0.11.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.12.0
-          path: bin/0.12.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.13.0
-          path: bin/0.13.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.14.2
-          path: bin/0.14.2
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-0.15.0
-          path: bin/0.15.0
 
       - name: list files
         run: ls -lahR bin
