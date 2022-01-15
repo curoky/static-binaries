@@ -36,6 +36,6 @@ class Mold < Formula
     assert_equal 'not a dynamic executable', output
 
     output = shell_output("#{bin}/mold --version")
-    assert_match "mold #{version}", output.strip
+    assert_match 'mold', output.strip
   end
 end
