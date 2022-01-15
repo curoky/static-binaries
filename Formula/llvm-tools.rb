@@ -3,7 +3,7 @@ class LlvmTools < Formula
   homepage 'https://clang.llvm.org/docs/ClangFormat.html'
   # The LLVM Project is under the Apache License v2.0 with LLVM Exceptions
   license 'Apache-2.0'
-  version = ENV['HOMEBREW_LLVMTOOLS_VERSION'] || '12.0.1'
+  version = ENV['HOMEBREW_LLVMTOOLS_VERSION'] || '13.0.1'
   version version
 
   if Gem::Version.new(version) <= Gem::Version.new('8.0.1')
@@ -26,8 +26,8 @@ class LlvmTools < Formula
     end
   elsif Gem::Version.new(version) <= Gem::Version.new('11.0.0')
     url "https://github.com/llvm/llvm-project/releases/download/llvmorg-#{version}/llvm-project-#{version}.tar.xz"
-  elsif Gem::Version.new(version) == Gem::Version.new('12.0.1')
-    url 'https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1-rc3/llvm-project-12.0.1rc3.src.tar.xz'
+  elsif Gem::Version.new(version) == Gem::Version.new('13.0.1')
+    url 'https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.1-rc2/llvm-project-13.0.1rc2.src.tar.xz'
   else
     url "https://github.com/llvm/llvm-project/releases/download/llvmorg-#{version}/llvm-project-#{version}.src.tar.xz"
   end

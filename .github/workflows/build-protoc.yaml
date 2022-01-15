@@ -29,6 +29,8 @@ jobs:
           - '3.15.6'
           - '3.16.0'
           - '3.17.3'
+          - '3.18.2'
+          - '3.19.3'
 
     runs-on: ubuntu-latest
     steps:
@@ -121,6 +123,16 @@ jobs:
         with:
           name: binaries-3.17.3
           path: bin/3.17.3
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-3.18.2
+          path: bin/3.18.2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-3.19.3
+          path: bin/3.19.3
 
       - name: list files
         run: ls -lahR bin

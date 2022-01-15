@@ -1,7 +1,7 @@
 class Protoc < Formula
   desc "Protocol buffers (Google's data interchange format)"
   homepage 'https://github.com/protocolbuffers/protobuf/'
-  version ENV['HOMEBREW_PROTOC_VERSION'] || '3.17.3'
+  version ENV['HOMEBREW_PROTOC_VERSION'] || '3.19.3'
   url "https://github.com/protocolbuffers/protobuf/archive/v#{version}.zip"
   license 'BSD-3-Clause'
 

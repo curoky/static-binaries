@@ -16,7 +16,6 @@ jobs:
       matrix:
         version:
           - '3.2a'
-          - '2.9a'
 
     runs-on: ubuntu-latest
     steps:
@@ -49,11 +48,6 @@ jobs:
         with:
           name: binaries-3.2a
           path: bin/3.2a
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binaries-2.9a
-          path: bin/2.9a
 
       - name: list files
         run: ls -lahR bin

@@ -1,7 +1,7 @@
 class Fbthriftc < Formula
   desc "Facebook's branch of Apache Thrift, including a new C++ server."
   homepage 'https://github.com/facebook/fbthrift'
-  version ENV['HOMEBREW_FBTHRIFTC_VERSION'] || '2021.06.07'
+  version ENV['HOMEBREW_FBTHRIFTC_VERSION'] || '2022.01.03'
   url "https://github.com/facebook/fbthrift/archive/v#{version}.00.tar.gz"
 
   keg_only :versioned_formula

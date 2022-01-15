@@ -24,8 +24,9 @@ jobs:
           - '8.0.1'
           - '9.0.1'
           - '10.0.1'
-          - '11.0.0'
+          - '11.1.0'
           - '12.0.1'
+          - '13.0.1'
 
     runs-on: ubuntu-latest
     steps:
@@ -101,13 +102,18 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: binaries-11.0.0
-          path: bin/11.0.0
+          name: binaries-11.1.0
+          path: bin/11.1.0
 
       - uses: actions/download-artifact@v2
         with:
           name: binaries-12.0.1
           path: bin/12.0.1
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries-13.0.1
+          path: bin/13.0.1
 
       - name: list files
         run: ls -lahR bin

@@ -1,7 +1,7 @@
 class Thriftc < Formula
   desc 'Framework for scalable cross-language services development'
   homepage 'https://thrift.apache.org'
-  version ENV['HOMEBREW_THRIFTC_VERSION'] || '0.14.2'
+  version ENV['HOMEBREW_THRIFTC_VERSION'] || '0.15.0'
   if version == '0.2.0'
     url "https://github.com/apache/thrift/archive/#{version}.tar.gz"
   else

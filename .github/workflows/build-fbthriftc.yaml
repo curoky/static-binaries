@@ -16,8 +16,7 @@ jobs:
       max-parallel: 20
       matrix:
         version:
-          - '2020.12.14'
-          - '2021.06.07'
+          - '2022.01.03'
 
     runs-on: ubuntu-latest
     steps:
@@ -55,13 +54,8 @@ jobs:
       - run: pip3 install typer
       - uses: actions/download-artifact@v2
         with:
-          name: binaries-2020.12.14
-          path: bin/2020.12.14
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binaries-2021.06.07
-          path: bin/2021.06.07
+          name: binaries-2022.01.03
+          path: bin/2022.01.03
 
       - name: list files
         run: ls -lahR bin
