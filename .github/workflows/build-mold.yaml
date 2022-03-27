@@ -49,7 +49,7 @@ jobs:
       - run: pip3 install typer
       - uses: actions/download-artifact@v2
         with:
-          name: binaries-1.0.1
+          name: binaries-1.1.1
 
       - name: list files
         run: ls -lahR bin
