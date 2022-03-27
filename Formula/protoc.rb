@@ -1,7 +1,7 @@
 class Protoc < Formula
   desc "Protocol buffers (Google's data interchange format)"
   homepage 'https://github.com/protocolbuffers/protobuf/'
-  version ENV['HOMEBREW_PROTOC_VERSION'] || '3.19.3'
+  version ENV['HOMEBREW_PROTOC_VERSION'] || '3.20.0'
   url "https://github.com/protocolbuffers/protobuf/archive/v#{version}.zip"
   license 'BSD-3-Clause'
 
@@ -46,7 +46,8 @@ class Protoc < Formula
       '3.2.1' => '3.2.0',
       '3.4.1' => '3.4.0',
       '3.5.2' => '3.5.1',
-      '3.13.0.1' => '3.13.0'
+      '3.13.0.1' => '3.13.0',
+      '3.20.0' => '3.20.0-rc2'
     }
     test_version.default = version
     output = shell_output("#{bin}/protoc --version")

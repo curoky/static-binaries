@@ -28,6 +28,7 @@ jobs:
           - '0.13.0'
           - '0.14.2'
           - '0.15.0'
+          - '0.16.0'
 
     runs-on: ubuntu-latest
     steps:

@@ -2,7 +2,7 @@ class Mold < Formula
   desc 'mold: A Modern Linker'
   homepage 'https://github.com/rui314/mold'
   url 'https://github.com/rui314/mold/archive/refs/heads/main.zip'
-  version ENV['HOMEBREW_MOLD_VERSION'] || '1.0.1'
+  version ENV['HOMEBREW_MOLD_VERSION'] || '1.1.1'
   license 'AGPL-3.0-only'
 
   depends_on 'pkg-config' => :build

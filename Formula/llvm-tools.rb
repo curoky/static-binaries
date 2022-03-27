@@ -3,7 +3,7 @@ class LlvmTools < Formula
   homepage 'https://clang.llvm.org/docs/ClangFormat.html'
   # The LLVM Project is under the Apache License v2.0 with LLVM Exceptions
   license 'Apache-2.0'
-  version = ENV['HOMEBREW_LLVMTOOLS_VERSION'] || '13.0.1'
+  version = ENV['HOMEBREW_LLVMTOOLS_VERSION'] || '14.0.0'
   version version
 
   if Gem::Version.new(version) <= Gem::Version.new('8.0.1')
