@@ -1,13 +1,13 @@
 name: build mold
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/build-mold.yaml'
-      - 'Formula/mold.rb'
-      - 'action/install/action.yaml'
-  release:
-    types: [created]
+  # push:
+  #   paths:
+  #     - '.github/workflows/build-mold.yaml'
+  #     - 'Formula/mold.rb'
+  #     - 'action/install/action.yaml'
+  # release:
+  #   types: [created]
 
 jobs:
   install:
