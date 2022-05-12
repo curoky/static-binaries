@@ -1,10 +1,9 @@
 class Fbthriftc < Formula
   desc "Facebook's branch of Apache Thrift, including a new C++ server."
   homepage 'https://github.com/facebook/fbthrift'
-  version ENV['HOMEBREW_FBTHRIFTC_VERSION'] || '2022.01.03'
-  url "https://github.com/facebook/fbthrift/archive/v#{version}.00.tar.gz"
+  version ENV['HOMEBREW_FBTHRIFTC_VERSION'] || '2022.04.25.00'
+  url "https://github.com/facebook/fbthrift/archive/v#{version}.tar.gz"
 
-  keg_only :versioned_formula
   depends_on 'flex' => :build
   depends_on 'bison' => :build
   depends_on 'cmake' => :build
@@ -14,6 +13,7 @@ class Fbthriftc < Formula
   depends_on 'boost' => :build
   depends_on 'openssl@1.1' => :build
   depends_on 'libevent' => :build
+  depends_on 'fmt-static' => :build
 
   def install
     boost = Formula['boost']
@@ -38,6 +38,8 @@ class Fbthriftc < Formula
     # args << "-DCMAKE_EXE_LINKER_FLAGS='-static-libgcc -static-libstdc++'" if OS.mac?
 
     inreplace 'CMakeLists.txt', 'set(CMAKE_INSTALL_RPATH', '#set(CMAKE_INSTALL_RPATH'
+    inreplace 'CMakeLists.txt', 'if (compiler_only OR build_all)',
+              "if (compiler_only OR build_all) \n find_package(fmt CONFIG REQUIRED)"
 
     mkdir 'build' do
       system 'cmake', *args, '..'
