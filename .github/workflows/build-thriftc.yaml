@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: Homebrew/actions/setup-homebrew@master
 
       - name: tap curoky's tap
         run: brew tap curoky/tap
