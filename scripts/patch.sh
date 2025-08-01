@@ -22,6 +22,11 @@ prefix="$2"
 
 skip_list=(
   nsight-systems
+
+  iina
+  snipaste
+  keka
+  obs-studio
 )
 
 if [[ " ${skip_list[@]} " =~ " ${name} " ]]; then

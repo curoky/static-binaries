@@ -99,6 +99,12 @@ tasks:
   zlib: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib
   zstd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zstd
 
+  # font
+  lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
+  fira-code: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.fira-code
+  nerd-fonts.fira-code: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.nerd-fonts.fira-code
+  nerd-fonts.ubuntu-mono: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.nerd-fonts.ubuntu-mono
+
   # wrapped
   autoconf: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix autoconf
   automake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix automake

@@ -17,12 +17,12 @@ on:
         default: ""
         required: false
         type: string
-  # schedule:
-  #   - cron: '0 0 - name: - name: 0'
+  schedule:
+    - cron: "0 0 * * 0"
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
     permissions:
       contents: write
     strategy:
@@ -73,6 +73,11 @@ jobs:
           - name: zip
           - name: zsh-extra
           - name: zstd
+
+          - name: lxgw-wenkai
+          - name: fira-code
+          - name: nerd-fonts.fira-code
+          - name: nerd-fonts.ubuntu-mono
 
           # - name: silver-searcher
           # - name: zsh
@@ -159,6 +164,8 @@ jobs:
           mv output ${{ matrix.name }}
           tar -czvf ${{ matrix.name }}.darwin-arm64.tar.gz ${{ matrix.name }}
         if: ${{ env.skip_steps != 'true' }}
+        env:
+          NIXPKGS_ALLOW_UNFREE: 1
 
       - uses: svenstaro/upload-release-action@v2
         if: ${{ env.skip_steps != 'true' }}

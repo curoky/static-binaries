@@ -12,9 +12,16 @@ tasks:
   eza: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.eza
   bat: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.bat
   atuin: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.atuin
-  # ruff: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.ruff
+  ruff: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.ruff
   fd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.fd
   git-absorb: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.git-absorb
+
+  # GUI APP
+  iina: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.iina
+  # snipaste: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.snipaste
+  keka: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.keka
+  # kap: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.kap
+  # obs-studio: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.obs-studio
 
   # others
   silver-searcher: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.silver-searcher
