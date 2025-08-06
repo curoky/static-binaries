@@ -63,6 +63,7 @@ in
   zellij = pkgs.pkgsStatic.callPackage ./patched/zellij.nix { };
   git = pkgs.pkgsStatic.callPackage ./patched/git.nix { };
   gettext = pkgs.pkgsStatic.callPackage ./patched/gettext.nix { };
+  p7zip = pkgs.pkgsStatic.callPackage ./patched/p7zip.nix { };
 
   # pypkgs
   dool = pkgs.pkgsStatic.callPackage ./pypkgs/dool.nix { };

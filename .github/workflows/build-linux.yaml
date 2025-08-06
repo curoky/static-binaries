@@ -143,6 +143,7 @@ jobs:
           - name: lua
           - name: cmake
           - name: cronie
+          - name: p7zip
 
           # - name: nixfmt-rfc-style
           # - name: nixpkgs-fmt

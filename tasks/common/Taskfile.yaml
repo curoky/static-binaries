@@ -135,6 +135,7 @@ tasks:
   zellij: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zellij
   cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
   git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
+  p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext
 
   # new
