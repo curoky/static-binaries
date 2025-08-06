@@ -142,6 +142,7 @@ jobs:
           - name: zstd
           - name: lua
           - name: cmake
+          - name: cronie
 
           # - name: nixfmt-rfc-style
           # - name: nixpkgs-fmt

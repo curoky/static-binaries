@@ -98,6 +98,7 @@ tasks:
   zlib-ng: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib-ng
   zlib: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib
   zstd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zstd
+  cronie: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.cronie
 
   # font
   lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
