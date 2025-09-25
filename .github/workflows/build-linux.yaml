@@ -144,6 +144,7 @@ jobs:
           - name: cmake
           - name: cronie
           - name: p7zip
+          - name: lefthook
 
           # - name: nixfmt-rfc-style
           # - name: nixpkgs-fmt

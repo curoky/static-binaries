@@ -45,6 +45,9 @@ let
   buildifier = pkgs.buildifier.overrideAttrs (oldAttrs: rec {
     env.CGO_ENABLED = "0";
   });
+  lefthook = pkgs.lefthook.overrideAttrs (oldAttrs: rec {
+    env.CGO_ENABLED = "0";
+  });
 in
 {
   inherit shfmt;
@@ -59,4 +62,5 @@ in
   inherit dive;
   inherit scc;
   inherit buildifier;
+  inherit lefthook;
 }

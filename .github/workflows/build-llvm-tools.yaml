@@ -29,6 +29,9 @@ jobs:
       matrix:
         version:
           - 18
+          - 19
+          - 20
+          - 21
     steps:
       - run: echo "skip_steps=true" >> $GITHUB_ENV
       - run: echo "skip_steps=false" >> $GITHUB_ENV
@@ -37,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ env.skip_steps != 'true' }}
 
-      - run: ./docker/build.sh llvm_18 linux-x86_64
+      - run: ./docker/build.sh llvm_${{ matrix.version }} linux-x86_64
         if: ${{ env.skip_steps != 'true' }}
 
       - run: docker system prune -a --force
@@ -45,36 +48,36 @@ jobs:
       - name: pack clang-format
         run: |
           mkdir -p tmp
-          tar -x --gunzip -f llvm_18.linux-x86_64.tar.gz -C tmp --strip-components=1
-          mkdir -p clang-format_18/bin
-          cp tmp/bin/clang-format clang-format_18/bin/clang-format-18
-          tar -c --gunzip -f clang-format_18.linux-x86_64.tar.gz clang-format_18
-          mkdir -p lld_18/bin
-          cp tmp/bin/lld lld_18/bin/lld-18
-          tar -c --gunzip -f lld_18.linux-x86_64.tar.gz lld_18
+          tar -x --gunzip -f llvm_${{ matrix.version }}.linux-x86_64.tar.gz -C tmp --strip-components=1
+          mkdir -p clang-format_${{ matrix.version }}/bin
+          cp tmp/bin/clang-format clang-format_${{ matrix.version }}/bin/clang-format-${{ matrix.version }}
+          tar -c --gunzip -f clang-format_${{ matrix.version }}.linux-x86_64.tar.gz clang-format_${{ matrix.version }}
+          mkdir -p lld_${{ matrix.version }}/bin
+          cp tmp/bin/lld lld_${{ matrix.version }}/bin/lld-${{ matrix.version }}
+          tar -c --gunzip -f lld_${{ matrix.version }}.linux-x86_64.tar.gz lld_${{ matrix.version }}
         if: ${{ env.skip_steps != 'true' }}
 
       - uses: svenstaro/upload-release-action@v2
         if: ${{ env.skip_steps != 'true' }}
         with:
-          file: llvm_18.linux-x86_64.tar.gz
-          asset_name: llvm_18.linux-x86_64.tar.gz
+          file: llvm_${{ matrix.version }}.linux-x86_64.tar.gz
+          asset_name: llvm_${{ matrix.version }}.linux-x86_64.tar.gz
           tag: "v1.0"
           overwrite: true
 
       - uses: svenstaro/upload-release-action@v2
         if: ${{ env.skip_steps != 'true' }}
         with:
-          file: clang-format_18.linux-x86_64.tar.gz
-          asset_name: clang-format_18.linux-x86_64.tar.gz
+          file: clang-format_${{ matrix.version }}.linux-x86_64.tar.gz
+          asset_name: clang-format_${{ matrix.version }}.linux-x86_64.tar.gz
           tag: "v1.0"
           overwrite: true
 
       - uses: svenstaro/upload-release-action@v2
         if: ${{ env.skip_steps != 'true' }}
         with:
-          file: lld_18.linux-x86_64.tar.gz
-          asset_name: lld_18.linux-x86_64.tar.gz
+          file: lld_${{ matrix.version }}.linux-x86_64.tar.gz
+          asset_name: lld_${{ matrix.version }}.linux-x86_64.tar.gz
           tag: "v1.0"
           overwrite: true
 

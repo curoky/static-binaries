@@ -21,3 +21,6 @@ tasks:
   llvmPackages_18.clang-unwrapped: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_18.clang-unwrapped
   lld_18: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_18
   llvm_18: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_18.clang-unwrapped nixpkgs.pkgsStatic.lld_18
+  llvm_19: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_19.clang-unwrapped nixpkgs.pkgsStatic.lld_19
+  llvm_20: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_20.clang-unwrapped nixpkgs.pkgsStatic.lld_20
+  llvm_21: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_21.clang-unwrapped nixpkgs.pkgsStatic.lld_21
