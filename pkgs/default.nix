@@ -44,8 +44,18 @@ in
 {
   # inherit silver_searcher;
   inherit protobuf3_20;
-  inherit protobuf_3_8_0;
-  inherit protobuf_3_9_2;
+  # inherit protobuf_3_8_0;
+  # inherit protobuf_3_9_2;
+
+  protobuf_3_8_0 = pkgs.pkgsStatic.callPackage ./protobuf-generic-v3.nix ({
+    version = "3.8.0";
+    sha256 = "sha256-qK4Tb6o0SAN5oKLHocEIIKoGCdVFQMeBONOQaZQAlG4=";
+  });
+
+  protobuf_3_9_2 = pkgs.pkgsStatic.callPackage ./protobuf-generic-v3.nix ({
+    version = "3.9.2";
+    sha256 = "sha256-1mLSNLyRspTqoaTFylGCc2JaEQOMR1WAL7ffwJPqHyA=";
+  });
 
   rsync = pkgs.pkgsStatic.rsync.override {
     enableXXHash = false;
