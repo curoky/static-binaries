@@ -52,7 +52,7 @@ tasks:
   gnugrep: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnugrep
   gnumake: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnumake
   gnupatch: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnupatch
-  gnupg: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnupg
+  # gnupg: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnupg
   gnused: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnused
   gnutar: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnutar
   gzip: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gzip
@@ -83,7 +83,7 @@ tasks:
   pkg-config: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.pkg-config-unwrapped
   procps: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procps
   procs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procs
-  protobuf_24: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_24
+  # protobuf_24: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_24
   protobuf_25: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
   protobuf_29: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_29
   # rsync: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.rsync
@@ -110,6 +110,12 @@ tasks:
   rsync:
     - task: setup-2505
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.rsync
+  gnupg:
+    - task: setup-2505
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.gnupg
+  protobuf_24:
+    - task: setup-2505
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
 
   # font
   lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
