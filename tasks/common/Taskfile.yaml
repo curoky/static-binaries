@@ -3,7 +3,7 @@ version: "3"
 tasks:
   setup:
     cmds:
-      - nix-channel --add https://nixos.org/channels/nixos-25.05 nixpkgs
+      - nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs
       - nix-channel --update
       - nix-channel --list
       - mkdir -p ~/nix/profiles
@@ -15,10 +15,13 @@ tasks:
     # - nix-channel --add https://github.com/NixOS/nixpkgs/archive/staging.tar.gz staging
     - nix-channel --add https://github.com/tobim/nixpkgs/archive/refs/heads/pkgs/git-static.tar.gz git_fix
     - nix-channel --update
-  setup-old-2411:
+  setup-2411:
     - nix-channel --add https://nixos.org/channels/nixos-24.11 old
     - nix-channel --update
-  setup-old:
+  setup-2505:
+    - nix-channel --add https://nixos.org/channels/nixos-25.05 old
+    - nix-channel --update
+  setup-2405:
     - nix-channel --add https://nixos.org/channels/nixos-24.05 old
     - nix-channel --update
   setup-unstable:
@@ -147,11 +150,11 @@ tasks:
   vim-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-extra
 
   protobuf_3_8_0:
-    - task: setup-old
+    - task: setup-2405
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_8_0
 
   protobuf_3_9_2:
-    - task: setup-old
+    - task: setup-2405
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_9_2
 
   # go pkgs
