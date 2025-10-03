@@ -73,6 +73,7 @@ jobs:
           - name: zip
           - name: zsh-extra
           - name: zstd
+          - name: lefthook
 
           - name: lxgw-wenkai
           - name: fira-code
