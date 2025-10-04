@@ -30,8 +30,8 @@ jobs:
         version:
           - 18
           - 19
-          - 20
-          - 21
+          # - 20
+          # - 21
     steps:
       - run: echo "skip_steps=true" >> $GITHUB_ENV
       - run: echo "skip_steps=false" >> $GITHUB_ENV
