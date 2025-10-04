@@ -1,0 +1,10 @@
+# syntax=docker/dockerfile:1.9.0
+FROM nixpkgs/nix-unstable:latest AS nixpkgs-builder
+
+ENV NIX_PATH=nixpkgs=channel:nixos-25.05
+
+RUN nix-channel --add https://nixos.org/channels/nixos-25.11 nixpkgs \
+  && nix-channel --update
+
+ARG PACKAGE_NAME=curl
+RUN nix-env -iA nixpkgs.pkgsStatic.${PACKAGE_NAME}

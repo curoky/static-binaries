@@ -83,10 +83,7 @@ tasks:
   pkg-config: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.pkg-config-unwrapped
   procps: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procps
   procs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procs
-  # protobuf_24: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_24
-  protobuf_25: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
-  protobuf_29: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_29
-  # rsync: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.rsync
+   # rsync: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.rsync
   smartmontools: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.smartmontools
   snappy: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.snappy
   strace: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.strace
@@ -102,6 +99,31 @@ tasks:
   zlib: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib
   zstd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zstd
   cronie: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.cronie
+  
+  # protobuf
+  protobuf_21: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_21
+  protobuf_25: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
+  protobuf_27: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
+  protobuf_29: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_29
+
+  protobuf3_20:
+    - task: setup-2405
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf3_20
+  protobuf_23:
+    - task: setup-2405
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_23
+  protobuf_24:
+    - task: setup-2505
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
+  protobuf_26:
+    - task: setup-2505
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
+  protobuf_28:
+    - task: setup-2505
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
+
+  protobuf_3_8_0: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_8_0
+  protobuf_3_9_2: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_9_2
 
   # old
   patchelf:
@@ -113,10 +135,7 @@ tasks:
   gnupg:
     - task: setup-2505
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.gnupg
-  protobuf_24:
-    - task: setup-2505
-    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
-
+ 
   # font
   lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
   fira-code: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.fira-code
@@ -160,10 +179,10 @@ tasks:
   nsight-systems: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix nsight-systems
   cacert: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cacert
   python311: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python311
+  python312: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python312
+  python313: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python313
   tmux-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-extra
   vim-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-extra
-  protobuf_3_8_0: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_8_0
-  protobuf_3_9_2: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_9_2
 
   # go pkgs
   bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk

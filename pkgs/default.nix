@@ -13,40 +13,8 @@
 }:
 
 let
-  protobuf3_20 = pkgs.pkgsStatic.protobuf3_20.overrideAttrs (oldAttrs: rec {
-    postInstall = ''
-      mv $out/bin/protoc $out/bin/protoc-${oldAttrs.version}
-    '';
-  });
-  protobuf_3_8_0 = old.pkgsStatic.protobuf3_20.overrideAttrs (oldAttrs: rec {
-    src = pkgs.fetchFromGitHub {
-      owner = "protocolbuffers";
-      repo = "protobuf";
-      rev = "v3.8.0";
-      sha256 = "sha256-qK4Tb6o0SAN5oKLHocEIIKoGCdVFQMeBONOQaZQAlG4=";
-    };
-    postInstall = ''
-      mv $out/bin/protoc $out/bin/protoc-3.8.0
-    '';
-  });
-  protobuf_3_9_2 = old.pkgsStatic.protobuf3_20.overrideAttrs (oldAttrs: rec {
-    src = pkgs.fetchFromGitHub {
-      owner = "protocolbuffers";
-      repo = "protobuf";
-      rev = "v3.9.2";
-      sha256 = "sha256-1mLSNLyRspTqoaTFylGCc2JaEQOMR1WAL7ffwJPqHyA=";
-    };
-    postInstall = ''
-      mv $out/bin/protoc $out/bin/protoc-3.9.2
-    '';
-  });
 in
 {
-  # inherit silver_searcher;
-  inherit protobuf3_20;
-  # inherit protobuf_3_8_0;
-  # inherit protobuf_3_9_2;
-
   protobuf_3_8_0 = pkgs.pkgsStatic.callPackage ./protobuf-generic-v3.nix ({
     version = "3.8.0";
     sha256 = "sha256-qK4Tb6o0SAN5oKLHocEIIKoGCdVFQMeBONOQaZQAlG4=";
@@ -74,6 +42,11 @@ in
   git = pkgs.pkgsStatic.callPackage ./patched/git.nix { };
   gettext = pkgs.pkgsStatic.callPackage ./patched/gettext.nix { };
   p7zip = pkgs.pkgsStatic.callPackage ./patched/p7zip.nix { };
+  
+  # python3
+  python311 = pkgs.pkgsStatic.callPackage ./python3/python311.nix { };
+  python312 = pkgs.pkgsStatic.callPackage ./python3/python312.nix { };
+  python313 = pkgs.pkgsStatic.callPackage ./python3/python313.nix { };
 
   # pypkgs
   dool = pkgs.pkgsStatic.callPackage ./pypkgs/dool.nix { };
@@ -99,7 +72,6 @@ in
 
   cacert = pkgs.pkgsStatic.callPackage ./cacert.nix { };
   nsight-systems = pkgs.pkgsStatic.callPackage ./nsight-systems.nix { };
-  python311 = pkgs.pkgsStatic.callPackage ./python311.nix { };
   rime-extra = pkgs.pkgsStatic.callPackage ./rime-extra.nix { };
   tmux-extra = pkgs.pkgsStatic.callPackage ./tmux-extra.nix { };
   vim-extra = pkgs.callPackage ./vim-extra.nix { };
