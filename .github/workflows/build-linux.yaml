@@ -110,7 +110,7 @@ jobs:
           - name: protobuf_3_8_0
           - name: protobuf_3_9_2
           - name: protobuf3_20
-          - name: protobuf_21
+          - name: protobuf3_21
           - name: protobuf_23
           - name: protobuf_24
           - name: protobuf_25
