@@ -101,14 +101,16 @@ tasks:
   cronie: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.cronie
   
   # protobuf
-  protobuf_21: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_21
   protobuf_25: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
-  protobuf_27: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
+  protobuf_27: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_27
   protobuf_29: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_29
 
   protobuf3_20:
     - task: setup-2405
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf3_20
+  protobuf3_21:
+    - task: setup-2405
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf3_21
   protobuf_23:
     - task: setup-2405
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_23
@@ -117,10 +119,10 @@ tasks:
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
   protobuf_26:
     - task: setup-2505
-    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_26
   protobuf_28:
     - task: setup-2505
-    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_24
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.protobuf_28
 
   protobuf_3_8_0: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_8_0
   protobuf_3_9_2: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix protobuf_3_9_2
