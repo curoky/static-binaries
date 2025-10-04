@@ -16,6 +16,7 @@ tasks:
   ruff: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ruff
   ripgrep: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ripgrep
   yazi: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.yazi-unwrapped
+  uv: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.uv
 
   # others
   aria2: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.aria2

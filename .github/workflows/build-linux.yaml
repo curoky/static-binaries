@@ -146,6 +146,7 @@ jobs:
           - name: p7zip
           - name: lefthook
           - name: yazi
+          - name: uv
 
           # - name: nixfmt-rfc-style
           # - name: nixpkgs-fmt
