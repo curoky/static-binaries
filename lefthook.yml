@@ -1,0 +1,33 @@
+pre-commit:
+  fail_on_changes: 'always'
+  jobs:
+    - name: shell script
+      run: shfmt -w -i 2 -s -l -ci {staged_files}
+      glob: '*.{sh}'
+      stage_fixed: false
+
+    - name: python
+      # run: ruff check --force-exclude --fix, --exit-non-zero-on-fix, --no-cache {staged_files}
+      run: ruff format --no-cache --force-exclude {staged_files} 
+      glob: '*.{py}'
+      stage_fixed: false
+
+    - name: c/c++
+      run: clang-format -i -style=file {staged_files}
+      glob: '*.{c,cc,cpp,h,hpp}'
+      stage_fixed: false
+
+    - name: protobuf
+      run: clang-format -i -style=file {staged_files}
+      glob: '*.{proto}'
+      stage_fixed: false
+
+    # - name: json
+    #   run: shfmt -w -i 2 -s -l -ci {staged_files}
+    #   glob: '*.{json}'
+    #   stage_fixed: false
+
+    # - name: yaml
+    #   run: shfmt -w -i 2 -s -l -ci {staged_files}
+    #   glob: '*.{yaml}'
+    #   stage_fixed: false
