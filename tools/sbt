@@ -38,7 +38,7 @@ function download_pkg() {
   local arch=$2
 
   local store_path=$3
-  local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt
+  local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
 
   echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
 
