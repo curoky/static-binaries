@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -xeuo pipefail
 
 # Write a Bash script named `sbt` that implements command-line argument parsing with two subcommands:
 
@@ -35,13 +35,13 @@ function download_pkg() {
   local arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
   local name=$1
   local save_path=$2
-  mkdir -p /tmp/sbt
-  rm -rf /tmp/sbt/${name}.tar.gz
+  mkdir -p /tmp/sbt_download
+  rm -rf /tmp/sbt_download/${name}.tar.gz
   curl -sSL https://github.com/curoky/static-binaries/releases/download/v1.0/${name}.${arch}.tar.gz \
-    -o /tmp/sbt/${name}.tar.gz
+    -o /tmp/sbt_download/${name}.tar.gz
   rm -rf ${save_path}/${name}
   mkdir -p ${save_path}/${name}
-  tar -x --gunzip -f /tmp/sbt/${name}.tar.gz -C ${save_path}/${name} --strip-components=1
+  tar -x --gunzip -f /tmp/sbt_download/${name}.tar.gz -C ${save_path}/${name} --strip-components=1
 }
 
 function install_pkg() {
