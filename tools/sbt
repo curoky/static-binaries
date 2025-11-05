@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Write a Bash script named `sbt` that implements command-line argument parsing with two subcommands:
+
+# 1. `sbt install {package}`
+# 2. `sbt download {package}`
+
+# Requirements:
+# - The `install` command accepts:
+#   - `--link` or `--nolink` (mutually exclusive switches)
+#   - `--root={path}` or `--root {path}` (both formats supported)
+# - The `download` command only requires a package name.
+# - Use **GNU getopt** for robust parsing.
+# - Show helpful usage output when arguments are missing or invalid.
+# - The script should be written **entirely in English**, cleanly formatted, with clear comments and example usage.
+# - Include sample output and a short description of script features at the end.
+
+
+function link() {
+  local src_dir=$1
+  local dst_dir=$2
+  find "$src_dir" \( -type f -o -type l \) | while read -r file; do
+    rel_path="${file#$src_dir/}"
+    dest_file="$dst_dir/$rel_path"
+    mkdir -p "$(dirname "$dest_file")"
+    if [[ -L $dest_file ]] || [[ -f $dest_file ]]; then
+      rm "$dest_file"
+    fi
+    ln -s -r "$file" "$dest_file"
+  done
+}
+
+function download_pkg() {
+  local arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
+  local name=$1
+  local save_path=$2
+  mkdir -p /tmp/sbt
+  rm -rf /tmp/sbt/${name}.tar.gz
+  curl -sSL https://github.com/curoky/static-binaries/releases/download/v1.0/${name}.${arch}.tar.gz \
+    -o /tmp/sbt/${name}.tar.gz
+  rm -rf ${save_path}/${name}
+  mkdir -p ${save_path}/${name}
+  tar -x --gunzip -f /tmp/sbt/${name}.tar.gz -C ${save_path}/${name} --strip-components=1
+}
+
+function install_pkg() {
+  local name=$1
+  local prefix=$2
+  local link=$3
+
+  mkdir -p ${prefix}/store
+  download_pkg ${name} ${prefix}/store
+  if [[ ${link} == "1" ]]; then
+    link ${prefix}/store/${name} ${prefix}
+  fi
+}
+
+SCRIPT_NAME=$(basename "$0")
+
+usage() {
+  cat <<EOF
+Usage:
+  $SCRIPT_NAME install [options] <package>
+  $SCRIPT_NAME download <package>
+
+Commands:
+  install     Install a package
+  download    Download a package
+
+Install options:
+  --nolink            Disable link mode during installation
+  --prefix <path>       Specify installation prefix path
+
+Examples:
+  $SCRIPT_NAME install mylib --link --prefix /opt/mylibs
+  $SCRIPT_NAME download toolkit
+EOF
+  exit 1
+}
+
+# Ensure at least one argument (command)
+if [[ $# -lt 1 ]]; then
+  echo "Error: Missing command"
+  usage
+fi
+
+COMMAND="$1"
+shift # remove command from argument list
+
+case "$COMMAND" in
+install)
+  LINK_MODE="1"
+  PREFIX_PATH="/opt/sbt"
+  PACKAGE=""
+
+  # Check GNU getopt availability
+  # if ! getopt --test >/dev/null; then
+  #   echo "Error: This script requires GNU getopt"
+  #   exit 1
+  # fi
+
+  OPTIONS=""
+  LONGOPTS="nolink,prefix:"
+
+  # Parse options using getopt
+  PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$SCRIPT_NAME" -- "$@") || exit 1
+  eval set -- "$PARSED"
+
+  # Process options
+  while true; do
+    case "$1" in
+    --nolink)
+      LINK_MODE="0"
+      shift
+      ;;
+    --prefix)
+      PREFIX_PATH="$2"
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Internal error: unknown option '$1'"
+      exit 1
+      ;;
+    esac
+  done
+
+  # The remaining argument should be the package name
+  if [[ $# -lt 1 ]]; then
+    echo "Error: install command requires a package name"
+    usage
+  fi
+  PACKAGE="$1"
+
+  echo "🔧 Installing package: $PACKAGE"
+  echo "Options:"
+  echo "  Link mode: ${LINK_MODE:-not specified}"
+  echo "  Prefix path: ${PREFIX_PATH:-default}"
+
+  install_pkg $PACKAGE $PREFIX_PATH $LINK_MODE
+
+  echo "✅ Installation completed: $PACKAGE"
+  ;;
+
+download)
+  if [[ $# -lt 1 ]]; then
+    echo "Error: download command requires a package name"
+    usage
+  fi
+  PACKAGE="$1"
+  echo "📦 Downloading package: $PACKAGE ..."
+
+  download_pkg $PACKAGE $PWD
+
+  echo "✅ Download completed: $PACKAGE"
+  ;;
+
+-h | --help | help)
+  usage
+  ;;
+
+*)
+  echo "Error: Unknown command '$COMMAND'"
+  usage
+  ;;
+esac
