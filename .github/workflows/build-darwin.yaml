@@ -74,6 +74,7 @@ jobs:
           - name: zsh-extra
           - name: zstd
           - name: lefthook
+          - name: bazelisk
 
           - name: lxgw-wenkai
           - name: fira-code
