@@ -9,13 +9,15 @@ set -euo pipefail
 # Requirements:
 # - The `install` command accepts:
 #   - `--link` or `--nolink` (mutually exclusive switches)
-#   - `--root={path}` or `--root {path}` (both formats supported)
-# - The `download` command only requires a package name.
+#   - `--prefix={path}` or `--prefix {path}` (both formats supported)
+#   - `--arch={osname_arch}` or `--arch {osname_arch}` (both formats supported)
+# - The `download` command accepts.
+#   - `--arch={osname_arch}` or `--arch {osname_arch}` (both formats supported)
 # - Use **GNU getopt** for robust parsing.
 # - Show helpful usage output when arguments are missing or invalid.
 # - The script should be written **entirely in English**, cleanly formatted, with clear comments and example usage.
 # - Include sample output and a short description of script features at the end.
-
+# - Keep the code as concise as possible, with as few lines of code as possible.
 
 function link() {
   local src_dir=$1
@@ -32,139 +34,125 @@ function link() {
 }
 
 function download_pkg() {
-  local arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
   local name=$1
-  local save_path=$2
-  mkdir -p /tmp/sbt_download
-  rm -rf /tmp/sbt_download/${name}.tar.gz
+  local arch=$2
+
+  local store_path=$3
+  local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
+
+  echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
+
+  # $(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
+
+  mkdir -p $cache_path
+  rm -rf $cache_path/$name.tar.gz
   curl -sSL https://github.com/curoky/static-binaries/releases/download/v1.0/${name}.${arch}.tar.gz \
-    -o /tmp/sbt_download/${name}.tar.gz
-  rm -rf ${save_path}/${name}
-  mkdir -p ${save_path}/${name}
-  tar -x --gunzip -f /tmp/sbt_download/${name}.tar.gz -C ${save_path}/${name} --strip-components=1
+    -o $cache_path/${name}.tar.gz
+  rm -rf $store_path
+  mkdir -p $store_path
+  tar -x --gunzip -f $cache_path/${name}.tar.gz -C $store_path --strip-components=1
 }
 
 function install_pkg() {
   local name=$1
-  local prefix=$2
-  local link=$3
+  local arch=$2
 
-  mkdir -p ${prefix}/store
-  download_pkg ${name} ${prefix}/store
-  if [[ ${link} == "1" ]]; then
-    link ${prefix}/store/${name} ${prefix}
+  local prefix=$3
+  local link=$4
+  
+  local store_path=$prefix/store/$name
+  
+  echo "> Installing $name($arch) to $store_path, and linked=$link_mode"
+
+  download_pkg $name $arch $store_path
+  if [[ $link == "1" ]]; then
+    link $store_path $prefix
   fi
 }
 
-SCRIPT_NAME=$(basename "$0")
-
-usage() {
-  cat <<EOF
+show_usage() {
+    cat <<EOF
 Usage:
-  $SCRIPT_NAME install [options] <package>
-  $SCRIPT_NAME download <package>
+  sbt install [OPTIONS] <package>
+  sbt download [OPTIONS] <package>
 
-Commands:
-  install     Install a package
-  download    Download a package
+Subcommands:
+  install     Install a package.
+  download    Download a package.
 
-Install options:
-  --nolink            Disable link mode during installation
-  --prefix <path>       Specify installation prefix path
+Options for 'install':
+  --link | --nolink              Choose whether installation links or not (mutually exclusive).
+  --prefix PATH or --prefix=PATH Installation prefix path.
+  --arch ARCH or --arch=ARCH     Specify architecture (e.g. linux_x86_64).
+
+Options for 'download':
+  --arch ARCH or --arch=ARCH     Specify architecture.
 
 Examples:
-  $SCRIPT_NAME install mylib --link --prefix /opt/mylibs
-  $SCRIPT_NAME download toolkit
+  sbt install --link --prefix=/usr/local hello
+  sbt install --nolink --arch linux_x86_64 something
+  sbt download --arch linux_arm64 toolname
 EOF
-  exit 1
 }
 
-# Ensure at least one argument (command)
-if [[ $# -lt 1 ]]; then
-  echo "Error: Missing command"
-  usage
-fi
+[ $# -lt 1 ] && { show_usage; exit 1; }
 
-COMMAND="$1"
-shift # remove command from argument list
+cmd="$1"; shift
 
-case "$COMMAND" in
-install)
-  LINK_MODE="1"
-  PREFIX_PATH="/opt/sbt"
-  PACKAGE=""
+case "$cmd" in
+  install)
+    ARGS=$(getopt -o '' --long link,nolink,prefix:,arch: -n sbt -- "$@") || { show_usage; exit 1; }
+    eval set -- "$ARGS"
 
-  # Check GNU getopt availability
-  # if ! getopt --test >/dev/null; then
-  #   echo "Error: This script requires GNU getopt"
-  #   exit 1
-  # fi
+    link_mode="1"
+    prefix="/opt/sbt"
+    arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
 
-  OPTIONS=""
-  LONGOPTS="nolink,prefix:"
+    while true; do
+      case "$1" in
+        --link) link_mode="1"; shift ;;
+        --nolink) link_mode="0"; shift ;;
+        --prefix) prefix="$2"; shift 2 ;;
+        --prefix=*) prefix="${1#*=}"; shift ;;
+        --arch) arch="$2"; shift 2 ;;
+        --arch=*) arch="${1#*=}"; shift ;;
+        --) shift; break ;;
+        *) show_usage; exit 1 ;;
+      esac
+    done
+  
+    [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
+    pkg="$1"
 
-  # Parse options using getopt
-  PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$SCRIPT_NAME" -- "$@") || exit 1
-  eval set -- "$PARSED"
+    [ "$link_mode" = "" ] && { echo "Error: --link or --nolink required."; exit 1; }
 
-  # Process options
-  while true; do
-    case "$1" in
-    --nolink)
-      LINK_MODE="0"
-      shift
-      ;;
-    --prefix)
-      PREFIX_PATH="$2"
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      echo "Internal error: unknown option '$1'"
-      exit 1
-      ;;
-    esac
-  done
+    install_pkg $pkg $arch $prefix $link_mode
+    ;;
 
-  # The remaining argument should be the package name
-  if [[ $# -lt 1 ]]; then
-    echo "Error: install command requires a package name"
-    usage
-  fi
-  PACKAGE="$1"
+  download)
+    ARGS=$(getopt -o '' --long arch: -n sbt -- "$@") || { show_usage; exit 1; }
+    eval set -- "$ARGS"
 
-  echo "🔧 Installing package: $PACKAGE"
-  echo "Options:"
-  echo "  Link mode: ${LINK_MODE:-not specified}"
-  echo "  Prefix path: ${PREFIX_PATH:-default}"
+    arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
 
-  install_pkg $PACKAGE $PREFIX_PATH $LINK_MODE
+    while true; do
+      case "$1" in
+        --arch) arch="$2"; shift 2 ;;
+        --arch=*) arch="${1#*=}"; shift ;;
+        --) shift; break ;;
+        *) show_usage; exit 1 ;;
+      esac
+    done
 
-  echo "✅ Installation completed: $PACKAGE"
-  ;;
+    [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
+    pkg="$1"
+    echo $PWD
+    download_pkg $pkg $arch $PWD/$pkg
+    ;;
 
-download)
-  if [[ $# -lt 1 ]]; then
-    echo "Error: download command requires a package name"
-    usage
-  fi
-  PACKAGE="$1"
-  echo "📦 Downloading package: $PACKAGE ..."
-
-  download_pkg $PACKAGE $PWD
-
-  echo "✅ Download completed: $PACKAGE"
-  ;;
-
--h | --help | help)
-  usage
-  ;;
-
-*)
-  echo "Error: Unknown command '$COMMAND'"
-  usage
-  ;;
+  *)
+    echo "Error: Unknown subcommand '$cmd'"
+    show_usage
+    exit 1
+    ;;
 esac
