@@ -50,18 +50,18 @@ function download_pkg() {
     -o $cache_path/${name}.tar.gz
   rm -rf $store_path
   mkdir -p $store_path
-  tar -x --gunzip -f $cache_path/${name}.tar.gz -C $store_path --strip-components=1
+  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
 }
 
-function install_pkg() {
+function download_link_pkg() {
   local name=$1
   local arch=$2
 
   local prefix=$3
   local link=$4
-  
+
   local store_path=$prefix/store/$name
-  
+
   echo "> Installing $name($arch) to $store_path, and linked=$link_mode"
 
   download_pkg $name $arch $store_path
@@ -95,6 +95,20 @@ Examples:
 EOF
 }
 
+arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
+
+if [[ $arch == "darwin-arm64" ]]; then
+  if [[ ! -d /tmp/sbt/getopt ]]; then
+    download_pkg getopt $arch /tmp/sbt/getopt
+  fi
+  if [[ ! -d /tmp/sbt/coreutils ]]; then
+    download_pkg coreutils $arch /tmp/sbt/coreutils
+  fi
+  export PATH=/tmp/sbt/getopt/bin:/tmp/sbt/coreutils/bin:$PATH
+  echo "use getopt: $(which getopt)"
+  echo "use ln: $(which ln)"
+fi
+
 [ $# -lt 1 ] && { show_usage; exit 1; }
 
 cmd="$1"; shift
@@ -106,7 +120,7 @@ case "$cmd" in
 
     link_mode="1"
     prefix="/opt/sbt"
-    arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
+
 
     while true; do
       case "$1" in
@@ -120,20 +134,18 @@ case "$cmd" in
         *) show_usage; exit 1 ;;
       esac
     done
-  
+
     [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
     pkg="$1"
 
     [ "$link_mode" = "" ] && { echo "Error: --link or --nolink required."; exit 1; }
 
-    install_pkg $pkg $arch $prefix $link_mode
+    download_link_pkg $pkg $arch $prefix $link_mode
     ;;
 
   download)
     ARGS=$(getopt -o '' --long arch: -n sbt -- "$@") || { show_usage; exit 1; }
     eval set -- "$ARGS"
-
-    arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
 
     while true; do
       case "$1" in
