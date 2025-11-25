@@ -121,7 +121,6 @@ case "$cmd" in
     link_mode="1"
     prefix="/opt/sbt"
 
-
     while true; do
       case "$1" in
         --link) link_mode="1"; shift ;;
@@ -136,10 +135,8 @@ case "$cmd" in
     done
 
     [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
+
     pkg="$1"
-
-    [ "$link_mode" = "" ] && { echo "Error: --link or --nolink required."; exit 1; }
-
     download_link_pkg $pkg $arch $prefix $link_mode
     ;;
 
@@ -157,8 +154,8 @@ case "$cmd" in
     done
 
     [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
+
     pkg="$1"
-    echo $PWD
     download_pkg $pkg $arch $PWD/$pkg
     ;;
 

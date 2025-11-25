@@ -132,7 +132,7 @@ jobs:
         if: ${{ env.skip_steps != 'true' }}
         with:
           # restore and save a cache using this key
-          primary-key: nix-${{ runner.os }}-${{ matrix.name }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          primary-key: nix-${{ runner.os }}-${{ matrix.name }}-${{ hashFiles('**/*.nix') }}
           # if there's no cache hit, restore a cache by this prefix
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ matrix.name }}-
           # collect garbage until the Nix store size (in bytes) is at most this number

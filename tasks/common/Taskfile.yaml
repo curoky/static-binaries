@@ -15,11 +15,11 @@ tasks:
     # - nix-channel --add https://github.com/NixOS/nixpkgs/archive/staging.tar.gz staging
     - nix-channel --add https://github.com/tobim/nixpkgs/archive/refs/heads/pkgs/git-static.tar.gz git_fix
     - nix-channel --update
-  setup-2411:
-    - nix-channel --add https://nixos.org/channels/nixos-24.11 old
-    - nix-channel --update
   setup-2505:
     - nix-channel --add https://nixos.org/channels/nixos-25.05 old
+    - nix-channel --update
+  setup-2411:
+    - nix-channel --add https://nixos.org/channels/nixos-24.11 old
     - nix-channel --update
   setup-2405:
     - nix-channel --add https://nixos.org/channels/nixos-24.05 old
@@ -41,7 +41,7 @@ tasks:
   bzip2: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bzip2
   connect: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.connect
   ethtool: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ethtool
-  exiftool: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.exiftool
+  # exiftool: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.exiftool
   findutils: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.findutils
   flex: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.flex
   gawk: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gawk
@@ -137,6 +137,9 @@ tasks:
   gnupg:
     - task: setup-2505
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.gnupg
+  exiftool:
+    - task: setup-2505
+    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.exiftool
  
   # font
   lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
