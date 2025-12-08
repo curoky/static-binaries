@@ -24,4 +24,4 @@ docker buildx build . \
   --file Dockerfile.$version \
   --network=host \
   --build-arg PACKAGE_NAME=$package_name \
-  --tag curoky/dotbox:static-binaries
+  --tag curoky/static-binaries:$version

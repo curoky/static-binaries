@@ -26,9 +26,9 @@ docker buildx build . \
   --network=host \
   --build-arg PACKAGE_NAME=$PACKAGE_NAME \
   --build-arg ARCH_NAME=$ARCH_NAME \
-  --tag curoky/dotbox:static-binaries
+  --tag curoky/static-binaries:main
 
-id=$(docker create curoky/dotbox:static-binaries)
+id=$(docker create curoky/static-binaries:main)
 docker cp $id:/tmp/${PACKAGE_NAME}.${ARCH_NAME}.tar.gz - >${PACKAGE_NAME}.${ARCH_NAME}.tar.gz.tar
 docker rm -v $id
 tar -xvf ${PACKAGE_NAME}.${ARCH_NAME}.tar.gz.tar
