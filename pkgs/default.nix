@@ -42,6 +42,7 @@ in
   git = pkgs.pkgsStatic.callPackage ./patched/git.nix { };
   gettext = pkgs.pkgsStatic.callPackage ./patched/gettext.nix { };
   p7zip = pkgs.pkgsStatic.callPackage ./patched/p7zip.nix { };
+  cloc = pkgs.pkgsStatic.callPackage ./patched/cloc.nix { };
   
   # python3
   python311 = pkgs.pkgsStatic.callPackage ./python3/python311.nix { };

@@ -155,6 +155,7 @@ jobs:
           - name: lefthook
           - name: yazi
           - name: uv
+          - name: cloc
 
           # - name: nixfmt-rfc-style
           # - name: nixpkgs-fmt

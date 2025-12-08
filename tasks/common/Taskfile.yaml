@@ -177,6 +177,7 @@ tasks:
   cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
   git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
   p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
+  cloc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cloc
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext
 
   # new
