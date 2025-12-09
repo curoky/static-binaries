@@ -79,7 +79,7 @@ tasks:
   openssl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.openssl.bin
   parallel: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.parallel
   # patchelf: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.patchelf
-  perl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.perl
+  # perl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.perl
   pkg-config: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.pkg-config-unwrapped
   procps: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procps
   procs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procs
@@ -165,6 +165,8 @@ tasks:
   wget: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix wget
   zsh-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-bundle
   zsh: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh
+  cloc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cloc
+  perl: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix perl
 
   # pypkgs
   dool: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix dool
@@ -177,7 +179,6 @@ tasks:
   cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
   git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
   p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
-  cloc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cloc
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext
 
   # new

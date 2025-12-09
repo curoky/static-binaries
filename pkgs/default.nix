@@ -42,7 +42,6 @@ in
   git = pkgs.pkgsStatic.callPackage ./patched/git.nix { };
   gettext = pkgs.pkgsStatic.callPackage ./patched/gettext.nix { };
   p7zip = pkgs.pkgsStatic.callPackage ./patched/p7zip.nix { };
-  cloc = pkgs.pkgsStatic.callPackage ./patched/cloc.nix { };
   
   # python3
   python311 = pkgs.pkgsStatic.callPackage ./python3/python311.nix { };
@@ -70,6 +69,8 @@ in
   autoconf = pkgs.pkgsStatic.callPackage ./wrapped/autoconf.nix { };
   automake = pkgs.pkgsStatic.callPackage ./wrapped/automake.nix { };
   libtool = pkgs.pkgsStatic.callPackage ./wrapped/libtool.nix { };
+  cloc = pkgs.pkgsStatic.callPackage ./wrapped/cloc.nix { };
+  perl = pkgs.pkgsStatic.callPackage ./wrapped/perl.nix { };
 
   cacert = pkgs.pkgsStatic.callPackage ./cacert.nix { };
   nsight-systems = pkgs.pkgsStatic.callPackage ./nsight-systems.nix { };
