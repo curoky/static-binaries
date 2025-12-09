@@ -64,7 +64,8 @@ jobs:
           - name: rsync
           - name: shfmt
           - name: starship
-          # - name: tmux
+          - name: bazelisk
+          - name: lefthook
           - name: tmux-extra
           - name: unzip
           - name: vim
@@ -73,8 +74,7 @@ jobs:
           - name: zip
           - name: zsh-extra
           - name: zstd
-          - name: lefthook
-          - name: bazelisk
+          # - name: tmux
 
           - name: lxgw-wenkai
           - name: fira-code

@@ -41,9 +41,12 @@ jobs:
           - name: buildifier
           - name: bzip2
           - name: cacert
+          - name: cloc
+          - name: cmake
           - name: connect
           - name: coreutils
           - name: croc
+          - name: cronie
           - name: curl
           - name: diffutils
           - name: dive
@@ -84,11 +87,13 @@ jobs:
           - name: iputils
           - name: jq
           - name: krb5
+          - name: lefthook
           - name: less
           - name: libcap
           - name: libtool
           - name: lsb-release
           - name: lsof
+          - name: lua
           - name: m4
           - name: makeself
           - name: man
@@ -102,15 +107,12 @@ jobs:
           - name: numactl
           - name: openssh_gssapi
           - name: openssl
+          - name: p7zip
           - name: patchelf
           - name: perl
           - name: pkg-config
           - name: procps
           - name: procs
-          - name: protobuf_3_8_0
-          - name: protobuf_3_9_2
-          - name: protobuf3_20
-          - name: protobuf3_21
           - name: protobuf_23
           - name: protobuf_24
           - name: protobuf_25
@@ -118,6 +120,10 @@ jobs:
           - name: protobuf_27
           - name: protobuf_28
           - name: protobuf_29
+          - name: protobuf_3_8_0
+          - name: protobuf_3_9_2
+          - name: protobuf3_20
+          - name: protobuf3_21
           - name: python311
           - name: python312
           - name: python313
@@ -136,11 +142,13 @@ jobs:
           - name: tzdata
           - name: unzip
           - name: util-linux
+          - name: uv
           - name: vim
           - name: vim-extra
           - name: wget
           - name: xxd
           - name: xz
+          - name: yazi
           - name: zellij
           - name: zip
           - name: zlib
@@ -148,14 +156,6 @@ jobs:
           - name: zsh
           - name: zsh-bundle
           - name: zstd
-          - name: lua
-          - name: cmake
-          - name: cronie
-          - name: p7zip
-          - name: lefthook
-          - name: yazi
-          - name: uv
-          - name: cloc
 
           # - name: nixfmt-rfc-style
           # - name: nixpkgs-fmt
