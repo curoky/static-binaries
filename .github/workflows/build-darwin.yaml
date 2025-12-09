@@ -30,51 +30,133 @@ jobs:
         include:
           - name: aria2
           - name: atuin
+          - name: autoconf
+          - name: automake
+          - name: bash
           - name: bat
+          - name: bazelisk
+          - name: binutils
+          - name: bison
           - name: buildifier
           - name: bzip2
+          - name: cacert
+          - name: cloc
+          - name: cmake
           - name: connect
           - name: coreutils
+          - name: croc
+          - name: cronie
+          - name: curl
+          - name: diffutils
+          - name: dive
+          - name: dool
+          - name: ethtool
+          - name: exiftool
           - name: eza
           - name: fd
+          - name: file
           - name: findutils
+          - name: flex
           - name: fzf
           - name: gawk
+          - name: gdb
           - name: gdu
           - name: getopt
           - name: gettext
+          - name: gh
+          - name: git
           - name: git-absorb
           - name: git-extras
+          - name: git-filter-repo
           - name: git-lfs
+          - name: glibcLocales
           - name: gnugrep
+          - name: gnumake
           - name: gnupatch
+          - name: gnupg
           - name: gnused
           - name: gnutar
           - name: go-task
           - name: gost
+          - name: gzip
+          - name: indent
           - name: inetutils
+          - name: iproute2
+          - name: iptables
+          - name: iputils
+          - name: jq
+          - name: krb5
+          - name: lefthook
+          - name: less
+          - name: libcap
+          - name: libtool
+          - name: lsb-release
           - name: lsof
+          - name: lua
           - name: m4
           - name: makeself
+          - name: man
+          - name: miniserve
           - name: ncdu_1
           - name: netcat
+          - name: netron
+          - name: nettools
+          - name: ninja
+          - name: nsight-systems
+          - name: numactl
+          - name: openssh_gssapi
           - name: openssl
+          - name: p7zip
+          - name: patchelf
+          - name: perl
+          - name: pkg-config
+          - name: procps
+          - name: procs
+          - name: protobuf_23
+          - name: protobuf_24
+          - name: protobuf_25
+          - name: protobuf_26
+          - name: protobuf_27
+          - name: protobuf_28
+          - name: protobuf_29
+          - name: protobuf_3_8_0
+          - name: protobuf_3_9_2
+          - name: protobuf3_20
+          - name: protobuf3_21
+          - name: python311
+          - name: python312
+          - name: python313
           - name: rime-extra
           - name: ripgrep
           - name: rsync
+          - name: ruff
+          - name: scc
           - name: shfmt
+          - name: snappy
           - name: starship
-          - name: bazelisk
-          - name: lefthook
+          - name: strace
+          - name: tmux
           - name: tmux-extra
+          - name: tree
+          - name: tzdata
           - name: unzip
+          - name: util-linux
+          - name: uv
           - name: vim
           - name: vim-extra
+          - name: wget
+          - name: xxd
           - name: xz
+          - name: yazi
+          - name: zellij
           - name: zip
+          - name: zlib
+          - name: zlib-ng
+          - name: zsh
+          - name: zsh-bundle
           - name: zsh-extra
           - name: zstd
-          # - name: tmux
+
 
           - name: lxgw-wenkai
           - name: fira-code
