@@ -34,14 +34,18 @@ tasks:
     - nix-channel --add https://github.com/NixOS/nixpkgs/archive/staging.tar.gz staging
     - nix-channel --update
 
-  lua: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lua
+  # rsync: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.rsync
+  # exiftool: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.exiftool
+  # gnupg: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnupg
+  # patchelf: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.patchelf
+  # perl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.perl
   bash: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bash
   binutils: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.binutils-unwrapped
   bison: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bison
   bzip2: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bzip2
   connect: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.connect
+  cronie: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.cronie
   ethtool: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ethtool
-  # exiftool: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.exiftool
   findutils: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.findutils
   flex: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.flex
   gawk: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gawk
@@ -52,7 +56,6 @@ tasks:
   gnugrep: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnugrep
   gnumake: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnumake
   gnupatch: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnupatch
-  # gnupg: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnupg
   gnused: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnused
   gnutar: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gnutar
   gzip: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gzip
@@ -67,6 +70,7 @@ tasks:
   libcap: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.libcap
   lsb-release: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lsb-release
   lsof: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lsof
+  lua: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lua
   m4: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.m4
   man: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.man
   ncdu_1: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ncdu_1
@@ -78,12 +82,9 @@ tasks:
   numactl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.numactl
   openssl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.openssl.bin
   parallel: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.parallel
-  # patchelf: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.patchelf
-  # perl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.perl
   pkg-config: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.pkg-config-unwrapped
   procps: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procps
   procs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procs
-   # rsync: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.rsync
   smartmontools: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.smartmontools
   snappy: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.snappy
   strace: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.strace
@@ -98,7 +99,6 @@ tasks:
   zlib-ng: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib-ng
   zlib: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib
   zstd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zstd
-  cronie: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.cronie
   
   # protobuf
   protobuf_25: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
@@ -142,14 +142,15 @@ tasks:
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.exiftool
  
   # font
-  lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
   fira-code: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.fira-code
+  lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
   nerd-fonts.fira-code: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.nerd-fonts.fira-code
   nerd-fonts.ubuntu-mono: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.nerd-fonts.ubuntu-mono
 
   # wrapped
   autoconf: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix autoconf
   automake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix automake
+  cloc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cloc
   coreutils: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix coreutils
   curl: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix curl
   file: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix file
@@ -158,6 +159,7 @@ tasks:
   makeself: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix makeself
   miniserve: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix miniserve
   openssh_gssapi: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix openssh_gssapi
+  perl: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix perl
   rime-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix rime-extra
   tmux-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-bundle
   vim-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-bundle
@@ -165,8 +167,6 @@ tasks:
   wget: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix wget
   zsh-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-bundle
   zsh: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh
-  cloc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cloc
-  perl: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix perl
 
   # pypkgs
   dool: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix dool
@@ -174,34 +174,34 @@ tasks:
   netron: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix netron
 
   # patched
-  diffutils: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix diffutils
-  zellij: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zellij
   cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
+  diffutils: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix diffutils
   git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
   p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
+  zellij: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zellij
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext
 
   # new
-  zsh-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-extra
-  nsight-systems: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix nsight-systems
   cacert: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cacert
+  nsight-systems: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix nsight-systems
   python311: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python311
   python312: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python312
   python313: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python313
   tmux-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-extra
   vim-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-extra
+  zsh-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-extra
 
   # go pkgs
   bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk
+  buildifier: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix buildifier
   croc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix croc
+  dive: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix dive
   fzf: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix fzf
   gdu: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gdu
   gh: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gh
   git-lfs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix git_lfs
   go-task: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix go_task
   gost: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gost
-  shfmt: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix shfmt
-  scc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix scc
-  dive: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix dive
-  buildifier: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix buildifier
   lefthook: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix lefthook
+  scc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix scc
+  shfmt: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix shfmt

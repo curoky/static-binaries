@@ -7,16 +7,16 @@ includes:
 
 tasks:
   # rust pkgs
-  starship: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.starship
-  eza: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.eza
-  fd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.fd
   atuin: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.atuin
   bat: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bat
+  eza: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.eza
+  fd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.fd
   git-absorb: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.git-absorb
-  ruff: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ruff
   ripgrep: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ripgrep
-  yazi: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.yazi-unwrapped
+  ruff: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ruff
+  starship: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.starship
   uv: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.uv
+  yazi: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.yazi-unwrapped
 
   # others
   aria2: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.aria2

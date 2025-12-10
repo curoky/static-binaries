@@ -8,15 +8,15 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: Homebrew/actions/setup-homebrew@master
+      - uses: Homebrew/actions/setup-homebrew@main
       - run: echo "/opt/homebrew/opt/binutils/bin" >> $GITHUB_PATH
       - run: brew install go-task binutils
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3"
 
-      - uses: nixbuild/nix-quick-install-action@v30
+      - uses: nixbuild/nix-quick-install-action@v34
         with:
           nix_conf: |
             keep-env-derivations = true
