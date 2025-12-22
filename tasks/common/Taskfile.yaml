@@ -3,7 +3,7 @@ version: "3"
 tasks:
   setup:
     cmds:
-      - nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs
+      - nix-channel --add https://nixos.org/channels/nixos-25.11 nixpkgs
       - nix-channel --update
       - nix-channel --list
       - mkdir -p ~/nix/profiles
@@ -15,6 +15,9 @@ tasks:
     # - nix-channel --add https://github.com/NixOS/nixpkgs/archive/staging.tar.gz staging
     - nix-channel --add https://github.com/tobim/nixpkgs/archive/refs/heads/pkgs/git-static.tar.gz git_fix
     - nix-channel --update
+  setup-2511:
+    - nix-channel --add https://nixos.org/channels/nixos-25.11 old
+    - nix-channel --update
   setup-2505:
     - nix-channel --add https://nixos.org/channels/nixos-25.05 old
     - nix-channel --update
@@ -25,7 +28,7 @@ tasks:
     - nix-channel --add https://nixos.org/channels/nixos-24.05 old
     - nix-channel --update
   setup-unstable:
-    - nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
+    - nix-channel --add https://nixos.org/channels/nixos-unstable unstable
     - nix-channel --update
   setup-master:
     - nix-channel --add https://github.com/NixOS/nixpkgs/archive/master.tar.gz master
@@ -176,7 +179,7 @@ tasks:
   # patched
   cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
   diffutils: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix diffutils
-  git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
+  git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git --keep-failed
   p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
   zellij: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zellij
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext

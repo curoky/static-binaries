@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1.9.0
-FROM nixpkgs/nix-unstable:latest AS nixpkgs-builder
+FROM nixpkgs/nix-unstable:nixos-25.11-x86_64-linux AS nixpkgs-builder
 
-ENV NIX_PATH=nixpkgs=channel:nixos-25.05 \
+ENV NIX_PATH=nixpkgs=channel:nixos-25.11 \
   NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 \
   PATH=$PATH:/nix/var/nix/profiles/packer/bin
 
-RUN nix-channel --add https://nixos.org/channels/nixos-25.05 nixpkgs \
+RUN nix-channel --add https://nixos.org/channels/nixos-25.11 nixpkgs \
   && nix-channel --update \
   && nix-env -p /nix/var/nix/profiles/packer -iA nixpkgs.python3 nixpkgs.go-task \
     nixpkgs.gnused nixpkgs.gnutar nixpkgs.findutils nixpkgs.file nixpkgs.gnugrep \
