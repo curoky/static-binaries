@@ -32,7 +32,7 @@ in
 }).overrideAttrs (oldAttrs: rec {
   buildInputs = oldAttrs.buildInputs ++ [ nghttp2 libpsl c-ares ];
 
-  env.NIX_LDFLAGS = oldAttrs.env.NIX_LDFLAGS 
+  env.NIX_LDFLAGS = oldAttrs.env.NIX_LDFLAGS
     + " -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring";
 
   patchPhase = ''
@@ -43,6 +43,9 @@ in
   '';
 
   postInstall = (oldAttrs.postInstall or "") + ''
+    #cp config.log $out/share/git
+    #sed -i "s|/nix/store/[a-z0-9]\{32\}-|/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-|g" $out/share/git/config.log
+
     mv $out/bin/git $out/bin/_git
     cp ${wrapperScript} $out/bin/git
     chmod +x $out/bin/git

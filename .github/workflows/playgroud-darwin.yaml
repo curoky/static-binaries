@@ -25,4 +25,4 @@ jobs:
       - run: task -t tasks/common/Taskfile.yaml setup
 
       - uses: fawazahmed0/action-debug-vscode@main
-        timeout-minutes: 45
+        timeout-minutes: 180

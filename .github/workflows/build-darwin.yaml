@@ -191,7 +191,8 @@ jobs:
         if: ${{ env.skip_steps != 'true' }}
 
       - run: echo "/opt/homebrew/opt/binutils/bin" >> $GITHUB_PATH
-      - run: brew install go-task binutils
+      - run: echo "/opt/homebrew/opt/gnu-sed/libexec/gnubin" >> $GITHUB_PATH
+      - run: brew install go-task binutils gnu-sed
         if: ${{ env.skip_steps != 'true' }}
 
       - uses: actions/checkout@v5

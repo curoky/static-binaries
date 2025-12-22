@@ -180,7 +180,7 @@ tasks:
   # patched
   cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
   diffutils: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix diffutils
-  git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git --keep-failed
+  git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
   p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
   zellij: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zellij
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext
