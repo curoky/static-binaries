@@ -64,7 +64,7 @@ jobs:
           - name: getopt
           - name: gettext
           - name: gh
-          # - name: git
+          - name: git
           - name: git-absorb
           - name: git-extras
           - name: git-filter-repo

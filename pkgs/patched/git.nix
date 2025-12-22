@@ -25,10 +25,15 @@ let
     exec -a "$0" "$root/bin/_git" "$@"
   '';
 in
-git.overrideAttrs (oldAttrs: rec {
+(git.override {
+  pythonSupport = false;
+  nlsSupport = false;
+  perlSupport = false;
+}).overrideAttrs (oldAttrs: rec {
   buildInputs = oldAttrs.buildInputs ++ [ nghttp2 libpsl ];
 
-  NIX_LDFLAGS = ["-lnghttp2" "-lpsl" "-lssl" "-lcrypto" "-lssh2" "-lidn2" "-lzstd" "-lz" "-lunistring"];
+  env.NIX_LDFLAGS = oldAttrs.env.NIX_LDFLAGS 
+    + " -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring";
 
   patchPhase = ''
     find . -path './t/t[0-9][0-9][0-9][0-9]' -prune -o -type f -name '*.[ch]' -exec sed -i 's/\<error\>(/git_error(/g' {} +
