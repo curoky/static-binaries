@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, writeText, git, nghttp2, libpsl}:
+{ lib, stdenv, fetchurl, writeText, git, nghttp2, libpsl, c-ares}:
 
 let
   wrapperScript = writeText "wrapper.sh" ''
@@ -30,7 +30,7 @@ in
   nlsSupport = false;
   perlSupport = false;
 }).overrideAttrs (oldAttrs: rec {
-  buildInputs = oldAttrs.buildInputs ++ [ nghttp2 libpsl ];
+  buildInputs = oldAttrs.buildInputs ++ [ nghttp2 libpsl c-ares ];
 
   env.NIX_LDFLAGS = oldAttrs.env.NIX_LDFLAGS 
     + " -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring";
