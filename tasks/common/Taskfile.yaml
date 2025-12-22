@@ -84,7 +84,7 @@ tasks:
   nixpkgs-fmt: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.nixpkgs-fmt
   numactl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.numactl
   openssl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.openssl.bin
-  parallel: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.parallel
+  # parallel: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.parallel
   pkg-config: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.pkg-config-unwrapped
   procps: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procps
   procs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.procs
@@ -170,6 +170,7 @@ tasks:
   wget: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix wget
   zsh-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-bundle
   zsh: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh
+  parallel: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix parallel
 
   # pypkgs
   dool: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix dool

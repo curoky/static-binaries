@@ -108,6 +108,7 @@ jobs:
           - name: openssh_gssapi
           - name: openssl
           - name: p7zip
+          - name: parallel
           - name: patchelf
           - name: perl
           - name: pkg-config

@@ -71,6 +71,7 @@ in
   libtool = pkgs.pkgsStatic.callPackage ./wrapped/libtool.nix { };
   cloc = pkgs.pkgsStatic.callPackage ./wrapped/cloc.nix { };
   perl = pkgs.pkgsStatic.callPackage ./wrapped/perl.nix { };
+  parallel = pkgs.pkgsStatic.callPackage ./wrapped/parallel.nix { };
 
   cacert = pkgs.pkgsStatic.callPackage ./cacert.nix { };
   nsight-systems = pkgs.pkgsStatic.callPackage ./nsight-systems.nix { };
