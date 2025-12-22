@@ -6,22 +6,10 @@ includes:
     flatten: true
 
 tasks:
-  # rust pkgs
-  atuin: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.atuin
-  bat: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bat
-  eza: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.eza
-  fd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.fd
-  git-absorb: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.git-absorb
-  ripgrep: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ripgrep
-  ruff: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ruff
-  starship: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.starship
-  uv: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.uv
-  yazi: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.yazi-unwrapped
-
   # GUI APP
-  iina: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.iina
+  # iina: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.iina
   # snipaste: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.snipaste
-  keka: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.keka
+  # keka: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.keka
   # kap: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.kap
   # obs-studio: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.obs-studio
 

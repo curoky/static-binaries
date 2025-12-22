@@ -261,4 +261,4 @@ jobs:
 
       - uses: fawazahmed0/action-debug-vscode@main
         if: ${{ failure() }}
-        timeout-minutes: 360
+        timeout-minutes: 60
