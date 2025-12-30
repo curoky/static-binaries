@@ -32,8 +32,11 @@ in
 }).overrideAttrs (oldAttrs: rec {
   buildInputs = oldAttrs.buildInputs ++ [ nghttp2 libpsl c-ares ];
 
+  #doCheck = false;
+  #doInstallCheck = false;
+
   env.NIX_LDFLAGS = oldAttrs.env.NIX_LDFLAGS
-    + " -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring";
+    + " -static -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring";
 
   patchPhase = ''
     find . -path './t/t[0-9][0-9][0-9][0-9]' -prune -o -type f -name '*.[ch]' -exec sed -i 's/\<error\>(/git_error(/g' {} +
