@@ -127,7 +127,7 @@ jobs:
           # - name: python311
           # - name: python312
           # - name: python313
-          - name: rime-extra
+          - name: rime-plugs
           - name: ripgrep
           - name: rsync
           - name: ruff
@@ -137,14 +137,14 @@ jobs:
           - name: starship
           # - name: strace
           # - name: tmux
-          - name: tmux-extra
+          - name: tmux-plugs
           - name: tree
           - name: tzdata
           - name: unzip
           - name: util-linux
           - name: uv
           - name: vim
-          - name: vim-extra
+          - name: vim-plugs
           # - name: wget
           - name: xxd
           - name: xz
@@ -155,7 +155,7 @@ jobs:
           - name: zlib-ng
           - name: zsh
           - name: zsh-bundle
-          - name: zsh-extra
+          - name: zsh-plugs
           - name: zstd
 
           - name: lxgw-wenkai

@@ -1,7 +1,7 @@
 { lib, stdenv, fetchFromGitHub}:
 
 stdenv.mkDerivation rec {
-  pname = "tmux-extra";
+  pname = "tmux-plugs";
   version = "1.0.0";
 
   src = fetchFromGitHub {

@@ -163,7 +163,7 @@ tasks:
   miniserve: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix miniserve
   openssh_gssapi: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix openssh_gssapi
   perl: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix perl
-  rime-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix rime-extra
+  rime-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix rime-plugs
   tmux-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-bundle
   vim-bundle: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-bundle
   vim: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim
@@ -191,9 +191,9 @@ tasks:
   python311: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python311
   python312: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python312
   python313: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix python313
-  tmux-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-extra
-  vim-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-extra
-  zsh-extra: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-extra
+  tmux-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-plugs
+  vim-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-plugs
+  zsh-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-plugs
 
   # go pkgs
   bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk

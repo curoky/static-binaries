@@ -75,8 +75,8 @@ in
 
   cacert = pkgs.pkgsStatic.callPackage ./cacert.nix { };
   nsight-systems = pkgs.pkgsStatic.callPackage ./nsight-systems.nix { };
-  rime-extra = pkgs.pkgsStatic.callPackage ./rime-extra.nix { };
-  tmux-extra = pkgs.pkgsStatic.callPackage ./tmux-extra.nix { };
-  vim-extra = pkgs.callPackage ./vim-extra.nix { };
-  zsh-extra = pkgs.pkgsStatic.callPackage ./zsh-extra.nix { };
+  rime-plugs = pkgs.pkgsStatic.callPackage ./rime-plugs.nix { };
+  tmux-plugs = pkgs.pkgsStatic.callPackage ./tmux-plugs.nix { };
+  vim-plugs = pkgs.callPackage ./vim-plugs.nix { };
+  zsh-plugs = pkgs.pkgsStatic.callPackage ./zsh-plugs.nix { };
 }
