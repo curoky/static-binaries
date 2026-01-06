@@ -64,7 +64,7 @@ jobs:
           - name: getopt
           - name: gettext
           - name: gh
-          - name: git
+          # - name: git
           - name: git-absorb
           - name: git-extras
           - name: git-filter-repo
@@ -185,7 +185,7 @@ jobs:
     steps:
       - run: echo "skip_steps=true" >> $GITHUB_ENV
       - run: echo "skip_steps=false" >> $GITHUB_ENV
-        if: ${{ (github.event_name == 'workflow_dispatch' && (inputs.name == matrix.name || inputs.name == '*')) || (github.event_name == 'push' && github.ref == 'refs/heads/master') }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && (inputs.name == matrix.name || inputs.name == '*')) || (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'schedule' }}
 
       - uses: Homebrew/actions/setup-homebrew@main
         if: ${{ env.skip_steps != 'true' }}
