@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchurl, openssh_gssapi, writeText}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  openssh_gssapi,
+  writeText,
+}:
 
 let
   wrapperScriptScp = writeText "wrapper.sh" ''

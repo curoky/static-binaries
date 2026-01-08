@@ -1,4 +1,8 @@
-{ lib, stdenv, vimPlugins}:
+{
+  lib,
+  stdenv,
+  vimPlugins,
+}:
 
 let
   inherit (vimPlugins) vim-plug;
@@ -18,7 +22,7 @@ stdenv.mkDerivation rec {
   pname = "vim-plugs";
   version = "1.0.0";
 
-  nativeBuildInputs = [];
+  nativeBuildInputs = [ ];
 
   unpackPhase = ":";
 

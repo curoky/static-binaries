@@ -1,4 +1,8 @@
-{ lib, stdenv, parallel}:
+{
+  lib,
+  stdenv,
+  parallel,
+}:
 
 parallel.overrideAttrs (oldAttrs: {
   postInstall = (oldAttrs.postInstall or "") + ''

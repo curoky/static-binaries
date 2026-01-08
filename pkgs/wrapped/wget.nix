@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchurl, wget, writeText}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  wget,
+  writeText,
+}:
 
 let
   wrapperScript = writeText "wrapper.sh" ''

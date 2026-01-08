@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchurl, automake, writeText}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  automake,
+  writeText,
+}:
 
 let
   automake_script = ./automake;

@@ -1,4 +1,16 @@
-{ lib, stdenv, python3, fetchurl, fetchFromGitHub, cmake, fetchzip, opencc, unzip, python3Packages, pkgs}:
+{
+  lib,
+  stdenv,
+  python3,
+  fetchurl,
+  fetchFromGitHub,
+  cmake,
+  fetchzip,
+  opencc,
+  unzip,
+  python3Packages,
+  pkgs,
+}:
 
 stdenv.mkDerivation rec {
   pname = "cacert";

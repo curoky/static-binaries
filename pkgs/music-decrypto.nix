@@ -1,4 +1,5 @@
-{ lib,
+{
+  lib,
   buildDotnetModule,
   fetchFromGitHub,
   dotnetCorePackages,
@@ -54,7 +55,8 @@ buildDotnetModule rec {
   buildInputs = [
     #zlib
     zlib.static
-  ] ++ lib.optionals stdenv.hostPlatform.isDarwin ( [
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin ([
     darwin.ICU
   ]);
 
@@ -63,10 +65,12 @@ buildDotnetModule rec {
   postFixup = ''
     rm $out/bin/musicdecrypto
     mv $out/lib/music-decrypto/musicdecrypto $out/bin/musicdecrypto
-  '' + lib.optionalString stdenv.isLinux ''
+  ''
+  + lib.optionalString stdenv.isLinux ''
     patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 $out/bin/musicdecrypto
     patchelf --set-rpath "/lib64:/usr/lib64" $out/bin/musicdecrypto
-  '' + lib.optionalString stdenv.isDarwin ''
+  ''
+  + lib.optionalString stdenv.isDarwin ''
     OLD_ICU_PATH=$(otool -L "$out/bin/musicdecrypto" | grep libicucore | awk '{print $1}')
 
     if [ -n "$OLD_ICU_PATH" ]; then

@@ -1,4 +1,9 @@
-{ lib, stdenv, fetchFromGitHub, tmux}:
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  tmux,
+}:
 
 stdenv.mkDerivation rec {
   pname = "tmux-bundle";

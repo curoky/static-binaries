@@ -1,4 +1,11 @@
-{ lib, cloc, perl, perlPackages, rsync, writeText}:
+{
+  lib,
+  cloc,
+  perl,
+  perlPackages,
+  rsync,
+  writeText,
+}:
 
 let
   wrapperScript = writeText "wrapper.sh" ''
@@ -18,7 +25,10 @@ let
 in
 
 cloc.overrideAttrs (oldAttrs: rec {
-  nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ perl rsync];
+  nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
+    perl
+    rsync
+  ];
   postFixup = "";
   postInstall = ''
     chmod +w $out/bin/

@@ -1,5 +1,10 @@
-
-{ lib, stdenv, fetchurl, writeText, unzip }:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  writeText,
+  unzip,
+}:
 
 let
   mainPyScript = writeText "main.py" ''

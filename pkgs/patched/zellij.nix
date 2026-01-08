@@ -1,4 +1,9 @@
-{ lib, stdenv, fetchurl, zellij}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  zellij,
+}:
 
 zellij.overrideAttrs (oldAttrs: rec {
   doCheck = false;

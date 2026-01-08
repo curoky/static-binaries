@@ -22,6 +22,11 @@ pre-commit:
       glob: '*.{proto}'
       stage_fixed: false
 
+    - name: nixfmt
+      run: nixfmt {staged_files}
+      glob: '*.{nix}'
+      stage_fixed: false
+
     # - name: json
     #   run: shfmt -w -i 2 -s -l -ci {staged_files}
     #   glob: '*.{json}'

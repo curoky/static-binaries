@@ -1,20 +1,21 @@
-{ lib
-, buildDotnetModule
-, fetchFromGitHub
-, dotnetCorePackages
-, clang
-, zlib
-, icu
-, apple-sdk
-, fetchurl
-, stdenv
-, swiftPackages
-, darwin
-, pkgs
+{
+  lib,
+  buildDotnetModule,
+  fetchFromGitHub,
+  dotnetCorePackages,
+  clang,
+  zlib,
+  icu,
+  apple-sdk,
+  fetchurl,
+  stdenv,
+  swiftPackages,
+  darwin,
+  pkgs,
 }:
-let 
+let
   pkgsMusl = import <nixpkgs> {
-    crossSystem = (import <nixpkgs> {}).lib.systems.examples.musl64;
+    crossSystem = (import <nixpkgs> { }).lib.systems.examples.musl64;
   };
 
   dotnet_sdk_8_0 = dotnetCorePackages.sdk_8_0.overrideAttrs (oldAttrs: {
@@ -37,7 +38,6 @@ buildDotnetModule rec {
     hash = "sha256-dSstNJdHIuZydg83iwL03KVf1rNBOwdoq4+OEsl9RTo=";
   };
   projectFile = "MusicDecrypto.Commandline/MusicDecrypto.Commandline.csproj";
-
 
   executables = [ "musicdecrypto" ];
 
@@ -83,12 +83,12 @@ buildDotnetModule rec {
     pkgs.pkgsMusl.zlib.static
     #icu
     #openssl
-  ] ++ lib.optionals stdenv.hostPlatform.isDarwin ( [
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin ([
     darwin.ICU
   ]);
 
-  postInstall = ''
-  '';
+  postInstall = '''';
 
   # passthru.updateScript = ./update.sh;
   dontDotnetFixup = true;

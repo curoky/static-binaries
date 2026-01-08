@@ -6,7 +6,8 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> { },
+{
+  pkgs ? import <nixpkgs> { },
   old ? import <old> { },
   staging ? import <staging> { },
   unstable ? import <unstable> { },
@@ -37,12 +38,12 @@ in
 
   # patched
   diffutils = pkgs.pkgsStatic.callPackage ./patched/diffutils.nix { };
-  cmake = pkgs.pkgsStatic.callPackage ./patched/cmake.nix {};
+  cmake = pkgs.pkgsStatic.callPackage ./patched/cmake.nix { };
   zellij = pkgs.pkgsStatic.callPackage ./patched/zellij.nix { };
   git = pkgs.pkgsStatic.callPackage ./patched/git.nix { };
   gettext = pkgs.pkgsStatic.callPackage ./patched/gettext.nix { };
   p7zip = pkgs.pkgsStatic.callPackage ./patched/p7zip.nix { };
-  
+
   # python3
   python311 = pkgs.pkgsStatic.callPackage ./python3/python311.nix { };
   python312 = pkgs.pkgsStatic.callPackage ./python3/python312.nix { };

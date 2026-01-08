@@ -1,4 +1,9 @@
-{ lib, stdenv, fetchurl, p7zip}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  p7zip,
+}:
 
 p7zip.overrideAttrs (oldAttrs: rec {
   preConfigure = oldAttrs.preConfigure + "

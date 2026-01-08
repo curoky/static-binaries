@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchurl, libtool, writeText}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  libtool,
+  writeText,
+}:
 
 libtool.overrideAttrs (oldAttrs: {
   postInstall = (oldAttrs.postInstall or "") + ''

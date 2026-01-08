@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchurl, autoconf, writeText}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  autoconf,
+  writeText,
+}:
 
 let
   autoconf_script = ./autoconf;

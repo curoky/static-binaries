@@ -1,4 +1,9 @@
-{ lib, stdenv, fetchurl, gettext}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  gettext,
+}:
 
 gettext.overrideAttrs (oldAttrs: rec {
   configureFlags = oldAttrs.configureFlags ++ [

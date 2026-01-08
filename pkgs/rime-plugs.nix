@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchurl, opencc, unzip}:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  opencc,
+  unzip,
+}:
 
 stdenv.mkDerivation rec {
   pname = "rime-plugs";
@@ -49,10 +55,12 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-FBbXPxWT7ky+OmO6Lv+nEGx40GmcUQyvilbBnd6Rdwg=";
   };
 
-  phases = ["buildPhase" "installPhase" ];
+  phases = [
+    "buildPhase"
+    "installPhase"
+  ];
 
-  buildPhase = ''
-  '';
+  buildPhase = '''';
 
   installPhase = ''
     mkdir -p \

@@ -1,4 +1,8 @@
-{ lib, stdenv, fetchFromGitHub, writeText,
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  writeText,
   zsh,
   oh-my-zsh,
   zsh-syntax-highlighting,

@@ -1,4 +1,8 @@
-{ lib, stdenv, fetchFromGitHub, oh-my-zsh,
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  oh-my-zsh,
   zsh-syntax-highlighting,
   zsh-autosuggestions,
   zsh-completions,
