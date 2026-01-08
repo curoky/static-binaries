@@ -1,9 +1,9 @@
 name: build llvm-tools
 
 on:
-  push:
-    branches:
-      - master
+  # push:
+  #   branches:
+  #     - master
   # push:
   #   paths:
   #     - ".github/workflows/build.yaml"
