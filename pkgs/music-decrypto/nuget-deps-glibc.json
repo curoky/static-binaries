@@ -1,0 +1,22 @@
+[
+  {
+    "pname": "NativeMemoryArray",
+    "version": "1.2.2",
+    "hash": "sha256-ZOjNOqc+8mRKaIwhzO2lzqx+4T7tyZ5akmEza2KVHrk="
+  },
+  {
+    "pname": "Spectre.Console",
+    "version": "0.49.1",
+    "hash": "sha256-tqSVojyuQjuB34lXo759NOcyLgNIw815mKXJPq5JFDo="
+  },
+  {
+    "pname": "Spectre.Console.Cli",
+    "version": "0.49.1",
+    "hash": "sha256-sar9rhft1ivDMj1kU683+4KxUPUZL+Fb++ewMA6RD4Q="
+  },
+  {
+    "pname": "TagLibSharp",
+    "version": "2.3.0",
+    "hash": "sha256-PD9bVZiPaeC8hNx2D+uDUf701cCaMi2IRi5oPTNN+/w="
+  }
+]

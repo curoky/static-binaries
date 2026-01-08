@@ -97,6 +97,7 @@ jobs:
           - name: makeself
           # - name: man
           # - name: miniserve
+          - name: music-decrypto
           - name: ncdu_1
           - name: netcat
           - name: netron

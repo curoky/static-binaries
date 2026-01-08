@@ -194,6 +194,7 @@ tasks:
   tmux-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix tmux-plugs
   vim-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix vim-plugs
   zsh-plugs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zsh-plugs
+  music-decrypto: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix music-decrypto
 
   # go pkgs
   bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk

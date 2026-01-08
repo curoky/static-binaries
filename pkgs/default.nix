@@ -79,4 +79,6 @@ in
   tmux-plugs = pkgs.pkgsStatic.callPackage ./tmux-plugs.nix { };
   vim-plugs = pkgs.callPackage ./vim-plugs.nix { };
   zsh-plugs = pkgs.pkgsStatic.callPackage ./zsh-plugs.nix { };
+  music-decrypto = pkgs.callPackage ./music-decrypto.nix { };
+
 }

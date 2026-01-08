@@ -1,0 +1,42 @@
+[
+  {
+    "pname": "NativeMemoryArray",
+    "version": "1.2.2",
+    "hash": "sha256-ZOjNOqc+8mRKaIwhzO2lzqx+4T7tyZ5akmEza2KVHrk="
+  },
+  {
+    "pname": "runtime.linux-musl-x64.Microsoft.DotNet.ILCompiler",
+    "version": "8.0.22",
+    "hash": "sha256-TM/YT3wq9DCQ2TkFvq9UFdERV9ewpm7Wr+IIqErdqns="
+  },
+  {
+    "pname": "Microsoft.NETCore.App.Runtime.linux-musl-x64",
+    "version": "8.0.22",
+    "hash": "sha256-xWp1LHJq7z2lG5muEgC7oPv0tUbZnUV0DzKqVXYa0DM="
+  },
+  {
+    "pname": "Microsoft.AspNetCore.App.Runtime.linux-musl-x64",
+    "version": "8.0.22",
+    "hash": "sha256-0QpM45fce98/SW05PGfDGkMtoA8DGPE8HsTcSprqEDc="
+  },
+  {
+    "pname": "Microsoft.NETCore.App.Host.linux-musl-x64",
+    "version": "8.0.22",
+    "hash": "sha256-ll3yIdCGnCMpXhUanc2ch26PRU4p5u0GLf0jzG8npOA="
+  },
+  {
+    "pname": "Spectre.Console",
+    "version": "0.49.1",
+    "hash": "sha256-tqSVojyuQjuB34lXo759NOcyLgNIw815mKXJPq5JFDo="
+  },
+  {
+    "pname": "Spectre.Console.Cli",
+    "version": "0.49.1",
+    "hash": "sha256-sar9rhft1ivDMj1kU683+4KxUPUZL+Fb++ewMA6RD4Q="
+  },
+  {
+    "pname": "TagLibSharp",
+    "version": "2.3.0",
+    "hash": "sha256-PD9bVZiPaeC8hNx2D+uDUf701cCaMi2IRi5oPTNN+/w="
+  }
+]
