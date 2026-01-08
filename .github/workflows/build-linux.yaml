@@ -104,6 +104,7 @@ jobs:
           - name: netron
           - name: nettools
           - name: ninja
+          - name: nixfmt
           - name: nsight-systems
           - name: numactl
           - name: openssh_gssapi
@@ -160,8 +161,6 @@ jobs:
           - name: zsh-plugs
           - name: zstd
 
-          # - name: nixfmt-rfc-style
-          # - name: nixpkgs-fmt
           # - name: silver-searcher
 
     steps:

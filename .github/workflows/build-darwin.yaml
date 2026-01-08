@@ -106,6 +106,7 @@ jobs:
           - name: netron
           # - name: nettools
           - name: ninja
+          # - name: nixfmt
           # - name: nsight-systems
           # - name: numactl
           # - name: openssh_gssapi

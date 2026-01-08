@@ -82,6 +82,7 @@ tasks:
   ninja: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.ninja
   nixfmt-rfc-style: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.nixfmt-rfc-style
   nixpkgs-fmt: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.nixpkgs-fmt
+  nixfmt: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.nixfmt
   numactl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.numactl
   openssl: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.openssl.bin
   # parallel: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.parallel
