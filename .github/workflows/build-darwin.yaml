@@ -21,7 +21,7 @@ on:
     - cron: '0 0 * * 0'
 
 env:
-  CACHED_PKG: '["aria2", "flex", "gdb", "uv", "yazi", "starship", "fd", "bison"]'
+  CACHED_PKG: '["aria2", "flex", "gdb", "uv", "yazi", "starship", "fd", "bison", "protobuf_27", "protobuf_28", "protobuf_29"]'
 
 jobs:
   build:
