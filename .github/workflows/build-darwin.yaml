@@ -83,7 +83,7 @@ jobs:
           - name: gost
           - name: gzip
           # - name: indent
-          - name: inetutils
+          # - name: inetutils
           # - name: iproute2
           # - name: iptables
           # - name: iputils
