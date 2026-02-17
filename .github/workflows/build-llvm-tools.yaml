@@ -32,7 +32,7 @@ jobs:
           - 19
           - 20
           - 21
-          - 22
+          # - 22
     steps:
       - run: echo "skip_steps=true" >> $GITHUB_ENV
       - run: echo "skip_steps=false" >> $GITHUB_ENV
