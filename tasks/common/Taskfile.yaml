@@ -198,19 +198,32 @@ tasks:
   music-decrypto: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix music-decrypto
 
   # go pkgs
-  bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk
-  buildifier: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix buildifier
-  croc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix croc
-  dive: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix dive
-  fzf: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix fzf
-  gdu: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gdu
-  gh: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gh
-  git-lfs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix git_lfs
-  go-task: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix go_task
-  gost: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gost
-  lefthook: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix lefthook
-  scc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix scc
-  shfmt: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix shfmt
+  bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.bazelisk
+  buildifier: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.buildifier
+  croc: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.croc
+  dive: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.dive
+  fzf: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.fzf
+  gdu: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gdu
+  gh: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gh
+  git-lfs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.git-lfs
+  go-task: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.go-task
+  gost: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.gost
+  lefthook: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lefthook
+  scc: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.scc
+  shfmt: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.shfmt
+  # bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk
+  # buildifier: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix buildifier
+  # croc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix croc
+  # dive: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix dive
+  # fzf: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix fzf
+  # gdu: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gdu
+  # gh: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gh
+  # git-lfs: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix git_lfs
+  # go-task: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix go_task
+  # gost: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix gost
+  # lefthook: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix lefthook
+  # scc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix scc
+  # shfmt: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix shfmt
 
   # rust pkgs
   atuin: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.atuin
