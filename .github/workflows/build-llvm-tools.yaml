@@ -30,39 +30,49 @@ jobs:
         version:
           - 18
           - 19
-          # - 20
-          # - 21
+          - 20
+          - 21
+          - 22
     steps:
       - run: echo "skip_steps=true" >> $GITHUB_ENV
       - run: echo "skip_steps=false" >> $GITHUB_ENV
-        if: ${{ (github.event_name == 'workflow_dispatch') || (github.event_name == 'push' && github.ref == 'refs/heads/master') }}
+        if: ${{ (github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch') || (github.event_name == 'push' && github.ref == 'refs/heads/master') }}
 
       - uses: actions/checkout@v5
         if: ${{ env.skip_steps != 'true' }}
-      - run: tools/free-disk-space.sh
 
-      - run: ./docker/build.sh llvm_${{ matrix.version }} linux-x86_64
+      - run: tools/free-disk-space.sh
+        if: ${{ env.skip_steps != 'true' }}
+
+      - name: Set up Swap Space
+        if: ${{ env.skip_steps != 'true' }}
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
+
+      - run: ./docker/build.sh clang_${{ matrix.version }} linux-x86_64
         if: ${{ env.skip_steps != 'true' }}
 
       - run: docker system prune -a --force
+        if: ${{ env.skip_steps != 'true' }}
 
       - name: pack clang-format
+        if: ${{ env.skip_steps != 'true' }}
         run: |
           mkdir -p tmp
-          tar -x --gunzip -f llvm_${{ matrix.version }}.linux-x86_64.tar.gz -C tmp --strip-components=1
+          tar -x --gunzip -f clang_${{ matrix.version }}.linux-x86_64.tar.gz -C tmp --strip-components=1
           mkdir -p clang-format_${{ matrix.version }}/bin
           cp tmp/bin/clang-format clang-format_${{ matrix.version }}/bin/clang-format-${{ matrix.version }}
           tar -c --gunzip -f clang-format_${{ matrix.version }}.linux-x86_64.tar.gz clang-format_${{ matrix.version }}
           mkdir -p lld_${{ matrix.version }}/bin
           cp tmp/bin/lld lld_${{ matrix.version }}/bin/lld-${{ matrix.version }}
           tar -c --gunzip -f lld_${{ matrix.version }}.linux-x86_64.tar.gz lld_${{ matrix.version }}
-        if: ${{ env.skip_steps != 'true' }}
 
       - uses: svenstaro/upload-release-action@v2
         if: ${{ env.skip_steps != 'true' }}
         with:
-          file: llvm_${{ matrix.version }}.linux-x86_64.tar.gz
-          asset_name: llvm_${{ matrix.version }}.linux-x86_64.tar.gz
+          file: clang_${{ matrix.version }}.linux-x86_64.tar.gz
+          asset_name: clang_${{ matrix.version }}.linux-x86_64.tar.gz
           tag: "v1.0"
           overwrite: true
 

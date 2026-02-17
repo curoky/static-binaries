@@ -9,8 +9,28 @@ tasks:
   # others
   aria2: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.aria2
   llvmPackages_18.clang-unwrapped: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_18.clang-unwrapped
-  lld_18: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_18
   llvm_18: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_18.clang-unwrapped nixpkgs.pkgsStatic.lld_18
   llvm_19: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_19.clang-unwrapped nixpkgs.pkgsStatic.lld_19
   llvm_20: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_20.clang-unwrapped nixpkgs.pkgsStatic.lld_20
   llvm_21: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_21.clang-unwrapped nixpkgs.pkgsStatic.lld_21
+  llvm_22: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.llvmPackages_22.clang-unwrapped nixpkgs.pkgsStatic.lld_22
+  lld_18: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_18
+  lld_19: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_19
+  lld_20: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_20
+  lld_21: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_21
+  lld_22: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lld_22
+  clang_18: 
+    - nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix clang_18
+    - task: lld_18
+  clang_19: 
+    - nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix clang_19
+    - task: lld_19
+  clang_20: 
+    - nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix clang_20
+    - task: lld_20
+  clang_21: 
+    - nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix clang_21
+    - task: lld_21
+  clang_22: 
+    - nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix clang_22
+    - task: lld_22

@@ -69,12 +69,16 @@ sudo rm -rf \
   /usr/local/share/vcpkg \
   /usr/local/julia* \
   /usr/local/aws* \
+  /usr/share/dotnet \
   /usr/share/swift \
   /usr/share/miniconda \
   /usr/share/az_* \
   /usr/share/gradle-* \
   /usr/share/sbt \
   /usr/share/kotlinc \
+  /usr/lib/jvm \
+  /usr/lib/google-cloud-sdk \
+  /usr/lib/firefox \
   /etc/skel
 
 df -h
