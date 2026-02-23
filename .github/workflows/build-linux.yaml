@@ -161,6 +161,16 @@ jobs:
           - name: zsh-plugs
           - name: zstd
 
+          - name: s6
+          - name: s6-rc
+          - name: s6-linux-init
+          - name: s6-linux-utils
+          - name: s6-portable-utils
+          - name: s6-networking
+          - name: s6-dns
+          - name: skalibs
+          - name: execline
+
           # - name: silver-searcher
 
     steps:

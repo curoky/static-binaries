@@ -104,6 +104,17 @@ tasks:
   zlib: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zlib
   zstd: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.zstd
   
+  # s6-overlay
+  s6: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6
+  s6-rc: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-rc
+  s6-linux-init: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-linux-init
+  s6-linux-utils: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-linux-utils
+  s6-portable-utils: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-portable-utils
+  s6-networking: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-networking
+  s6-dns: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-dns
+  skalibs: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.skalibs
+  execline: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.execline
+
   # protobuf
   protobuf_25: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_25
   protobuf_27: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.protobuf_27
