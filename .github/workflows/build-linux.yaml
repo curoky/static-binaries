@@ -57,6 +57,7 @@ jobs:
           - name: fd
           - name: file
           - name: findutils
+          - name: flac
           - name: flex
           - name: fzf
           - name: gawk
