@@ -138,8 +138,10 @@ jobs:
           - name: rsync
           - name: ruff
           - name: scc
+          - name: shellcheck
           - name: shfmt
           - name: snappy
+          - name: sqlite
           - name: starship
           # - name: strace
           # - name: tmux
