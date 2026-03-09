@@ -13,18 +13,20 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: "package name"
-        default: ""
+        description: 'package name'
+        default: ''
         required: false
         type: string
   schedule:
-    - cron: "0 0 * * 0"
+    - cron: '0 0 * * 0'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
+
     strategy:
       matrix:
         # task --list-all | sed -e 's/://g' -e 's/*/- name:/g'
@@ -190,12 +192,26 @@ jobs:
       - run: ./docker/build.sh ${{ matrix.name }} linux-x86_64
         if: ${{ env.skip_steps != 'true' }}
 
+      - uses: oras-project/setup-oras@v1
+        if: ${{ env.skip_steps != 'true' }}
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: >
+          oras push ghcr.io/curoky/static-binaries:${{ matrix.name }}-linux-x86_64
+          ./${{ matrix.name }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+        if: ${{ env.skip_steps != 'true' }}
+
       - uses: svenstaro/upload-release-action@v2
         if: ${{ env.skip_steps != 'true' }}
         with:
           file: ${{ matrix.name }}.linux-x86_64.tar.gz
           asset_name: ${{ matrix.name }}.linux-x86_64.tar.gz
-          tag: "v1.0"
+          tag: 'v1.0'
           overwrite: true
 
       - uses: mxschmitt/action-tmate@v3

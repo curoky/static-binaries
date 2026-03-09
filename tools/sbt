@@ -53,6 +53,27 @@ function download_pkg() {
   tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
 }
 
+function download_pkg2(){
+  local name=$1
+  local arch=$2
+
+  local store_path=$3
+  local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
+
+  TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:curoky/static-binaries:pull" | jq -r .token)
+
+  DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+    -H "Accept: application/vnd.oci.image.manifest.v1+json" \
+    "https://ghcr.io/v2/curoky/static-binaries/manifests/${name}-${arch}" | jq -r '.layers[0].digest')
+
+  curl -L -H "Authorization: Bearer $TOKEN" \
+    -o ${name}.tar.gz \
+    "https://ghcr.io/v2/curoky/static-binaries/blobs/$DIGEST"
+  rm -rf $store_path
+  mkdir -p $store_path
+  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
+}
+
 function download_link_pkg() {
   local name=$1
   local arch=$2
