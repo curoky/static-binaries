@@ -271,7 +271,7 @@ jobs:
 
       - run: >
           oras push ghcr.io/curoky/static-binaries:${{ matrix.name }}-darwin-arm64
-          ./${{ matrix.name }}.darwin-arm64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+          ./tmp/${{ matrix.name }}.darwin-arm64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
         if: ${{ env.skip_steps != 'true' }}
 
       # - uses: svenstaro/upload-release-action@v2
