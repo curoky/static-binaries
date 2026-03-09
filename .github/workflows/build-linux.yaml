@@ -37,6 +37,7 @@ jobs:
           - name: bat
           - name: bazelisk
           - name: binutils
+          # - name: biome
           - name: bison
           - name: buildifier
           - name: bzip2
