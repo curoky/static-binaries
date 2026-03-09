@@ -53,6 +53,7 @@ jobs:
           - name: diffutils
           - name: dive
           - name: dool
+          - name: dprint
           # - name: ethtool # TODO: export NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1
           # - name: exiftool
           - name: eza

@@ -51,6 +51,7 @@ jobs:
           - name: diffutils
           - name: dive
           - name: dool
+          - name: dprint
           - name: ethtool
           - name: exiftool
           - name: eza
