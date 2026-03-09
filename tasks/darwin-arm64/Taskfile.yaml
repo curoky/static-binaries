@@ -12,7 +12,7 @@ tasks:
   # keka: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.keka
   # kap: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.kap
   # obs-studio: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.obs-studio
-  
+
   # go pkgs
   bazelisk: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix bazelisk
   buildifier: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix buildifier
@@ -27,6 +27,7 @@ tasks:
   lefthook: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix lefthook
   scc: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix scc
   shfmt: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix shfmt
+  oras: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/gopkgs-without-cgo.nix oras
 
   # others
   silver-searcher: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.silver-searcher

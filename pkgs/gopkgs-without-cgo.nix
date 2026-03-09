@@ -50,6 +50,9 @@ let
   lefthook = pkgs.lefthook.overrideAttrs (oldAttrs: rec {
     env.CGO_ENABLED = "0";
   });
+  oras = pkgs.oras.overrideAttrs (oldAttrs: rec {
+    env.CGO_ENABLED = "0";
+  });
 in
 {
   inherit shfmt;
@@ -65,4 +68,5 @@ in
   inherit scc;
   inherit buildifier;
   inherit lefthook;
+  inherit oras;
 }

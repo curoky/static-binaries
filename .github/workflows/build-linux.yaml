@@ -112,6 +112,7 @@ jobs:
           - name: numactl
           - name: openssh_gssapi
           - name: openssl
+          - name: oras
           - name: p7zip
           - name: parallel
           - name: patchelf

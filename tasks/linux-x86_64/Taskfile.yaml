@@ -20,6 +20,7 @@ tasks:
   lefthook: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.lefthook
   scc: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.scc
   shfmt: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.shfmt
+  oras: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.oras
 
   # others
   aria2: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.aria2
