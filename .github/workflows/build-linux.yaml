@@ -26,7 +26,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-
     strategy:
       matrix:
         # task --list-all | sed -e 's/://g' -e 's/*/- name:/g'
@@ -206,13 +205,13 @@ jobs:
           ./${{ matrix.name }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
         if: ${{ env.skip_steps != 'true' }}
 
-      - uses: svenstaro/upload-release-action@v2
-        if: ${{ env.skip_steps != 'true' }}
-        with:
-          file: ${{ matrix.name }}.linux-x86_64.tar.gz
-          asset_name: ${{ matrix.name }}.linux-x86_64.tar.gz
-          tag: 'v1.0'
-          overwrite: true
+      # - uses: svenstaro/upload-release-action@v2
+      #   if: ${{ env.skip_steps != 'true' }}
+      #   with:
+      #     file: ${{ matrix.name }}.linux-x86_64.tar.gz
+      #     asset_name: ${{ matrix.name }}.linux-x86_64.tar.gz
+      #     tag: 'v1.0'
+      #     overwrite: true
 
       - uses: mxschmitt/action-tmate@v3
         if: ${{ failure() }}
