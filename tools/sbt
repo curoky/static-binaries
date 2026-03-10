@@ -33,7 +33,7 @@ function link() {
   done
 }
 
-function download_pkg() {
+function download_pkg_old() {
   local name=$1
   local arch=$2
 
@@ -53,21 +53,27 @@ function download_pkg() {
   tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
 }
 
-function download_pkg2(){
+function download_pkg(){
   local name=$1
   local arch=$2
 
   local store_path=$3
   local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
+  
+  echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
+  
+  # $(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
+
+  mkdir -p $cache_path
+  rm -rf $cache_path/$name.tar.gz
 
   TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:curoky/static-binaries:pull" | jq -r .token)
-
   DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
     -H "Accept: application/vnd.oci.image.manifest.v1+json" \
     "https://ghcr.io/v2/curoky/static-binaries/manifests/${name}-${arch}" | jq -r '.layers[0].digest')
 
   curl -L -H "Authorization: Bearer $TOKEN" \
-    -o ${name}.tar.gz \
+    -o $cache_path/${name}.tar.gz \
     "https://ghcr.io/v2/curoky/static-binaries/blobs/$DIGEST"
   rm -rf $store_path
   mkdir -p $store_path
