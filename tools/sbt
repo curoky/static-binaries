@@ -67,13 +67,15 @@ function download_pkg(){
   mkdir -p $cache_path
   rm -rf $cache_path/$name.tar.gz
 
-  TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:curoky/static-binaries:pull" | jq -r .token)
-  DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
-    -H "Accept: application/vnd.oci.image.manifest.v1+json" \
-    "https://ghcr.io/v2/curoky/static-binaries/manifests/${name}-${arch}" | jq -r '.layers[0].digest')
+  TOKEN_JSON=$(curl -s "https://ghcr.io/token?scope=repository:curoky/static-binaries:pull")
+  TOKEN=$(echo $TOKEN_JSON | sed 's/.*"token":"\([^"]*\)".*/\1/')
+  MANIFEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+      -H "Accept: application/vnd.oci.image.manifest.v1+json" \
+      "https://ghcr.io/v2/curoky/static-binaries/manifests/${name}-${arch}")
+  DIGEST=$(echo $MANIFEST | sed 's/.*"digest":"\([^"]*\)".*/\1/')
 
   curl -L -H "Authorization: Bearer $TOKEN" \
-    -o $cache_path/${name}.tar.gz \
+    -o "$cache_path/${name}.tar.gz" \
     "https://ghcr.io/v2/curoky/static-binaries/blobs/$DIGEST"
   rm -rf $store_path
   mkdir -p $store_path
