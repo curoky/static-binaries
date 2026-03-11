@@ -63,16 +63,7 @@ in
     '';
 
     preInstallCheck = oldAttrs.postInstall + ''
-      function disable_test {
-        local test=$1 pattern=$2
-        if [ $# -eq 1 ]; then
-          mv t/{,skip-}$test.sh || true
-        else
-          sed -i t/$test.sh \
-            -e "/^\s*test_expect_.*$pattern/,/^\s*' *\$/{s/^/: #/}"
-        fi
-      }
-      disable_test t1517-outside-repo
+      #disable_test t1517-outside-repo
     '';
 
     postInstall = (oldAttrs.postInstall or "") + ''
