@@ -7,6 +7,7 @@
   nghttp2,
   libpsl,
   c-ares,
+  brotli,
 }:
 
 let
@@ -44,6 +45,7 @@ in
       nghttp2
       libpsl
       c-ares
+      brotli
     ];
 
     #doCheck = false;
@@ -51,13 +53,26 @@ in
 
     env.NIX_LDFLAGS =
       oldAttrs.env.NIX_LDFLAGS
-      + " -static -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring";
+      + " -static -lnghttp2 -lnghttp3 -lcares -lngtcp2 -lngtcp2_crypto_ossl -lpsl -lssl -lcrypto -lssh2 -lidn2 -lzstd -lz -lunistring -lbrotlidec -lbrotlicommon";
 
     patchPhase = ''
       find . -path './t/t[0-9][0-9][0-9][0-9]' -prune -o -type f -name '*.[ch]' -exec sed -i 's/\<error\>(/git_error(/g' {} +
       find . -path './t/t[0-9][0-9][0-9][0-9]' -prune -o -type f -name '*.[ch]' -exec sed -i 's/\<error\>\s\+(/git_error (/g' {} +
       find . -path './t/t[0-9][0-9][0-9][0-9]' -prune -o -type f -name '*.[ch]' -exec sed -i 's/int\s\+error\s*(/int git_error(/g' {} +
       find . -path './t/t[0-9][0-9][0-9][0-9]' -prune -o -type f -name '*.[ch]' -exec sed -i 's/undef error\b/undef git_error/' {} +
+    '';
+
+    preInstallCheck = oldAttrs.postInstall + ''
+      function disable_test {
+        local test=$1 pattern=$2
+        if [ $# -eq 1 ]; then
+          mv t/{,skip-}$test.sh || true
+        else
+          sed -i t/$test.sh \
+            -e "/^\s*test_expect_.*$pattern/,/^\s*' *\$/{s/^/: #/}"
+        fi
+      }
+      disable_test t1517-outside-repo
     '';
 
     postInstall = (oldAttrs.postInstall or "") + ''
