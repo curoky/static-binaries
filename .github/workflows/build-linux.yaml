@@ -101,6 +101,7 @@ jobs:
           - name: m4
           - name: makeself
           - name: man
+          - name: mcfly
           # - name: miniserve
           - name: music-decrypto
           - name: ncdu_1

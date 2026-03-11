@@ -224,4 +224,5 @@ tasks:
   starship: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.starship
   uv: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.uv
   yazi: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.yazi-unwrapped
+  mcfly: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.mcfly
 
