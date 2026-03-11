@@ -25,7 +25,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
     permissions:
       contents: write
       packages: write
@@ -283,6 +283,6 @@ jobs:
       #     tag: 'v1.0'
       #     overwrite: true
 
-      - uses: fawazahmed0/action-debug-vscode@main
-        if: ${{ failure() }}
-        timeout-minutes: 60
+      # - uses: fawazahmed0/action-debug-vscode@main
+      #   if: ${{ failure() }}
+      #   timeout-minutes: 60

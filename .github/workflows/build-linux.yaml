@@ -214,6 +214,6 @@ jobs:
       #     tag: 'v1.0'
       #     overwrite: true
 
-      - uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
-        timeout-minutes: 60
+      # - uses: mxschmitt/action-tmate@v3
+      #   if: ${{ failure() }}
+      #   timeout-minutes: 60
