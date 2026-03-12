@@ -33,7 +33,7 @@ function link() {
   done
 }
 
-function download_pkg_old() {
+function download_pkg_from_release() {
   local name=$1
   local arch=$2
 
@@ -53,13 +53,15 @@ function download_pkg_old() {
   tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
 }
 
-function download_pkg(){
+function download_pkg_from_ghcr(){
   local name=$1
   local arch=$2
 
   local store_path=$3
   local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
   
+  local version=$4
+
   echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
   
   # $(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
@@ -67,19 +69,22 @@ function download_pkg(){
   mkdir -p $cache_path
   rm -rf $cache_path/$name.tar.gz
 
-  TOKEN_JSON=$(curl -s "https://ghcr.io/token?scope=repository:curoky/static-binaries:pull")
+  TOKEN_JSON=$(curl --retry 5 --retry-delay 2 --retry-all-errors -sSL "https://ghcr.io/token?scope=repository:curoky/static-binaries-v${version}:pull")
   TOKEN=$(echo $TOKEN_JSON | sed 's/.*"token":"\([^"]*\)".*/\1/')
-  MANIFEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+  MANIFEST=$(curl --retry 5 --retry-delay 2 --retry-all-errors -sSL -H "Authorization: Bearer $TOKEN" \
       -H "Accept: application/vnd.oci.image.manifest.v1+json" \
-      "https://ghcr.io/v2/curoky/static-binaries/manifests/${name}-${arch}")
+      "https://ghcr.io/v2/curoky/static-binaries-v${version}/manifests/${name}-${arch}")
   DIGEST=$(echo $MANIFEST | sed 's/.*"digest":"\([^"]*\)".*/\1/')
-
-  curl -L -H "Authorization: Bearer $TOKEN" \
+  if [[ ! $DIGEST == sha256:* ]]; then
+    echo "Error: $name: Failed to parse digest from manifest."
+    exit 1
+  fi
+  curl --retry 5 --retry-delay 2 --retry-all-errors -sSL -H "Authorization: Bearer $TOKEN" \
     -o "$cache_path/${name}.tar.gz" \
-    "https://ghcr.io/v2/curoky/static-binaries/blobs/$DIGEST"
+    "https://ghcr.io/v2/curoky/static-binaries-v${version}/blobs/$DIGEST"
   rm -rf $store_path
   mkdir -p $store_path
-  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
+  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=2
 }
 
 function download_link_pkg() {
@@ -89,11 +94,13 @@ function download_link_pkg() {
   local prefix=$3
   local link=$4
 
+  local version=$5
+
   local store_path=$prefix/store/$name
 
   echo "> Installing $name($arch) to $store_path, and linked=$link_mode"
 
-  download_pkg $name $arch $store_path
+  download_pkg_from_ghcr $name $arch $store_path $version
   if [[ $link == "1" ]]; then
     link $store_path $prefix
   fi
@@ -128,10 +135,10 @@ arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
 
 if [[ $arch == "darwin-arm64" ]]; then
   if [[ ! -d /tmp/sbt/getopt ]]; then
-    download_pkg getopt $arch /tmp/sbt/getopt
+    download_pkg_from_ghcr getopt $arch /tmp/sbt/getopt
   fi
   if [[ ! -d /tmp/sbt/coreutils ]]; then
-    download_pkg coreutils $arch /tmp/sbt/coreutils
+    download_pkg_from_ghcr coreutils $arch /tmp/sbt/coreutils
   fi
   export PATH=/tmp/sbt/getopt/bin:/tmp/sbt/coreutils/bin:$PATH
   echo "use getopt: $(which getopt)"
@@ -149,6 +156,7 @@ case "$cmd" in
 
     link_mode="1"
     prefix="/opt/sbt"
+    version="2"
 
     while true; do
       case "$1" in
@@ -158,6 +166,8 @@ case "$cmd" in
         --prefix=*) prefix="${1#*=}"; shift ;;
         --arch) arch="$2"; shift 2 ;;
         --arch=*) arch="${1#*=}"; shift ;;
+        --version) version="$2"; shift 2 ;;
+        --version=*) version="${1#*=}"; shift ;;
         --) shift; break ;;
         *) show_usage; exit 1 ;;
       esac
@@ -166,17 +176,20 @@ case "$cmd" in
     [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
 
     pkg="$1"
-    download_link_pkg $pkg $arch $prefix $link_mode
+    download_link_pkg $pkg $arch $prefix $link_mode $version
     ;;
 
   download)
     ARGS=$(getopt -o '' --long arch: -n sbt -- "$@") || { show_usage; exit 1; }
     eval set -- "$ARGS"
 
+    version=""
     while true; do
       case "$1" in
         --arch) arch="$2"; shift 2 ;;
         --arch=*) arch="${1#*=}"; shift ;;
+        --version) version="$2"; shift 2 ;;
+        --version=*) version="${1#*=}"; shift ;;
         --) shift; break ;;
         *) show_usage; exit 1 ;;
       esac
@@ -185,7 +198,7 @@ case "$cmd" in
     [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
 
     pkg="$1"
-    download_pkg $pkg $arch $PWD/$pkg
+    download_pkg_from_ghcr $pkg $arch $PWD/$pkg $version
     ;;
 
   *)
