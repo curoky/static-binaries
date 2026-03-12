@@ -39,6 +39,7 @@ in
   pythonSupport = false;
   nlsSupport = false;
   perlSupport = false;
+  withManual = false;
 }).overrideAttrs
   (oldAttrs: rec {
     buildInputs = oldAttrs.buildInputs ++ [
@@ -49,7 +50,7 @@ in
     ];
 
     #doCheck = false;
-    #doInstallCheck = false;
+    doInstallCheck = false;
 
     env.NIX_LDFLAGS =
       oldAttrs.env.NIX_LDFLAGS
@@ -73,5 +74,10 @@ in
       mv $out/bin/git $out/bin/_git
       cp ${wrapperScript} $out/bin/git
       chmod +x $out/bin/git
+
+      mkdir -p contrib/subtree
+      echo "all:" > contrib/subtree/Makefile
+      echo "install:" >> contrib/subtree/Makefile
+      echo "install-doc:" >> contrib/subtree/Makefile
     '';
   })

@@ -33,6 +33,8 @@ if [[ " ${skip_list[@]} " =~ " ${name} " ]]; then
   exit 0
 fi
 
+chmod +w -R $prefix
+
 # remove path which contain nix
 for f in $(find $prefix -type f); do
   if file --brief "$f" | grep -q 'text'; then

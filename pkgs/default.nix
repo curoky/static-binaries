@@ -26,28 +26,33 @@ in
     sha256 = "sha256-1mLSNLyRspTqoaTFylGCc2JaEQOMR1WAL7ffwJPqHyA=";
   });
 
-  rsync = pkgs.pkgsStatic.rsync.override {
-    enableXXHash = false;
-  };
+  #rsync = pkgs.pkgsStatic.rsync.override {
+  #  enableXXHash = false;
+  #};
   coreutils = pkgs.pkgsStatic.coreutils.override {
     singleBinary = false;
   };
   glibcLocales = pkgs.glibcLocales.override {
     allLocales = false;
   };
+  gnupgMinimal = pkgs.pkgsStatic.gnupg.override {
+    enableMinimal = true;
+    guiSupport = false;
+  };
 
   # patched
+  clang_18 = pkgs.pkgsStatic.callPackage ./patched/clang18.nix { };
+  clang_19 = pkgs.pkgsStatic.callPackage ./patched/clang19.nix { };
+  clang_20 = pkgs.pkgsStatic.callPackage ./patched/clang20.nix { };
+  clang_21 = pkgs.pkgsStatic.callPackage ./patched/clang21.nix { };
+  clang_22 = pkgs.pkgsStatic.callPackage ./patched/clang22.nix { };
   diffutils = pkgs.pkgsStatic.callPackage ./patched/diffutils.nix { };
   cmake = pkgs.pkgsStatic.callPackage ./patched/cmake.nix { };
   zellij = pkgs.pkgsStatic.callPackage ./patched/zellij.nix { };
   git = pkgs.pkgsStatic.callPackage ./patched/git.nix { };
   gettext = pkgs.pkgsStatic.callPackage ./patched/gettext.nix { };
   p7zip = pkgs.pkgsStatic.callPackage ./patched/p7zip.nix { };
-  clang_18 = pkgs.pkgsStatic.callPackage ./patched/clang18.nix { };
-  clang_19 = pkgs.pkgsStatic.callPackage ./patched/clang19.nix { };
-  clang_20 = pkgs.pkgsStatic.callPackage ./patched/clang20.nix { };
-  clang_21 = pkgs.pkgsStatic.callPackage ./patched/clang21.nix { };
-  clang_22 = pkgs.pkgsStatic.callPackage ./patched/clang22.nix { };
+  rsync = pkgs.pkgsStatic.callPackage ./patched/rsync.nix { };
 
   # python3
   python311 = pkgs.pkgsStatic.callPackage ./python3/python311.nix { };

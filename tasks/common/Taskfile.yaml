@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 tasks:
   setup:
@@ -108,7 +108,7 @@ tasks:
   shellcheck: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.shellcheck
   dprint: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.dprint
   biome: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.biome
-  
+
   # s6-overlay
   s6: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6
   s6-rc: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.s6-rc
@@ -151,16 +151,17 @@ tasks:
   patchelf:
     - task: setup-2505
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.patchelf
-  rsync:
-    - task: setup-2505
-    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.rsync
-  gnupg:
-    - task: setup-2505
-    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.gnupg
+
+  # rsync:
+  #   - task: setup-2505
+  #   - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.rsync
+  # gnupg:
+  #   - task: setup-2505
+  #   - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.gnupg
   exiftool:
     - task: setup-2505
     - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.exiftool
- 
+
   # font
   fira-code: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.fira-code
   lxgw-wenkai: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.lxgw-wenkai
@@ -195,14 +196,14 @@ tasks:
   netron: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix netron
 
   # patched
-  cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake
+  cmake: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cmake.out
   diffutils: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix diffutils
-  git:
-    - task: setup-2511
-    - nix-env -I old=$HOME/.nix-defexpr/channels/old -p ~/nix/profiles/prebuilt -iA old.pkgsStatic.git
+  git: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix git
   p7zip: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix p7zip
   zellij: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix zellij
   # gettext: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gettext
+  rsync: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix rsync
+  gnupg: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix gnupgMinimal
 
   # new
   cacert: nix-env -p ~/nix/profiles/prebuilt -iA -f ../../pkgs/default.nix cacert
@@ -227,4 +228,3 @@ tasks:
   uv: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.uv
   yazi: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.yazi-unwrapped
   mcfly: nix-env -p ~/nix/profiles/prebuilt -iA nixpkgs.pkgsStatic.mcfly
-

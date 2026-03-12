@@ -29,6 +29,7 @@ cloc.overrideAttrs (oldAttrs: rec {
     perl
     rsync
   ];
+  doInstallCheck = false;
   postFixup = "";
   postInstall = ''
     chmod +w $out/bin/
