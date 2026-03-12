@@ -27,6 +27,7 @@ jobs:
       contents: write
       packages: write
     strategy:
+      # max-parallel: 10
       matrix:
         # task --list-all | sed -e 's/://g' -e 's/*/- name:/g'
         include:
@@ -100,9 +101,9 @@ jobs:
           - name: lua
           - name: m4
           - name: makeself
-          - name: man
+          # - name: man
           - name: mcfly
-          # - name: miniserve
+          - name: miniserve
           - name: music-decrypto
           - name: ncdu_1
           - name: netcat
@@ -110,7 +111,7 @@ jobs:
           - name: nettools
           - name: ninja
           - name: nixfmt
-          - name: nsight-systems
+          # - name: nsight-systems
           - name: numactl
           - name: openssh_gssapi
           - name: openssl
@@ -189,20 +190,46 @@ jobs:
       - uses: actions/checkout@v5
         if: ${{ env.skip_steps != 'true' }}
 
-      - run: ./docker/build.sh ${{ matrix.name }} linux-x86_64
+      - run: sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin v3.49.1
+        if: ${{ env.skip_steps != 'true' }}
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            nix-path = nixpkgs=https://nixos.org/channels/nixos-25.11
+        if: ${{ env.skip_steps != 'true' }}
+
+      #       substituters = https://cache.nixos.org?priority=10 https://my-custom-cache.cachix.org?priority=20
+      #       trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+      # - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: cachix/cachix-action@v15
+        with:
+          name: curoky-static-binaries
+          authToken: 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiMWUxZDY1MC1jMDU3LTQ4NjctOTU3ZC1mMjczNTNlMDlmMWUiLCJzY29wZXMiOiJjYWNoZSJ9.aLeSNnHszgoJ1RX9Vo4RTE12GA51gBLeUMJ9keBJ8DE'
+        if: ${{ env.skip_steps != 'true' }}
+
+      - run: |
+          task -t tasks/common/Taskfile.yaml setup
+          task -t tasks/linux-x86_64/Taskfile.yaml ${{ matrix.name }}
+          nix-store -qR $(readlink -f ~/nix/profiles/prebuilt) | cachix push curoky-static-binaries
+          cp -RL ~/nix/profiles/prebuilt ./${{ matrix.name }}
+          ./scripts/patch.sh ${{ matrix.name }} ./${{ matrix.name }}
+          tar -czvf ./${{ matrix.name }}.linux-x86_64.tar.gz ./${{ matrix.name }}
         if: ${{ env.skip_steps != 'true' }}
 
       - uses: oras-project/setup-oras@v1
         if: ${{ env.skip_steps != 'true' }}
 
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u ${{ github.actor }} --password-stdin
+        if: ${{ env.skip_steps != 'true' }}
 
       - run: >
-          oras push ghcr.io/curoky/static-binaries:${{ matrix.name }}-linux-x86_64
+          oras push ghcr.io/curoky/static-binaries-v2:${{ matrix.name }}-linux-x86_64
           ./${{ matrix.name }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
         if: ${{ env.skip_steps != 'true' }}
 
