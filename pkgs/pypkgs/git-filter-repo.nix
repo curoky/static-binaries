@@ -25,13 +25,17 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
     store=$root/..
 
-    export PYTHONHOME=$store/python311
     export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11
     export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/site-packages
     export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/lib-dynload
     export PYTHONPATH=$PYTHONPATH:$root/lib/python3.11/site-packages
 
-    exec -a "$0" "$PYTHONHOME/bin/python3.11" "$root/bin/_git_filter_repo_main.py" "$@"
+    if [[ "$(uname)" == "Darwin" ]]; then
+      exec -a "$0" python3 "$root/bin/_git_filter_repo_main.py" "$@"
+    else
+      export PYTHONHOME=$store/python311
+      exec -a "$0" "$PYTHONHOME/bin/python3.11" "$root/bin/_git_filter_repo_main.py" "$@"
+    fi
   '';
 in
 

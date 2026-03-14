@@ -170,7 +170,6 @@ jobs:
           - name: zlib
           - name: zlib-ng
           - name: zsh
-          # - name: zsh-bundle
           - name: zsh-plugs
           - name: zstd
 
@@ -194,9 +193,6 @@ jobs:
 
           # FileNotFoundError: [Errno 2] No such file or directory: 'lipo'
           # - name: wget
-
-          # configure: error: C compiler cannot create executables
-          # - name: ruff
 
           #  > ./Modules/ossaudiodev.c:42:10: fatal error: 'sys/soundcard.h' file not found
           # - name: python311

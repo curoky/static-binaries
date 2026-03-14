@@ -25,7 +25,6 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
     store=$root/..
 
-    export PYTHONHOME=$store/python311
     export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11
     export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/site-packages
     export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/lib-dynload
@@ -33,8 +32,12 @@ let
 
     # python_bin_path=/home/x/.nix-profile/bin/python3.11
     # pathon_lib_root=/nix/var/nix/profiles/py311-static/lib/python3.11/
-
-    exec -a "$0" "$PYTHONHOME/bin/python3.11" "$root/bin/_dool_main.py" --bytes "$@"
+    if [[ "$(uname)" == "Darwin" ]]; then
+      exec -a "$0" python3 "$root/bin/_dool_main.py" --bytes "$@"
+    else
+      export PYTHONHOME=$store/python311
+      exec -a "$0" "$PYTHONHOME/bin/python3.11" "$root/bin/_dool_main.py" --bytes "$@"
+    fi
   '';
 in
 

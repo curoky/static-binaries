@@ -167,7 +167,6 @@ jobs:
           - name: zlib
           - name: zlib-ng
           - name: zsh
-          # - name: zsh-bundle
           - name: zsh-plugs
           - name: zstd
 
