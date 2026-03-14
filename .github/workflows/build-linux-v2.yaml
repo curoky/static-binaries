@@ -101,7 +101,7 @@ jobs:
           - name: lua
           - name: m4
           - name: makeself
-          # - name: man
+          - name: man
           - name: mcfly
           - name: miniserve
           - name: music-decrypto
@@ -201,7 +201,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         if: ${{ env.skip_steps != 'true' }}
 
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      # - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix config show substituters
         if: ${{ env.skip_steps != 'true' }}
 

@@ -11,6 +11,15 @@
     nixpkgs-2405.url = "github:NixOS/nixpkgs/nixos-24.05";
   };
 
+  nixConfig = {
+    extra-substituters = [
+      "https://curoky-static-binaries-v2.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "curoky-static-binaries-v2.cachix.org-1:fz4EbiwDeisCH9c1a7ItzRlF6BMEkugFBDeagmMIbsQ="
+    ];
+  };
+
   outputs =
     { self, ... }@inputs:
     let
@@ -86,14 +95,6 @@
             coreutils = defaultPkgsStatic.coreutils.override {
               singleBinary = false;
             };
-            ffmpeg = defaultPkgsStatic.ffmpeg.overrideAttrs (oldAttrs: {
-              # 移除 configureFlags 里的 pulse 支持
-              configureFlags = (oldAttrs.configureFlags or [ ]) ++ [
-                "--disable-libpulse"
-              ];
-              # 如果它有 buildInputs 引用了 libpulse，也把它删掉
-              buildInputs = lib.filter (p: p.pname or "" != "libpulseaudio") oldAttrs.buildInputs;
-            });
             gnupg = defaultPkgsStatic.gnupg.override {
               enableMinimal = true;
               guiSupport = false;
