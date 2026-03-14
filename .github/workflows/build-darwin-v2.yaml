@@ -230,7 +230,7 @@ jobs:
       - uses: cachix/cachix-action@v15
         with:
           name: curoky-static-binaries-v2
-          authToken: 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzOGM0YzAxOC0xY2I1LTRiZGUtOWVhMy03YzFmZDk2Mjc4ZDAiLCJzY29wZXMiOiJjYWNoZSJ9.VrYQP0zavhmHR3k1qNFbRUB3jP_jiJysOZrGJrvwA2M'
+          authToken: ${{ secrets.CACHIX_TOKEN }}
         if: ${{ env.skip_steps != 'true' }}
       - run: |
           nix build .#${{ matrix.name }}
