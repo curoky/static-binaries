@@ -1,0 +1,86 @@
+name: build llvm-tools v2
+
+on:
+  # push:
+  #   branches:
+  #     - master
+  #     - dev
+  push:
+    paths:
+      - '.github/workflows/build-llvm-tools-v2.yaml'
+      - 'pkgs/**'
+      - 'pkgs-list/**'
+      - 'scripts/**'
+      - 'flake*'
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'package name'
+        default: ''
+        required: false
+        type: string
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    strategy:
+      matrix:
+        version:
+          - 18
+          - 19
+          - 20
+          - 21
+          - 22
+    steps:
+      - run: echo "skip_steps=true" >> $GITHUB_ENV
+      - run: echo "skip_steps=false" >> $GITHUB_ENV
+        if: ${{ (github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch') || (github.event_name == 'push' && github.ref == 'refs/heads/master') }}
+
+      - uses: actions/checkout@v5
+        if: ${{ env.skip_steps != 'true' }}
+
+      - run: tools/free-disk-space.sh
+        if: ${{ env.skip_steps != 'true' }}
+
+      - name: Set up Swap Space
+        if: ${{ env.skip_steps != 'true' }}
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
+
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y rsync
+        if: ${{ env.skip_steps != 'true' }}
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        if: ${{ env.skip_steps != 'true' }}
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: curoky-static-binaries-v2
+          authToken: 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzOGM0YzAxOC0xY2I1LTRiZGUtOWVhMy03YzFmZDk2Mjc4ZDAiLCJzY29wZXMiOiJjYWNoZSJ9.VrYQP0zavhmHR3k1qNFbRUB3jP_jiJysOZrGJrvwA2M'
+        if: ${{ env.skip_steps != 'true' }}
+      - run: |
+          nix build .#clang-tools-${{ matrix.version }}
+          nix-store -qR $(readlink -f ./result)
+          nix-store -qR $(readlink -f ./result) | cachix push curoky-static-binaries-v2
+          rsync -av --copy-unsafe-links ./result/ ./clang-tools-${{ matrix.version }}/
+          tar -czvf ./clang-tools-${{ matrix.version }}.linux-x86_64.tar.gz ./clang-tools-${{ matrix.version }}
+        if: ${{ env.skip_steps != 'true' }}
+
+      - uses: oras-project/setup-oras@v1
+        if: ${{ env.skip_steps != 'true' }}
+
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u ${{ github.actor }} --password-stdin
+        if: ${{ env.skip_steps != 'true' }}
+
+      - run: >
+          oras push ghcr.io/curoky/static-binaries-v2:clang-tools-${{ matrix.version }}-linux-x86_64
+          ./clang-tools-${{ matrix.version }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+        if: ${{ env.skip_steps != 'true' }}

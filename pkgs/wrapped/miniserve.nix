@@ -42,7 +42,7 @@ let
 in
 
 miniserve.overrideAttrs (oldAttrs: {
-  nativeInstallCheckInputs = [];
+  nativeInstallCheckInputs = [ ];
   postInstall = (oldAttrs.postInstall or "") + ''
     mv $out/bin/miniserve $out/bin/_miniserve
     cp ${wrapperScript} $out/bin/miniserve

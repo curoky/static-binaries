@@ -88,7 +88,7 @@ buildDotnetModule rec {
     darwin.ICU
   ]);
 
-  postInstall = '''';
+  postInstall = "";
 
   # passthru.updateScript = ./update.sh;
   dontDotnetFixup = true;

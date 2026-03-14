@@ -1,15 +1,17 @@
-name: build darwin
+name: build darwin v2
 
 on:
-  push:
-    branches:
-      - master
   # push:
-  #   paths:
-  #     - ".github/workflows/build.yaml"
-  #     - "pkgs/**"
-  #     - "tasks/**"
-  #     - "scripts/**"
+  #   branches:
+  #     - master
+  #     - dev
+  push:
+    paths:
+      - '.github/workflows/build-darwin-v2.yaml'
+      - 'pkgs/**'
+      - 'pkgs-list/**'
+      - 'scripts/**'
+      - 'flake*'
   workflow_dispatch:
     inputs:
       name:
@@ -84,7 +86,7 @@ jobs:
           - name: gnused
           - name: gnutar
           - name: go-task
-          - name: gost
+          # - name: gost
           - name: gzip
           # - name: indent
           # - name: inetutils
@@ -145,6 +147,7 @@ jobs:
           - name: scc
           - name: shellcheck
           - name: shfmt
+          - name: silver-searcher
           - name: snappy
           - name: sqlite
           - name: starship
@@ -167,17 +170,24 @@ jobs:
           - name: zlib
           - name: zlib-ng
           - name: zsh
-          - name: zsh-bundle
+          # - name: zsh-bundle
           - name: zsh-plugs
           - name: zstd
+
+          # - name: s6
+          # - name: s6-rc
+          # - name: s6-linux-init
+          # - name: s6-linux-utils
+          # - name: s6-portable-utils
+          # - name: s6-networking
+          # - name: s6-dns
+          # - name: skalibs
+          # - name: execline
 
           - name: lxgw-wenkai
           - name: fira-code
           - name: nerd-fonts.fira-code
           - name: nerd-fonts.ubuntu-mono
-
-          # - name: silver-searcher
-          # - name: zsh
 
           # > meson.build:6:0: ERROR: 'objc' compiler binary not defined in cross file [binaries] section
           # - name: parallel
@@ -204,85 +214,48 @@ jobs:
         if: ${{ env.skip_steps != 'true' }}
 
       - run: echo "/opt/homebrew/opt/binutils/bin" >> $GITHUB_PATH
+      - run: echo "/opt/homebrew/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
       - run: echo "/opt/homebrew/opt/gnu-sed/libexec/gnubin" >> $GITHUB_PATH
-      - run: brew install go-task binutils gnu-sed
+      - run: brew install binutils gnu-sed coreutils rsync
         if: ${{ env.skip_steps != 'true' }}
 
       - uses: actions/checkout@v5
         if: ${{ env.skip_steps != 'true' }}
 
-      - uses: actions/setup-python@v6
+      - uses: DeterminateSystems/nix-installer-action@main
         if: ${{ env.skip_steps != 'true' }}
-        with:
-          python-version: '3'
 
-      - uses: nixbuild/nix-quick-install-action@v34
+      # - uses: DeterminateSystems/magic-nix-cache-action@main
+      #   if: ${{ env.skip_steps != 'true' && contains(fromJSON(env.CACHED_PKG), matrix.name) }}
+
+      - run: nix config show substituters
         if: ${{ env.skip_steps != 'true' }}
+
+      - uses: cachix/cachix-action@v15
         with:
-          nix_conf: |
-            keep-env-derivations = true
-            keep-outputs = true
-
-      - name: Restore and save Nix store
-        uses: nix-community/cache-nix-action@v6
-        if: ${{ env.skip_steps != 'true' && contains(fromJSON(env.CACHED_PKG), matrix.name) }}
-        with:
-          # restore and save a cache using this key
-          primary-key: nix-${{ runner.os }}-${{ matrix.name }}-${{ hashFiles('**/*.nix') }}
-          # if there's no cache hit, restore a cache by this prefix
-          restore-prefixes-first-match: nix-${{ runner.os }}-${{ matrix.name }}-
-          # collect garbage until the Nix store size (in bytes) is at most this number
-          # before trying to save a new cache
-          # 1G = 1073741824
-          gc-max-store-size: 100M
-          # do purge caches
-          purge: true
-          # purge all versions of the cache
-          purge-prefixes: nix-${{ runner.os }}-${{ matrix.name }}-
-          # created more than this number of seconds ago
-          purge-created: 0
-          # or, last accessed more than this number of seconds ago
-          # relative to the start of the `Post Restore and save Nix store` phase
-          purge-last-accessed: 0
-          # except any version with the key that is the same as the `primary-key`
-          purge-primary-key: true
-
-      # - name: setup channel
-      #   if: ${{ env.skip_steps != 'true' }}
-      #   run: |
-      #     nix-channel --add https://nixos.org/channels/nixos-24.11 nixpkgs
-      #     nix-channel --update
-
+          name: curoky-static-binaries-v2
+          authToken: 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzOGM0YzAxOC0xY2I1LTRiZGUtOWVhMy03YzFmZDk2Mjc4ZDAiLCJzY29wZXMiOiJjYWNoZSJ9.VrYQP0zavhmHR3k1qNFbRUB3jP_jiJysOZrGJrvwA2M'
+        if: ${{ env.skip_steps != 'true' }}
       - run: |
-          task -t tasks/common/Taskfile.yaml setup
-          task -t tasks/darwin-arm64/Taskfile.yaml ${{ matrix.name }}
-          ./scripts/pack.py
-          ./scripts/patch.sh ${{ matrix.name }} tmp/output
-          cd tmp
-          mv output ${{ matrix.name }}
-          tar -czvf ${{ matrix.name }}.darwin-arm64.tar.gz ${{ matrix.name }}
+          nix build .#${{ matrix.name }}
+          nix-store -qR $(readlink -f ./result)
+          nix-store -qR $(readlink -f ./result) | cachix push curoky-static-binaries-v2
+          rsync -av --copy-unsafe-links ./result/ ./${{ matrix.name }}/
+          tar -czvf ./${{ matrix.name }}.darwin-arm64.tar.gz ./${{ matrix.name }}
         if: ${{ env.skip_steps != 'true' }}
-        env:
-          NIXPKGS_ALLOW_UNFREE: 1
 
       - uses: oras-project/setup-oras@v1
         if: ${{ env.skip_steps != 'true' }}
 
+      # - uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - run: >
-          oras push ghcr.io/curoky/static-binaries:${{ matrix.name }}-darwin-arm64
-          ./tmp/${{ matrix.name }}.darwin-arm64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
         if: ${{ env.skip_steps != 'true' }}
 
-      # - uses: svenstaro/upload-release-action@v2
-      #   if: ${{ env.skip_steps != 'true' }}
-      #   with:
-      #     file: tmp/${{ matrix.name }}.darwin-arm64.tar.gz
-      #     asset_name: ${{ matrix.name }}.darwin-arm64.tar.gz
-      #     tag: 'v1.0'
-      #     overwrite: true
-
-      # - uses: fawazahmed0/action-debug-vscode@main
-      #   if: ${{ failure() }}
-      #   timeout-minutes: 60
+      - run: >
+          oras push ghcr.io/curoky/static-binaries-v3:${{ matrix.name }}-darwin-arm64
+          ./${{ matrix.name }}.darwin-arm64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+        if: ${{ env.skip_steps != 'true' }}

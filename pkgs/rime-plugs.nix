@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
     "installPhase"
   ];
 
-  buildPhase = '''';
+  buildPhase = "";
 
   installPhase = ''
     mkdir -p \

@@ -5,17 +5,31 @@
   mold,
   llvmPackages_20,
 }:
+let
+  clang = llvmPackages_20.clang-unwrapped.overrideAttrs (oldAttrs: rec {
+    nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ mold ];
+    env = {
+      NIX_CFLAGS_COMPILE =
+        (oldAttrs.NIX_CFLAGS_COMPILE or "") + " -g0 -ffunction-sections -fdata-sections";
+      NIX_LDFLAGS = (oldAttrs.NIX_LDFLAGS or "") + " --gc-sections -s";
+    };
 
-llvmPackages_20.clang-unwrapped.overrideAttrs (oldAttrs: rec {
-  nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ mold ];
-  env = {
-    NIX_CFLAGS_COMPILE =
-      (oldAttrs.NIX_CFLAGS_COMPILE or "") + " -g0 -ffunction-sections -fdata-sections";
-    NIX_LDFLAGS = (oldAttrs.NIX_LDFLAGS or "") + " --gc-sections -s";
-  };
+    cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
+      "-DCMAKE_BUILD_TYPE=MinSizeRel"
+      "-DLLVM_USE_LINKER=mold"
+    ];
+  });
+in
 
-  cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
-    "-DCMAKE_BUILD_TYPE=MinSizeRel"
-    "-DLLVM_USE_LINKER=mold"
-  ];
-})
+stdenv.mkDerivation rec {
+  pname = "clang-tools";
+  version = "20.0.0";
+
+  unpackPhase = ":";
+  buildPhase = ":";
+
+  installPhase = ''
+    mkdir -p $out/bin
+    cp ${clang}/bin/clang-format $out/bin/
+  '';
+}

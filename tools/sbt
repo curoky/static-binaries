@@ -151,12 +151,12 @@ cmd="$1"; shift
 
 case "$cmd" in
   install)
-    ARGS=$(getopt -o '' --long link,nolink,prefix:,arch: -n sbt -- "$@") || { show_usage; exit 1; }
+    ARGS=$(getopt -o '' --long link,nolink,prefix:,version:,arch: -n sbt -- "$@") || { show_usage; exit 1; }
     eval set -- "$ARGS"
 
     link_mode="1"
     prefix="/opt/sbt"
-    version="2"
+    version="3"
 
     while true; do
       case "$1" in
@@ -180,10 +180,11 @@ case "$cmd" in
     ;;
 
   download)
-    ARGS=$(getopt -o '' --long arch: -n sbt -- "$@") || { show_usage; exit 1; }
+    ARGS=$(getopt -o '' --long version:,arch: -n sbt -- "$@") || { show_usage; exit 1; }
     eval set -- "$ARGS"
 
-    version=""
+    version="3"
+
     while true; do
       case "$1" in
         --arch) arch="$2"; shift 2 ;;
