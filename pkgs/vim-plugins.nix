@@ -19,7 +19,7 @@ let
 in
 
 stdenv.mkDerivation rec {
-  pname = "vim-plugs";
+  pname = "vim-plugins";
   version = "1.0.0";
 
   nativeBuildInputs = [ ];

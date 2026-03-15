@@ -19,6 +19,13 @@ set -xeuo pipefail
 
 prefix="$1"
 
+# find "$prefix" -type d \( -name "man" -o -name "fish" -o -name "bash-completion" -o -name "nix-support" \) -exec rm -rf {} +
+rm -rf $prefix/nix-support
+rm -rf $prefix/share/man
+rm -rf $prefix/share/doc
+rm -rf $prefix/share/bash-completion
+
+
 find "$prefix" -type f -print0 | while IFS= read -r -d '' f; do
 
   FTYPE=$(file --brief "$f")
@@ -43,9 +50,6 @@ find "$prefix" -type f -print0 | while IFS= read -r -d '' f; do
     rm -f "$f"
   fi
 done
-
-# find "$prefix" -type d \( -name "man" -o -name "fish" -o -name "bash-completion" -o -name "nix-support" \) -exec rm -rf {} +
-rm -rf $prefix/nix-support
 
 find "$prefix" -type l -print0 | while IFS= read -r -d '' link; do
   target=$(readlink -f "$link")

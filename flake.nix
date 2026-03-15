@@ -122,10 +122,10 @@
             libtool = defaultPkgsStatic.callPackage ./pkgs/wrapped/libtool.nix { };
 
             cacert = defaultPkgsStatic.callPackage ./pkgs/cacert.nix { };
-            rime-plugs = defaultPkgsStatic.callPackage ./pkgs/rime-plugs.nix { };
-            tmux-plugs = defaultPkgsStatic.callPackage ./pkgs/tmux-plugs.nix { };
-            vim-plugs = defaultPkgs.callPackage ./pkgs/vim-plugs.nix { };
-            zsh-plugs = defaultPkgsStatic.callPackage ./pkgs/zsh-plugs.nix { };
+            rime-plugins = defaultPkgsStatic.callPackage ./pkgs/rime-plugins.nix { };
+            tmux-plugins = defaultPkgsStatic.callPackage ./pkgs/tmux-plugins.nix { };
+            vim-plugins = defaultPkgs.callPackage ./pkgs/vim-plugins.nix { };
+            zsh-plugins = defaultPkgsStatic.callPackage ./pkgs/zsh-plugins.nix { };
             music-decrypto = defaultPkgs.callPackage ./pkgs/music-decrypto.nix { };
           };
 

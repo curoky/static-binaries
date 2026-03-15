@@ -11,7 +11,7 @@
 
 stdenv.mkDerivation rec {
   version = "1.0.0";
-  pname = "zsh-plugs";
+  pname = "zsh-plugins";
 
   srcs = [
     (fetchFromGitHub {

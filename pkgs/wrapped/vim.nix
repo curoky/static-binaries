@@ -16,7 +16,7 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
 
     if [[ -z $VIMRUNTIME ]]; then
-      export VIMRUNTIME=$root/share/vim/vim91
+      export VIMRUNTIME=$root/share/vim/vim92
     fi
 
     exec -a "$0" "$root/bin/_vim" "$@"

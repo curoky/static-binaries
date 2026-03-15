@@ -7,7 +7,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  pname = "rime-plugs";
+  pname = "rime-plugins";
   version = "0.15.2";
 
   src = fetchurl {

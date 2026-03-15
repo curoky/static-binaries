@@ -5,7 +5,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  pname = "tmux-plugs";
+  pname = "tmux-plugins";
   version = "1.0.0";
 
   src = fetchFromGitHub {

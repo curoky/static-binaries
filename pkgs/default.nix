@@ -86,10 +86,10 @@ in
 
   cacert = pkgs.pkgsStatic.callPackage ./cacert.nix { };
   nsight-systems = pkgs.pkgsStatic.callPackage ./nsight-systems.nix { };
-  rime-plugs = pkgs.pkgsStatic.callPackage ./rime-plugs.nix { };
-  tmux-plugs = pkgs.pkgsStatic.callPackage ./tmux-plugs.nix { };
-  vim-plugs = pkgs.callPackage ./vim-plugs.nix { };
-  zsh-plugs = pkgs.pkgsStatic.callPackage ./zsh-plugs.nix { };
+  rime-plugins = pkgs.pkgsStatic.callPackage ./rime-plugins.nix { };
+  tmux-plugins = pkgs.pkgsStatic.callPackage ./tmux-plugins.nix { };
+  vim-plugins = pkgs.callPackage ./vim-plugins.nix { };
+  zsh-plugins = pkgs.pkgsStatic.callPackage ./zsh-plugins.nix { };
   music-decrypto = pkgs.callPackage ./music-decrypto.nix { };
 
 }
