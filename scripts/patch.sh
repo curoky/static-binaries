@@ -21,43 +21,32 @@ prefix="$1"
 
 find "$prefix" -type f -print0 | while IFS= read -r -d '' f; do
 
-  # 获取文件类型信息，减少重复调用 file 命令
   FTYPE=$(file --brief "$f")
 
-  # --- A. 路径脱敏 (针对文本文件) ---
   if echo "$FTYPE" | grep -q 'text'; then
     sed -e 's|#\!\s*/nix/store/[a-z0-9\._-]*/bin/|#\! /usr/bin/env |g' \
       -e 's|/nix/store/[a-z0-9\._-]*/bin/||g' -i "$f"
     sed -E 's|/nix/store/[a-z0-9]{32}-[^[:space:]:/()<>]*||g' -i "$f"
 
-  # --- B. 符号剥离 (针对 ELF 二进制) ---
   elif echo "$FTYPE" | grep -q 'ELF'; then
     strip --strip-unneeded "$f" || true
     nuke-refs "$f"
   fi
 
-  # --- C. 还原包裹文件 (Unwrap) ---
-  # 放在这里处理是因为它们也是 type f
   if [[ $(basename "$f") == .*-wrapped ]]; then
     dir=$(dirname "$f")
     new_name=$(basename "$f" | sed -e 's/-wrapped//g' -e 's/^.//')
     mv "$f" "$dir/$new_name"
   fi
 
-  # --- D. 特定后缀清理 ---
   if [[ $f == *.a ]] || [[ $f == *.pyc ]]; then
     rm -f "$f"
   fi
 done
 
-# 3. 目录与链接清理 (这些操作涉及目录结构或特殊类型，单独处理)
-echo "Cleaning up directories and links..."
-
-# 批量删除不需要的目录
 # find "$prefix" -type d \( -name "man" -o -name "fish" -o -name "bash-completion" -o -name "nix-support" \) -exec rm -rf {} +
 rm -rf $prefix/nix-support
 
-# 处理链接：删除无效链接及指向外部的链接
 find "$prefix" -type l -print0 | while IFS= read -r -d '' link; do
   target=$(readlink -f "$link")
   if [[ ! -e $link ]] || [[ $target != "$prefix"* ]]; then

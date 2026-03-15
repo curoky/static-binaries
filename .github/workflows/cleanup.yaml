@@ -1,0 +1,33 @@
+name: Cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/cleanup.yaml'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  ghcr-cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          dry-run: false
+          delete-untagged: true
+          packages: static-binaries-v3
+
+  # cache-cleanup:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     actions: write
+  #   steps:
+  #     - name: Delete all caches
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         gh cache delete --all -R ${{ github.repository }}

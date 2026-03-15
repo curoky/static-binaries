@@ -84,7 +84,7 @@ function download_pkg_from_ghcr(){
     "https://ghcr.io/v2/curoky/static-binaries-v${version}/blobs/$DIGEST"
   rm -rf $store_path
   mkdir -p $store_path
-  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=2
+  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=2 # --delay-directory-restore
 }
 
 function download_link_pkg() {
@@ -135,10 +135,10 @@ arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
 
 if [[ $arch == "darwin-arm64" ]]; then
   if [[ ! -d /tmp/sbt/getopt ]]; then
-    download_pkg_from_ghcr getopt $arch /tmp/sbt/getopt
+    download_pkg_from_ghcr getopt $arch /tmp/sbt/getopt 3
   fi
   if [[ ! -d /tmp/sbt/coreutils ]]; then
-    download_pkg_from_ghcr coreutils $arch /tmp/sbt/coreutils
+    download_pkg_from_ghcr coreutils $arch /tmp/sbt/coreutils 3
   fi
   export PATH=/tmp/sbt/getopt/bin:/tmp/sbt/coreutils/bin:$PATH
   echo "use getopt: $(which getopt)"

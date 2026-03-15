@@ -71,6 +71,7 @@ jobs:
           nix-store -qR $(readlink -f ./result)
           nix-store -qR $(readlink -f ./result) | cachix push curoky-static-binaries-v2
           rsync -av --copy-unsafe-links ./result/ ./clang-tools-${{ matrix.version }}/
+          find ./${{ matrix.name }} -type d -exec chmod +w {} +
           tar -czvf ./clang-tools-${{ matrix.version }}.linux-x86_64.tar.gz ./clang-tools-${{ matrix.version }}
         if: ${{ env.skip_steps != 'true' }}
 
