@@ -82,6 +82,6 @@ jobs:
         if: ${{ env.skip_steps != 'true' }}
 
       - run: >
-          oras push ghcr.io/curoky/static-binaries-v2:clang-tools-${{ matrix.version }}-linux-x86_64
+          oras push ghcr.io/curoky/static-binaries-v3:clang-tools-${{ matrix.version }}-linux-x86_64
           ./clang-tools-${{ matrix.version }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
         if: ${{ env.skip_steps != 'true' }}
