@@ -27,13 +27,25 @@
   # s6-overlay
   s6 = { };
   s6-rc = { };
-  s6-linux-init = { };
-  s6-linux-utils = { };
-  s6-portable-utils = { };
-  s6-networking = { };
-  s6-dns = { };
+  s6-linux-init = {
+    output = "bin";
+  };
+  s6-linux-utils = {
+    output = "bin";
+  };
+  s6-portable-utils = {
+    output = "bin";
+  };
+  s6-networking = {
+    output = "bin";
+  };
+  s6-dns = {
+    output = "bin";
+  };
   skalibs = { };
-  execline = { };
+  execline = {
+    output = "bin";
+  };
 
   # go pkgs
   bazelisk = { };
