@@ -149,6 +149,7 @@ jobs:
           - name: sqlite
           - name: starship
           - name: strace
+          - name: tokei
           - name: tmux
           - name: tmux-plugins
           - name: tree

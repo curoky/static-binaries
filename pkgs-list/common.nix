@@ -121,6 +121,7 @@
   ripgrep = { };
   ruff = { };
   starship = { };
+  tokei = { };
   uv = { };
   yazi-unwrapped = {
     alias = "yazi";
