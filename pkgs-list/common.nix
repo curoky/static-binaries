@@ -10,7 +10,9 @@
   };
   connect = { };
   findutils = { };
-  flac = { };
+  flac = {
+    output = "bin";
+  };
   flex = { };
   gawk = { };
   getopt = { };
