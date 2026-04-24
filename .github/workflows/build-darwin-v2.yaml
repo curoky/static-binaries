@@ -173,6 +173,8 @@ jobs:
           - name: zsh
           - name: zsh-plugins
           - name: zstd
+          # - name: crun
+          # - name: runc
 
           # - name: s6
           # - name: s6-rc

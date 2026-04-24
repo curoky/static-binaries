@@ -64,6 +64,7 @@
   oras = { };
   scc = { };
   shfmt = { };
+  runc = { };
 
   # llvm pkgs
   lld_18 = { };
