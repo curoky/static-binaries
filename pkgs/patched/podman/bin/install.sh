@@ -23,12 +23,12 @@ mkdir -p /opt/podmanx/
 cp -rf --remove-destination $abspath/../* /opt/podmanx/
 
 mkdir -p /etc/systemd/system/
-cp -rf --remove-destination ../conf/podmand.service /etc/systemd/system/podmand.service
+cp -rf --remove-destination ../conf/podmanxd.service /etc/systemd/system/podmanxd.service
 
 systemctl daemon-reload
-systemctl enable podmand.service
-systemctl start podmand.service
-systemctl status podmand.service
+systemctl enable podmanxd.service
+systemctl start podmanxd.service
+systemctl status podmanxd.service
 chmod +777 /tmp/podmanx.sock
 
 # wget https://github.com/curoky/devspace/releases/download/v1.0/podman.tar

@@ -42,8 +42,8 @@
   podman,
 }:
 let
-  podmand_bin = ./podman/bin;
-  podmand_conf = ./podman/conf;
+  podman_bin = ./podman/bin;
+  podman_conf = ./podman/conf;
 in
 (podman.override {
   conmon = conmon;
@@ -92,7 +92,7 @@ in
       rm -f $out/bin/podmansh
 
       mkdir -p $out/conf
-      cp ${podmand_bin}/* $out/bin/
-      cp ${podmand_conf}/* $out/conf/
+      cp ${podman_bin}/* $out/bin/
+      cp ${podman_conf}/* $out/conf/
     ";
   })
