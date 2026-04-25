@@ -13,7 +13,7 @@ index 3bf0bc1..05496ae 100644
 -			"/sbin/crun",
 -			"/bin/crun",
 -			"/run/current-system/sw/bin/crun",
-+			"@bin_path@/bin/crun",
++			"@bin_path@/crun",
  		},
  		"crun-vm": {
 -			"/usr/bin/crun-vm",
@@ -22,7 +22,7 @@ index 3bf0bc1..05496ae 100644
 -			"/sbin/crun-vm",
 -			"/bin/crun-vm",
 -			"/run/current-system/sw/bin/crun-vm",
-+			"@bin_path@/bin/crun-vm",
++			"@bin_path@/crun-vm",
  		},
  		"crun-wasm": {
 -			"/usr/bin/crun-wasm",
@@ -32,7 +32,7 @@ index 3bf0bc1..05496ae 100644
 -			"/sbin/crun-wasm",
 -			"/bin/crun-wasm",
 -			"/run/current-system/sw/bin/crun-wasm",
-+			"@bin_path@/bin/crun-wasm",
++			"@bin_path@/crun-wasm",
  		},
  		"runc": {
 -			"/usr/bin/runc",
@@ -43,11 +43,11 @@ index 3bf0bc1..05496ae 100644
 -			"/bin/runc",
 -			"/usr/lib/cri-o-runc/sbin/runc",
 -			"/run/current-system/sw/bin/runc",
-+			"@bin_path@/bin/runc",
++			"@bin_path@/runc",
  		},
  		"runj": {
 -			"/usr/local/bin/runj",
-+			"@bin_path@/bin/runj",
++			"@bin_path@/runj",
  		},
  		"kata": {
 -			"/usr/bin/kata-runtime",
@@ -58,7 +58,7 @@ index 3bf0bc1..05496ae 100644
 -			"/bin/kata-runtime",
 -			"/usr/bin/kata-qemu",
 -			"/usr/bin/kata-fc",
-+			"@bin_path@/bin/kata-runtime",
++			"@bin_path@/kata-runtime",
  		},
  		"runsc": {
 -			"/usr/bin/runsc",
@@ -68,23 +68,23 @@ index 3bf0bc1..05496ae 100644
 -			"/bin/runsc",
 -			"/sbin/runsc",
 -			"/run/current-system/sw/bin/runsc",
-+			"@bin_path@/bin/runsc",
++			"@bin_path@/runsc",
  		},
  		"youki": {
 -			"/usr/local/bin/youki",
 -			"/usr/bin/youki",
 -			"/bin/youki",
 -			"/run/current-system/sw/bin/youki",
-+			"@bin_path@/bin/youki",
++			"@bin_path@/youki",
  		},
  		"krun": {
 -			"/usr/bin/krun",
 -			"/usr/local/bin/krun",
-+			"@bin_path@/bin/krun",
++			"@bin_path@/krun",
  		},
  		"ocijail": {
 -			"/usr/local/bin/ocijail",
-+			"@bin_path@/bin/ocijail",
++			"@bin_path@/ocijail",
  		},
  	}
  	c.OCIRuntimesFlags = map[string][]string{}
@@ -103,7 +103,7 @@ index 3bf0bc1..05496ae 100644
 -		"/usr/local/bin/conmon",
 -		"/usr/local/sbin/conmon",
 -		"/run/current-system/sw/bin/conmon",
-+		"@bin_path@/bin/conmon",
++		"@bin_path@/conmon",
  	})
  	c.ConmonRsPath.Set([]string{
 -		"/usr/libexec/podman/conmonrs",
@@ -114,7 +114,7 @@ index 3bf0bc1..05496ae 100644
 -		"/usr/local/bin/conmonrs",
 -		"/usr/local/sbin/conmonrs",
 -		"/run/current-system/sw/bin/conmonrs",
-+		"@bin_path@/bin/conmonrs",
++		"@bin_path@/conmonrs",
  	})
  	c.PullPolicy = DefaultPullPolicy
  	c.RuntimeSupportsJSON.Set([]string{

@@ -48,6 +48,9 @@
 }).overrideAttrs
   (oldAttrs: rec {
     propagatedBuildInputs = [ ];
+    env = (oldAttrs.env or { }) // {
+      HELPER_BINARIES_DIR = "/opt/podman/libexec/podman";
+    };
     buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
       btrfs-progs
       gpgme
@@ -60,7 +63,7 @@
 
     patches = [
       (replaceVars ./podman/hardcode-paths.patch {
-        bin_path = "/opt/mypodman/libexec/podman";
+        bin_path = "/opt/podman/libexec/podman";
       })
 
       # we intentionally don't build and install the helper so we shouldn't display messages to users about it
@@ -72,5 +75,4 @@
     postInstall = "
       cp -Lf --remove-destination ${oldAttrs.passthru.helpersBin}/bin/* ${oldAttrs.env.HELPER_BINARIES_DIR}
     ";
-
   })
