@@ -59,19 +59,19 @@ function download_pkg_from_ghcr(){
 
   local store_path=$3
   local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
-  
+
   local version=$4
 
   echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
-  
+
   # $(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
 
   mkdir -p $cache_path
   rm -rf $cache_path/$name.tar.gz
 
-  TOKEN_JSON=$(curl --retry 5 --retry-delay 2 --retry-all-errors -sSL "https://ghcr.io/token?scope=repository:curoky/static-binaries-v${version}:pull")
+  TOKEN_JSON=$(curl --retry 5 --retry-delay 2 -sSL "https://ghcr.io/token?scope=repository:curoky/static-binaries-v${version}:pull")
   TOKEN=$(echo $TOKEN_JSON | sed 's/.*"token":"\([^"]*\)".*/\1/')
-  MANIFEST=$(curl --retry 5 --retry-delay 2 --retry-all-errors -sSL -H "Authorization: Bearer $TOKEN" \
+  MANIFEST=$(curl --retry 5 --retry-delay 2 -sSL -H "Authorization: Bearer $TOKEN" \
       -H "Accept: application/vnd.oci.image.manifest.v1+json" \
       "https://ghcr.io/v2/curoky/static-binaries-v${version}/manifests/${name}-${arch}")
   DIGEST=$(echo $MANIFEST | sed 's/.*"digest":"\([^"]*\)".*/\1/')
@@ -79,7 +79,7 @@ function download_pkg_from_ghcr(){
     echo "Error: $name: Failed to parse digest from manifest."
     exit 1
   fi
-  curl --retry 5 --retry-delay 2 --retry-all-errors -sSL -H "Authorization: Bearer $TOKEN" \
+  curl --retry 5 --retry-delay 2 -sSL -H "Authorization: Bearer $TOKEN" \
     -o "$cache_path/${name}.tar.gz" \
     "https://ghcr.io/v2/curoky/static-binaries-v${version}/blobs/$DIGEST"
   rm -rf $store_path
