@@ -135,6 +135,8 @@
             };
             nsight-systems = defaultPkgsStatic.callPackage ./pkgs/nsight-systems.nix { };
             cmake = defaultPkgsStatic.callPackage ./pkgs/patched/cmake.nix { };
+            cmake_3_27_9 = defaultPkgsStatic.callPackage ./pkgs/patched/cmake_3_27_9.nix { };
+            cmake_4_1_2 = defaultPkgsStatic.callPackage ./pkgs/patched/cmake_4_1_2.nix { };
             git = defaultPkgsStatic.callPackage ./pkgs/patched/git.nix { };
             zellij = defaultPkgsStatic.callPackage ./pkgs/patched/zellij.nix { };
 

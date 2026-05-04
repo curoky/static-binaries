@@ -46,6 +46,8 @@ jobs:
           - name: cacert
           - name: cloc
           - name: cmake
+          - name: cmake_3_27_9
+          - name: cmake_4_1_2
           - name: connect
           - name: coreutils
           - name: croc
