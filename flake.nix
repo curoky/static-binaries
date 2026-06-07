@@ -5,6 +5,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
     nixpkgs-staging.url = "github:NixOS/nixpkgs/staging";
+    nixpkgs-2605.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-2511.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-2505.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-2411.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -39,6 +40,7 @@
 
           envs = {
             "unstable" = mkEnv inputs.nixpkgs-unstable;
+            "26.05" = mkEnv inputs.nixpkgs-2605;
             "25.11" = mkEnv inputs.nixpkgs-2511;
             "25.05" = mkEnv inputs.nixpkgs-2505;
             "24.11" = mkEnv inputs.nixpkgs-2411;
@@ -47,6 +49,8 @@
 
           defaultPkgs = envs.unstable.pkgs;
           defaultPkgsStatic = envs.unstable.pkgsStatic;
+          Pkgs2605 = envs."26.05".pkgs;
+          Pkgs2605Static = envs."26.05".pkgsStatic;
           Pkgs2511 = envs."25.11".pkgs;
           Pkgs2511Static = envs."25.11".pkgsStatic;
           Pkgs2505 = envs."25.05".pkgs;
@@ -169,7 +173,7 @@
             wget = defaultPkgsStatic.callPackage ./pkgs/wrapped/wget.nix { };
             cloc = defaultPkgsStatic.callPackage ./pkgs/wrapped/cloc.nix { };
             parallel = defaultPkgsStatic.callPackage ./pkgs/wrapped/parallel.nix { };
-            miniserve = Pkgs2511Static.callPackage ./pkgs/wrapped/miniserve.nix { };
+            miniserve = defaultPkgsStatic.callPackage ./pkgs/wrapped/miniserve.nix { };
           };
 
           go_without_cgo = {
