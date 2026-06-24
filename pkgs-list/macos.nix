@@ -11,6 +11,6 @@
     version = "25.11";
   };
   uv = {
-    version = "26.05";
+    version = "25.11";
   };
 }
