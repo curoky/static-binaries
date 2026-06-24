@@ -40,11 +40,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          # All package names exposed by the flake, excluding the "all" aggregate.
-          mapfile -t all_pkgs < <(
-            nix eval --accept-flake-config --json .#packages.x86_64-linux --apply builtins.attrNames \
-              | nix run nixpkgs#jq -- -r '.[] | select(. != "all")'
-          )
+          # Resolve every package's output path in a single evaluation, producing
+          # TSV lines "<name>\t<outPath>" (excluding the "all" aggregate). Doing
+          # this in one `nix eval` avoids one process per package and sidesteps
+          # attribute-path escaping issues for names containing dots.
+          nix eval --accept-flake-config --raw .#packages.x86_64-linux --apply '
+            pkgs: builtins.concatStringsSep "\n" (
+              builtins.filter (s: s != "") (builtins.attrValues (builtins.mapAttrs
+                (name: drv:
+                  if name == "all" then "" else "${name}\t${drv.outPath}")
+                pkgs))
+            )
+          ' > pkgs.tsv
 
           # Decide which packages to consider.
           # - workflow_dispatch with a specific name  -> only that package
@@ -56,38 +63,41 @@ jobs:
           elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             if [ "$INPUT_NAME" = "*" ] || [ -z "$INPUT_NAME" ]; then
               force_all=true
-            else
-              all_pkgs=("$INPUT_NAME")
+            elif [ -n "$INPUT_NAME" ]; then
+              # Keep only the requested package.
+              grep -P "^${INPUT_NAME}\t" pkgs.tsv > pkgs.tsv.tmp && mv pkgs.tsv.tmp pkgs.tsv
             fi
           fi
 
-          selected=()
-          for name in "${all_pkgs[@]}"; do
-            if [ "$force_all" = true ]; then
-              selected+=("$name")
-              continue
-            fi
-
-            # Resolve the output path without building, then ask the binary cache
-            # whether it already has it. A cache miss (path-info fails) means the
-            # package must be rebuilt.
-            out_path=$(nix eval --accept-flake-config --raw ".#packages.x86_64-linux.${name}.outPath")
-            if nix path-info --accept-flake-config --store "$CACHIX_STORE" "$out_path" >/dev/null 2>&1; then
-              echo "cache hit : $name"
-            else
-              echo "need build: $name"
-              selected+=("$name")
-            fi
-          done
+          if [ "$force_all" = true ]; then
+            cut -f1 pkgs.tsv > selected.txt
+          else
+            # Query the binary cache in parallel; a cache miss means the package
+            # must be rebuilt. Print the name only for misses.
+            check() {
+              local name="${1%%$'\t'*}"
+              local out_path="${1#*$'\t'}"
+              if nix path-info --accept-flake-config --store "$CACHIX_STORE" "$out_path" >/dev/null 2>&1; then
+                echo "cache hit : $name" >&2
+              else
+                echo "need build: $name" >&2
+                echo "$name"
+              fi
+            }
+            export -f check
+            export CACHIX_STORE
+            xargs -P 16 -d '\n' -I {} bash -c 'check "$@"' _ {} < pkgs.tsv > selected.txt
+          fi
 
           # Build a matrix JSON: {"include":[{"name":"foo"},...]}
-          matrix=$(printf '%s\n' "${selected[@]:-}" \
-            | nix run nixpkgs#jq -- -R -s -c \
-                'split("\n") | map(select(length > 0)) | {include: map({name: .})}')
+          matrix=$(nix run nixpkgs#jq -- -R -s -c \
+            'split("\n") | map(select(length > 0)) | {include: map({name: .})}' < selected.txt)
+          count=$(grep -c . selected.txt || true)
 
-          echo "count=${#selected[@]}" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
-          echo "selected packages (${#selected[@]}): ${selected[*]:-<none>}"
+          echo "selected packages ($count):"
+          cat selected.txt
 
   build:
     needs: discover
