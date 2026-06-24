@@ -100,6 +100,24 @@ Design intent: keep runtime payloads small and reduce implicit dependence on the
 
 The CI model is “build each tool independently and publish an artifact per tool”.
 
+### Build selection (Linux)
+
+The Linux workflow uses a two-stage model to avoid spinning up one runner per
+package on every change:
+
+1. A `discover` job enumerates all package names dynamically via
+   `nix eval .#packages.x86_64-linux --apply builtins.attrNames` (excluding the
+   `all` aggregate). It then, for each package, resolves its `outPath` and queries
+   the Cachix binary cache with `nix path-info --store <cachix>`. Packages whose
+   output is missing from the cache are collected into a GitHub Actions matrix
+   (`{"include":[{"name":...}]}`) emitted as a job output.
+2. The `build` job consumes that matrix via `fromJSON` and only runs for the
+   selected packages. When nothing needs building, the matrix is empty and the
+   `build` job is skipped entirely (`if: needs.discover.outputs.count != '0'`).
+
+`workflow_dispatch` with a specific `name` builds only that package; with `*`
+(or empty) it forces all packages. `schedule` always forces all packages.
+
 ### Artifacts
 
 In both Linux and Darwin workflows:

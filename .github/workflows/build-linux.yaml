@@ -1,10 +1,6 @@
 name: build linux
 
 on:
-  # push:
-  #   branches:
-  #     - master
-  #     - dev
   push:
     paths:
       - '.github/workflows/build-linux.yaml'
@@ -15,232 +11,122 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'package name'
+        description: 'package name (use "*" to force build all)'
         default: ''
         required: false
         type: string
   schedule:
     - cron: '0 0 * * 0'
 
+env:
+  CACHIX_NAME: curoky-static-binaries-v2
+  CACHIX_STORE: https://curoky-static-binaries-v2.cachix.org
+
 jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      count: ${{ steps.set.outputs.count }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: DeterminateSystems/nix-installer-action@main
+
+      - id: set
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_NAME: ${{ inputs.name }}
+        run: |
+          set -euo pipefail
+
+          # All package names exposed by the flake, excluding the "all" aggregate.
+          mapfile -t all_pkgs < <(
+            nix eval --json .#packages.x86_64-linux --apply builtins.attrNames \
+              | nix run nixpkgs#jq -- -r '.[] | select(. != "all")'
+          )
+
+          # Decide which packages to consider.
+          # - workflow_dispatch with a specific name  -> only that package
+          # - workflow_dispatch with "*", or schedule  -> force build all
+          # - push                                     -> only packages missing from the binary cache
+          force_all=false
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            force_all=true
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ "$INPUT_NAME" = "*" ] || [ -z "$INPUT_NAME" ]; then
+              force_all=true
+            else
+              all_pkgs=("$INPUT_NAME")
+            fi
+          fi
+
+          selected=()
+          for name in "${all_pkgs[@]}"; do
+            if [ "$force_all" = true ]; then
+              selected+=("$name")
+              continue
+            fi
+
+            # Resolve the output path without building, then ask the binary cache
+            # whether it already has it. A cache miss (path-info fails) means the
+            # package must be rebuilt.
+            out_path=$(nix eval --raw ".#packages.x86_64-linux.${name}.outPath")
+            if nix path-info --store "$CACHIX_STORE" "$out_path" >/dev/null 2>&1; then
+              echo "cache hit : $name"
+            else
+              echo "need build: $name"
+              selected+=("$name")
+            fi
+          done
+
+          # Build a matrix JSON: {"include":[{"name":"foo"},...]}
+          matrix=$(printf '%s\n' "${selected[@]:-}" \
+            | nix run nixpkgs#jq -- -R -s -c \
+                'split("\n") | map(select(length > 0)) | {include: map({name: .})}')
+
+          echo "count=${#selected[@]}" >> "$GITHUB_OUTPUT"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "selected packages (${#selected[@]}): ${selected[*]:-<none>}"
+
   build:
+    needs: discover
+    if: ${{ needs.discover.outputs.count != '0' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
     strategy:
-      matrix:
-        include:
-          - name: aria2
-          - name: atuin
-          - name: autoconf
-          - name: automake
-          - name: bash
-          - name: bat
-          - name: bazelisk
-          - name: binutils
-          # - name: biome
-          - name: bison
-          - name: buildifier
-          - name: bzip2
-          - name: cacert
-          - name: cloc
-          - name: cmake
-          - name: cmake_3_27_9
-          - name: cmake_4_1_2
-          - name: connect
-          - name: coreutils
-          - name: croc
-          - name: cronie
-          - name: curl
-          - name: diffutils
-          - name: dive
-          - name: dool
-          - name: dprint
-          - name: ethtool
-          - name: exiftool
-          - name: eza
-          - name: fd
-          - name: file
-          - name: findutils
-          - name: flac
-          - name: flex
-          - name: fzf
-          - name: gawk
-          - name: gdb
-          - name: gdu
-          - name: getopt
-          - name: gettext
-          - name: gh
-          - name: git
-          - name: git-absorb
-          - name: git-extras
-          - name: git-filter-repo
-          - name: git-lfs
-          - name: glibcLocales
-          - name: gnugrep
-          - name: gnumake
-          - name: gnupatch
-          - name: gnupg
-          - name: gnused
-          - name: gnutar
-          - name: go-task
-          - name: gost
-          - name: gzip
-          - name: indent
-          - name: inetutils
-          - name: iproute2
-          - name: iptables
-          - name: iputils
-          - name: jq
-          - name: krb5
-          - name: lefthook
-          - name: less
-          - name: libcap
-          - name: libtool
-          - name: lsb-release
-          - name: lsof
-          - name: lua
-          - name: m4
-          - name: makeself
-          - name: man
-          - name: mcfly
-          - name: miniserve
-          - name: music-decrypto
-          - name: ncdu_1
-          - name: netcat
-          - name: netron
-          - name: nettools
-          - name: ninja
-          - name: nixfmt
-          # - name: nsight-systems
-          - name: numactl
-          - name: openssh_gssapi
-          - name: openssl
-          - name: oras
-          - name: p7zip
-          - name: parallel
-          - name: patchelf
-          - name: perl
-          - name: pkg-config
-          - name: procps
-          - name: procs
-          - name: protobuf_23
-          - name: protobuf_24
-          - name: protobuf_25
-          - name: protobuf_26
-          - name: protobuf_27
-          - name: protobuf_28
-          - name: protobuf_29
-          - name: protobuf_3_8_0
-          - name: protobuf_3_9_2
-          - name: protobuf3_20
-          - name: protobuf3_21
-          - name: python311
-          - name: python312
-          - name: python313
-          - name: rime-plugins
-          - name: ripgrep
-          - name: rsync
-          - name: ruff
-          - name: scc
-          - name: shellcheck
-          - name: shfmt
-          # - name: silver-searcher
-          - name: snappy
-          - name: sqlite
-          - name: starship
-          - name: strace
-          - name: tokei
-          - name: tmux
-          - name: tmux-plugins
-          - name: tree
-          - name: tzdata
-          - name: unzip
-          - name: util-linux
-          - name: uv
-          - name: vim
-          - name: vim-plugins
-          - name: wget
-          - name: xxd
-          - name: xz
-          - name: yazi
-          - name: zellij
-          - name: zip
-          - name: zlib
-          - name: zlib-ng
-          - name: zsh
-          - name: zsh-plugins
-          - name: zstd
-          - name: crun
-          - name: runc
-          - name: podman
-          - name: conmon
-
-          - name: s6
-          - name: s6-rc
-          - name: s6-linux-init
-          - name: s6-linux-utils
-          - name: s6-portable-utils
-          - name: s6-networking
-          - name: s6-dns
-          - name: skalibs
-          - name: execline
-
-          - name: lxgw-wenkai
-          - name: fira-code
-          # - name: nerd-fonts.fira-code
-          # - name: nerd-fonts.ubuntu-mono
-
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
     steps:
-      - run: echo "skip_steps=true" >> $GITHUB_ENV
-      - run: echo "skip_steps=false" >> $GITHUB_ENV
-        if: ${{ (github.event_name == 'workflow_dispatch' && (inputs.name == matrix.name || inputs.name == '*')) || (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'schedule' }}
-
       - uses: actions/checkout@v5
-        if: ${{ env.skip_steps != 'true' }}
 
       - run: |
           sudo apt-get update -y
           sudo apt-get install -y rsync
-        if: ${{ env.skip_steps != 'true' }}
 
       - uses: DeterminateSystems/nix-installer-action@main
-        if: ${{ env.skip_steps != 'true' }}
 
-      # - run: nix flake update
-      #   if: ${{ env.skip_steps != 'true' }}
-
-      # - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix config show substituters
-        if: ${{ env.skip_steps != 'true' }}
 
       - uses: cachix/cachix-action@v15
         with:
-          name: curoky-static-binaries-v2
+          name: ${{ env.CACHIX_NAME }}
           authToken: ${{ secrets.CACHIX_TOKEN }}
-        if: ${{ env.skip_steps != 'true' }}
+
       - run: |
           nix build .#${{ matrix.name }}
           nix-store -qR $(readlink -f ./result)
-          nix-store -qR $(readlink -f ./result) | cachix push curoky-static-binaries-v2
+          nix-store -qR $(readlink -f ./result) | cachix push ${{ env.CACHIX_NAME }}
           rsync -av --copy-unsafe-links ./result/ ./${{ matrix.name }}/
           find ./${{ matrix.name }} -type d -exec chmod +w {} +
           tar -czvf ./${{ matrix.name }}.linux-x86_64.tar.gz ./${{ matrix.name }}
-        if: ${{ env.skip_steps != 'true' }}
 
       - uses: oras-project/setup-oras@v1
-        if: ${{ env.skip_steps != 'true' }}
 
-      # - uses: docker/login-action@v3
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u ${{ github.actor }} --password-stdin
-        if: ${{ env.skip_steps != 'true' }}
 
       - run: >
           oras push ghcr.io/curoky/static-binaries-v3:${{ matrix.name }}-linux-x86_64
           ./${{ matrix.name }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
-        if: ${{ env.skip_steps != 'true' }}
