@@ -23,6 +23,7 @@
   tmux = { };
   nixfmt = { };
   shellcheck = { };
+  nil = { };
 
   # s6 = { };
   # s6-rc = { };

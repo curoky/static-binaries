@@ -123,7 +123,7 @@
             curl = defaultPkgsStatic.callPackage ./pkgs/wrapped/curl.nix { };
             file = defaultPkgsStatic.callPackage ./pkgs/wrapped/file.nix { };
             makeself = defaultPkgsStatic.callPackage ./pkgs/wrapped/makeself.nix { };
-            zsh = Pkgs2511Static.callPackage ./pkgs/wrapped/zsh.nix { };
+            zsh = defaultPkgsStatic.callPackage ./pkgs/wrapped/zsh.nix { };
             autoconf = defaultPkgsStatic.callPackage ./pkgs/wrapped/autoconf.nix { };
             automake = defaultPkgsStatic.callPackage ./pkgs/wrapped/automake.nix { };
             libtool = defaultPkgsStatic.callPackage ./pkgs/wrapped/libtool.nix { };

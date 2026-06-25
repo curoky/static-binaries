@@ -6,7 +6,6 @@
   silver-searcher = {
     version = "26.05";
   };
-  biome = { };
   shellcheck = {
     version = "25.11";
   };
