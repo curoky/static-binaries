@@ -45,9 +45,11 @@ jobs:
     steps:
       - uses: Homebrew/actions/setup-homebrew@main
 
-      # GNU grep provides `grep -P` (PCRE), which BSD grep on macOS lacks.
+      # GNU grep provides `grep -P` (PCRE) and GNU findutils provides
+      # `xargs -d`; BSD versions on macOS lack these.
       - run: echo "/opt/homebrew/opt/grep/libexec/gnubin" >> $GITHUB_PATH
-      - run: brew install grep
+      - run: echo "/opt/homebrew/opt/findutils/libexec/gnubin" >> $GITHUB_PATH
+      - run: brew install grep findutils
 
       - uses: actions/checkout@v5
 
