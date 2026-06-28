@@ -17,7 +17,7 @@ The primary goals are:
 
 1. **Static compilation** where it works (`pkgsStatic`). This remains the default for most packages.
 2. **Manual patch + bundle** when full static linking isn't practical: rewrite hard-coded paths, vendor configuration, and bundle required resources (see `packages/`).
-3. **`nix bundle`** only as a last resort, for tools that genuinely cannot be statically compiled (e.g. Node.js-based tools). Implemented via `lib/make-bundle.nix` (matthewbauer/nix-bundle); produces a single self-extracting executable and is **Linux only** (relies on user namespaces).
+3. **`nix bundle`** only as a last resort, for tools that genuinely cannot be statically compiled (e.g. Node.js-based tools, or JVM tools that need a JDK/JRE at runtime such as `maven`/`lemminx`). Implemented via `lib/make-bundle.nix` (matthewbauer/nix-bundle); produces a single self-extracting executable and is **Linux only** (relies on user namespaces).
 
 Non-goals:
 - Guarantee that every tool is a fully static single binary on every platform. Some packages are intentionally non-static (e.g. fonts), and "static" is best-effort depending on upstream.

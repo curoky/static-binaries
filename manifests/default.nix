@@ -349,6 +349,18 @@
     isStatic = false;
     bundle = true;
   };
+  # JVM based tools (need a JDK/JRE at runtime); bundled together with their
+  # closure into a single self-extracting executable via nix bundle.
+  maven = {
+    platforms = [ "x86_64-linux" ];
+    isStatic = false;
+    bundle = true;
+  };
+  lemminx = {
+    platforms = [ "x86_64-linux" ];
+    isStatic = false;
+    bundle = true;
+  };
 
   ## ---- cross-platform with per-platform overrides -----------------------
   # linux uses default version; darwin pins a specific version.
