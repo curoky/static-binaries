@@ -48,14 +48,15 @@ jobs:
           set -euo pipefail
 
           # Resolve every package's output path in a single evaluation, producing
-          # TSV lines "<name>\t<outPath>" (excluding the "all" aggregate). Doing
-          # this in one `nix eval` avoids one process per package and sidesteps
-          # attribute-path escaping issues for names containing dots.
+          # TSV lines "<name>\t<outPath>" (excluding the "all" / "all-fast"
+          # aggregates). Doing this in one `nix eval` avoids one process per
+          # package and sidesteps attribute-path escaping issues for names
+          # containing dots.
           nix eval --accept-flake-config --raw .#packages.x86_64-linux --apply '
             pkgs: builtins.concatStringsSep "\n" (
               builtins.filter (s: s != "") (builtins.attrValues (builtins.mapAttrs
                 (name: drv:
-                  if name == "all" then "" else "${name}\t${drv.outPath}")
+                  if name == "all" || name == "all-fast" then "" else "${name}\t${drv.outPath}")
                 pkgs))
             )
           ' > pkgs.tsv
