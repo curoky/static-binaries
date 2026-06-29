@@ -246,6 +246,9 @@
   croc = {
     platforms = [ "x86_64-linux" ];
   };
+  delve = {
+    platforms = [ "x86_64-linux" ];
+  };
   dive = {
     platforms = [ "x86_64-linux" ];
     "x86_64-linux" = {
@@ -270,7 +273,31 @@
   go-task = {
     platforms = [ "x86_64-linux" ];
   };
+  go-tools = {
+    platforms = [ "x86_64-linux" ];
+  };
+  gofumpt = {
+    platforms = [ "x86_64-linux" ];
+  };
+  golangci-lint = {
+    platforms = [ "x86_64-linux" ];
+  };
+  gomodifytags = {
+    platforms = [ "x86_64-linux" ];
+  };
+  gopls = {
+    platforms = [ "x86_64-linux" ];
+  };
+  gotests = {
+    platforms = [ "x86_64-linux" ];
+  };
+  gotools = {
+    platforms = [ "x86_64-linux" ];
+  };
   gost = {
+    platforms = [ "x86_64-linux" ];
+  };
+  impl = {
     platforms = [ "x86_64-linux" ];
   };
   lefthook = {
