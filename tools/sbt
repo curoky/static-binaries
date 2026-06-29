@@ -1,213 +1,446 @@
 #!/usr/bin/env bash
+#
+# sbt v2 - a tiny, dependency-light package manager for the prebuilt
+# static-binaries published at ghcr.io/curoky/static-binaries-v4.
+#
+# Design goals (see DESIGN.md "Client Install / Upgrade Model"):
+#   * Minimal host dependencies: only `bash`, `curl` and `tar` are required.
+#     Argument parsing is hand-rolled (no GNU getopt) and no coreutils / getopt
+#     bootstrap is downloaded, so the same script runs unchanged on Linux and
+#     macOS (including the stock bash 3.2 shipped with macOS).
+#   * Relocatable installs: packages live under `<prefix>/store/<name>` and are
+#     exposed through *relative* symlinks in `<prefix>/{bin,lib,share,...}`.
+#     Because every link is relative, the whole prefix can be moved anywhere and
+#     the links keep working with zero repair.
+#   * Independent packages: every package is treated as fully self-contained.
+#     sbt performs no dependency resolution; each package is installed, removed
+#     and (for packages that carry their own relative-path wrappers) relocated
+#     on its own.
+#
+# Commands: install | remove | upgrade | list | outdated | info
+#
+# Examples:
+#   sbt install --prefix=/usr/local ripgrep
+#   sbt install --nolink --arch linux-x86_64 fd
+#   sbt info ripgrep
+#   sbt outdated
+#   sbt upgrade            # upgrade everything
+#   sbt upgrade ripgrep    # upgrade one package
+#   sbt remove ripgrep
+#
 set -euo pipefail
 
-# Write a Bash script named `sbt` that implements command-line argument parsing with two subcommands:
+REGISTRY="ghcr.io/curoky/static-binaries-v4"
+META_FILE=".sbt-meta"
+DEFAULT_PREFIX="/opt/sbt"
 
-# 1. `sbt install {package}`
-# 2. `sbt download {package}`
+# --- low-level helpers -------------------------------------------------------
 
-# Requirements:
-# - The `install` command accepts:
-#   - `--link` or `--nolink` (mutually exclusive switches)
-#   - `--prefix={path}` or `--prefix {path}` (both formats supported)
-#   - `--arch={osname_arch}` or `--arch {osname_arch}` (both formats supported)
-# - The `download` command accepts.
-#   - `--arch={osname_arch}` or `--arch {osname_arch}` (both formats supported)
-# - Use **GNU getopt** for robust parsing.
-# - Show helpful usage output when arguments are missing or invalid.
-# - The script should be written **entirely in English**, cleanly formatted, with clear comments and example usage.
-# - Include sample output and a short description of script features at the end.
-# - Keep the code as concise as possible, with as few lines of code as possible.
-
-function link() {
-  local src_dir=$1
-  local dst_dir=$2
-  find "$src_dir" \( -type f -o -type l \) | while read -r file; do
-    rel_path="${file#$src_dir/}"
-    dest_file="$dst_dir/$rel_path"
-    mkdir -p "$(dirname "$dest_file")"
-    if [[ -L $dest_file ]] || [[ -f $dest_file ]]; then
-      rm "$dest_file"
-    fi
-    ln -s -r "$file" "$dest_file"
-  done
+die() {
+  echo "Error: $*" >&2
+  exit 1
 }
 
-function download_pkg_from_release() {
-  local name=$1
-  local arch=$2
-
-  local store_path=$3
-  local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
-
-  echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
-
-  # $(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
-
-  mkdir -p $cache_path
-  rm -rf $cache_path/$name.tar.gz
-  curl -sSL https://github.com/curoky/static-binaries/releases/download/v1.0/${name}.${arch}.tar.gz \
-    -o $cache_path/${name}.tar.gz
-  rm -rf $store_path
-  mkdir -p $store_path
-  tar -xzf $cache_path/${name}.tar.gz -C $store_path --strip-components=1
+# Detect the publish arch tag from uname. Only linux-x86_64 / darwin-arm64 are
+# published; anything else must be passed explicitly via --arch.
+detect_arch() {
+  local os machine
+  os=$(uname -s)
+  machine=$(uname -m)
+  case "$os" in
+  Linux) [ "$machine" = "x86_64" ] && {
+    echo "linux-x86_64"
+    return
+  } ;;
+  Darwin) [ "$machine" = "arm64" ] && {
+    echo "darwin-arm64"
+    return
+  } ;;
+  esac
+  die "unsupported platform '$os-$machine'; pass --arch linux-x86_64 or darwin-arm64."
 }
 
-function download_pkg_from_ghcr(){
-  local name=$1
-  local arch=$2
-
-  local store_path=$3
-  local cache_path=${XDG_CACHE_HOME:-${HOME}/.cache}/sbt/download/$arch
-
-  local version=$4
-
-  echo "> Downloading $name($arch) to $store_path, and cache_path=$cache_path"
-
-  # $(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]') # linux_amd64/darwin_arm64
-
-  mkdir -p $cache_path
-  rm -rf $cache_path/$name.tar.gz
-
-  TOKEN_JSON=$(curl --retry 5 --retry-delay 2 -sSL "https://ghcr.io/token?scope=repository:curoky/static-binaries-v${version}:pull")
-  TOKEN=$(echo $TOKEN_JSON | sed 's/.*"token":"\([^"]*\)".*/\1/')
-  MANIFEST=$(curl --retry 5 --retry-delay 2 -sSL -H "Authorization: Bearer $TOKEN" \
-      -H "Accept: application/vnd.oci.image.manifest.v1+json" \
-      "https://ghcr.io/v2/curoky/static-binaries-v${version}/manifests/${name}-${arch}")
-  DIGEST=$(echo $MANIFEST | sed 's/.*"digest":"\([^"]*\)".*/\1/')
-  if [[ ! $DIGEST == sha256:* ]]; then
-    echo "Error: $name: Failed to parse digest from manifest."
-    exit 1
-  fi
-  curl --retry 5 --retry-delay 2 -sSL -H "Authorization: Bearer $TOKEN" \
-    -o "$cache_path/${name}.tar.gz" \
-    "https://ghcr.io/v2/curoky/static-binaries-v${version}/blobs/$DIGEST"
-  rm -rf $store_path
-  mkdir -p $store_path
-  if ! tar -xzf "$cache_path/${name}.tar.gz" -C "$store_path" --strip-components=2; then
-    echo "ERROR: tar failed on $cache_path/${name}.tar.gz"
-    exit 1
-  fi
+# Read a single key=value from a package's metadata file.
+read_meta() {
+  local store_path=$1 key=$2
+  [ -f "$store_path/$META_FILE" ] || return 1
+  sed -n "s/^${key}=//p" "$store_path/$META_FILE"
 }
 
-function download_link_pkg() {
-  local name=$1
-  local arch=$2
-
-  local prefix=$3
-  local link=$4
-
-  local version=$5
-
-  local store_path=$prefix/store/$name
-
-  echo "> Installing $name($arch) to $store_path, and linked=$link_mode"
-
-  download_pkg_from_ghcr $name $arch $store_path $version
-  if [[ $link == "1" ]]; then
-    link $store_path $prefix
-  fi
-}
-
-show_usage() {
-    cat <<EOF
-Usage:
-  sbt install [OPTIONS] <package>
-  sbt download [OPTIONS] <package>
-
-Subcommands:
-  install     Install a package.
-  download    Download a package.
-
-Options for 'install':
-  --link | --nolink              Choose whether installation links or not (mutually exclusive).
-  --prefix PATH or --prefix=PATH Installation prefix path.
-  --arch ARCH or --arch=ARCH     Specify architecture (e.g. linux_x86_64).
-
-Options for 'download':
-  --arch ARCH or --arch=ARCH     Specify architecture.
-
-Examples:
-  sbt install --link --prefix=/usr/local hello
-  sbt install --nolink --arch linux_x86_64 something
-  sbt download --arch linux_arm64 toolname
+# Write the per-package metadata, kept inside the package dir so it is created
+# and removed atomically with the package itself.
+write_meta() {
+  local store_path=$1 name=$2 arch=$3 digest=$4 linked=$5
+  cat >"$store_path/$META_FILE" <<EOF
+name=$name
+arch=$arch
+digest=$digest
+linked=$linked
+installed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 }
 
-arch=$(echo $(uname -s)-$(uname -m) | tr '[:upper:]' '[:lower:]')
+# Compute the relative path from $1 (a directory) to $2 (a file), using only
+# bash so we never depend on GNU `ln -r` / `realpath --relative-to`.
+rel_path() {
+  local from=$1 to=$2 up="" common
+  from=${from%/}
+  common=$from
+  while [ "${to#$common/}" = "$to" ]; do
+    common=$(dirname "$common")
+    up="../$up"
+  done
+  echo "${up}${to#$common/}"
+}
 
-if [[ $arch == "darwin-arm64" ]]; then
-  if [[ ! -d /tmp/sbt/getopt ]]; then
-    download_pkg_from_ghcr getopt $arch /tmp/sbt/getopt 3
+# --- OCI registry access (curl + sed only) -----------------------------------
+
+oci_token() {
+  curl --retry 5 --retry-delay 2 -fsSL \
+    "https://ghcr.io/token?scope=repository:${REGISTRY#ghcr.io/}:pull" |
+    sed 's/.*"token":"\([^"]*\)".*/\1/'
+}
+
+# Resolve the layer blob digest of a package's tag without downloading it.
+remote_digest() {
+  local name=$1 arch=$2 token=$3 manifest digest
+  manifest=$(curl --retry 5 --retry-delay 2 -fsSL -H "Authorization: Bearer $token" \
+    -H "Accept: application/vnd.oci.image.manifest.v1+json" \
+    "https://${REGISTRY#ghcr.io/}/manifests/${name}-${arch}" 2>/dev/null) ||
+    die "$name: package not found for arch '$arch'."
+  digest=$(echo "$manifest" | sed 's/.*"digest":"\(sha256:[^"]*\)".*/\1/')
+  [ "${digest#sha256:}" != "$digest" ] || die "$name: failed to parse digest."
+  echo "$digest"
+}
+
+# --- install / link ----------------------------------------------------------
+
+# Create relative symlinks from store/<name>/* into the prefix root.
+# Skips the metadata file so it is never exposed.
+link_pkg() {
+  local store_path=$1 prefix=$2 file rel dest
+  while IFS= read -r file; do
+    rel=${file#$store_path/}
+    [ "$rel" = "$META_FILE" ] && continue
+    dest="$prefix/$rel"
+    mkdir -p "$(dirname "$dest")"
+    rm -f "$dest"
+    ln -s "$(rel_path "$(dirname "$dest")" "$file")" "$dest"
+  done < <(find "$store_path" \( -type f -o -type l \))
+}
+
+# Remove the relative symlinks a package created under the prefix.
+unlink_pkg() {
+  local store_path=$1 prefix=$2 file rel dest
+  while IFS= read -r file; do
+    rel=${file#$store_path/}
+    [ "$rel" = "$META_FILE" ] && continue
+    dest="$prefix/$rel"
+    [ -L "$dest" ] && rm -f "$dest"
+  done < <(find "$store_path" \( -type f -o -type l \))
+}
+
+# Download a package tarball and extract it into store/<name>.
+# Echoes the resolved digest on success.
+fetch_pkg() {
+  local name=$1 arch=$2 store_path=$3 token digest
+  local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/sbt/$arch
+  local cache=$cache_dir/$name.tar.gz
+
+  token=$(oci_token)
+  digest=$(remote_digest "$name" "$arch" "$token")
+
+  mkdir -p "$cache_dir"
+  curl --retry 5 --retry-delay 2 -fsSL -H "Authorization: Bearer $token" \
+    -o "$cache" "https://${REGISTRY#ghcr.io/}/blobs/$digest" ||
+    die "$name: failed to download blob."
+
+  rm -rf "$store_path"
+  mkdir -p "$store_path"
+  # CI archives the package as `./<name>/...`, so strip the leading dir.
+  tar -xzf "$cache" -C "$store_path" --strip-components=1 ||
+    die "$name: failed to extract $cache."
+  echo "$digest"
+}
+
+# Install or refresh a single package. Idempotent: skips when the locally
+# recorded digest already matches the remote (unless force=1).
+install_pkg() {
+  local name=$1 arch=$2 prefix=$3 linked=$4 force=$5
+  local store_path="$prefix/store/$name" digest
+
+  if [ "$force" != "1" ] && [ -f "$store_path/$META_FILE" ]; then
+    local cur token
+    cur=$(read_meta "$store_path" digest || true)
+    token=$(oci_token)
+    if [ -n "$cur" ] && [ "$cur" = "$(remote_digest "$name" "$arch" "$token")" ]; then
+      echo "> $name ($arch) is already up to date, skipping. Use --force to reinstall."
+      return 0
+    fi
   fi
-  if [[ ! -d /tmp/sbt/coreutils ]]; then
-    download_pkg_from_ghcr coreutils $arch /tmp/sbt/coreutils 3
+
+  echo "> Installing $name ($arch) -> $store_path (linked=$linked)"
+  digest=$(fetch_pkg "$name" "$arch" "$store_path")
+  write_meta "$store_path" "$name" "$arch" "$digest" "$linked"
+  [ "$linked" = "1" ] && link_pkg "$store_path" "$prefix"
+  return 0
+}
+
+# --- subcommand implementations ----------------------------------------------
+
+cmd_install() {
+  local prefix=$1 arch=$2 linked=$3 force=$4 name=$5
+  install_pkg "$name" "$arch" "$prefix" "$linked" "$force"
+  echo "> Installed $name."
+}
+
+cmd_remove() {
+  local prefix=$1 name=$2
+  local store_path="$prefix/store/$name"
+  [ -d "$store_path" ] || die "$name is not installed."
+  [ "$(read_meta "$store_path" linked || echo 0)" = "1" ] && unlink_pkg "$store_path" "$prefix"
+  rm -rf "$store_path"
+  echo "> Removed $name from $prefix."
+}
+
+cmd_list() {
+  local prefix=$1 store="$prefix/store" meta name arch digest linked
+  [ -d "$store" ] || {
+    echo "No packages installed under $prefix."
+    return 0
+  }
+  printf "%-22s %-15s %-7s %s\n" NAME ARCH LINKED DIGEST
+  for meta in "$store"/*/"$META_FILE"; do
+    [ -f "$meta" ] || continue
+    name=$(sed -n 's/^name=//p' "$meta")
+    arch=$(sed -n 's/^arch=//p' "$meta")
+    linked=$(sed -n 's/^linked=//p' "$meta")
+    digest=$(sed -n 's/^digest=//p' "$meta")
+    printf "%-22s %-15s %-7s %s\n" "$name" "$arch" "$linked" "${digest:0:19}"
+  done
+}
+
+cmd_info() {
+  local prefix=$1 arch=$2 name=$3
+  local store_path="$prefix/store/$name"
+  echo "Package: $name"
+  echo "Registry: $REGISTRY:${name}-${arch}"
+  if [ -f "$store_path/$META_FILE" ]; then
+    echo "Status:  installed ($store_path)"
+    sed 's/^/  /' "$store_path/$META_FILE"
+    local cur token remote
+    cur=$(read_meta "$store_path" digest || true)
+    token=$(oci_token)
+    remote=$(remote_digest "$name" "$arch" "$token")
+    if [ "$cur" = "$remote" ]; then
+      echo "  remote:  $remote (up to date)"
+    else
+      echo "  remote:  $remote (outdated)"
+    fi
+  else
+    local token
+    echo "Status:  not installed"
+    token=$(oci_token)
+    echo "  remote:  $(remote_digest "$name" "$arch" "$token")"
   fi
-  export PATH=/tmp/sbt/getopt/bin:/tmp/sbt/coreutils/bin:$PATH
-  echo "use getopt: $(which getopt)"
-  echo "use ln: $(which ln)"
-fi
+}
 
-[ $# -lt 1 ] && { show_usage; exit 1; }
+cmd_outdated() {
+  local prefix=$1 store="$prefix/store" meta name arch cur token remote any=0
+  [ -d "$store" ] || {
+    echo "No packages installed under $prefix."
+    return 0
+  }
+  token=$(oci_token)
+  for meta in "$store"/*/"$META_FILE"; do
+    [ -f "$meta" ] || continue
+    name=$(sed -n 's/^name=//p' "$meta")
+    arch=$(sed -n 's/^arch=//p' "$meta")
+    cur=$(sed -n 's/^digest=//p' "$meta")
+    remote=$(remote_digest "$name" "$arch" "$token" 2>/dev/null) || continue
+    if [ "$cur" != "$remote" ]; then
+      any=1
+      printf "%-22s %s -> %s\n" "$name" "${cur:0:19}" "${remote:0:19}"
+    fi
+  done
+  [ "$any" = "0" ] && echo "All packages are up to date."
+  return 0
+}
 
-cmd="$1"; shift
+cmd_upgrade() {
+  local prefix=$1 name=${2:-} store="$prefix/store" meta linked
+  if [ -n "$name" ]; then
+    local store_path="$store/$name"
+    [ -f "$store_path/$META_FILE" ] || die "$name is not installed."
+    install_pkg "$name" "$(read_meta "$store_path" arch)" "$prefix" \
+      "$(read_meta "$store_path" linked)" 0
+    return
+  fi
+  [ -d "$store" ] || {
+    echo "No packages installed under $prefix."
+    return 0
+  }
+  for meta in "$store"/*/"$META_FILE"; do
+    [ -f "$meta" ] || continue
+    name=$(sed -n 's/^name=//p' "$meta")
+    install_pkg "$name" "$(sed -n 's/^arch=//p' "$meta")" "$prefix" \
+      "$(sed -n 's/^linked=//p' "$meta")" 0
+  done
+}
+
+# --- usage + argument parsing -------------------------------------------------
+
+show_usage() {
+  cat <<EOF
+sbt - package manager for ghcr.io/curoky/static-binaries
+
+Usage:
+  sbt install  [OPTIONS] <package>
+  sbt remove   [OPTIONS] <package>
+  sbt upgrade  [OPTIONS] [package]
+  sbt info     [OPTIONS] <package>
+  sbt list     [OPTIONS]
+  sbt outdated [OPTIONS]
+
+Subcommands:
+  install     Install/refresh a package (idempotent; --force to reinstall).
+  remove      Uninstall a package and clean up its links.
+  upgrade     Upgrade one package, or all installed packages if none is given.
+  info        Show a package's metadata and whether it is up to date.
+  list        List installed packages and their recorded digests.
+  outdated    Show installed packages whose remote digest has changed.
+
+Common options:
+  --prefix PATH | --prefix=PATH   Install prefix (default: $DEFAULT_PREFIX).
+  --arch ARCH   | --arch=ARCH     Arch tag: linux-x86_64 | darwin-arm64 (auto).
+
+Options for 'install':
+  --link | --nolink               Expose binaries via relative symlinks (default: --link).
+  --force                         Reinstall even if the digest already matches.
+
+Examples:
+  sbt install --prefix=/usr/local ripgrep
+  sbt install --nolink --arch linux-x86_64 fd
+  sbt info ripgrep
+  sbt upgrade
+  sbt remove ripgrep
+EOF
+}
+
+[ $# -lt 1 ] && {
+  show_usage
+  exit 1
+}
+cmd=$1
+shift
+
+# Shared option state (hand-rolled parser; no getopt).
+prefix=$DEFAULT_PREFIX
+arch=""
+linked="1"
+force="0"
+positional=""
+
+# Pull "--opt value" / "--opt=value" formats apart without getopt.
+optval() { # usage: optval "$1" "$2" -> sets OPTVAL, sets SHIFT (1 or 2)
+  if [ "${1#*=}" != "$1" ]; then
+    OPTVAL=${1#*=}
+    SHIFT=1
+  else
+    [ $# -ge 2 ] || die "missing value for ${1%%=*}"
+    OPTVAL=$2
+    SHIFT=2
+  fi
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+  --link)
+    linked="1"
+    shift
+    ;;
+  --nolink)
+    linked="0"
+    shift
+    ;;
+  --force)
+    force="1"
+    shift
+    ;;
+  --prefix | --prefix=*)
+    optval "$@"
+    prefix=$OPTVAL
+    shift "$SHIFT"
+    ;;
+  --arch | --arch=*)
+    optval "$@"
+    arch=$OPTVAL
+    shift "$SHIFT"
+    ;;
+  --help | -h)
+    show_usage
+    exit 0
+    ;;
+  --)
+    shift
+    while [ $# -gt 0 ]; do
+      positional=${positional:-$1}
+      shift
+    done
+    break
+    ;;
+  -*) die "unknown option '$1'" ;;
+  # First non-option token is the package; keep scanning so options may
+  # appear after it (e.g. `sbt install ripgrep --nolink`).
+  *)
+    [ -z "$positional" ] && positional=$1
+    shift
+    ;;
+  esac
+done
+
+[ -n "$arch" ] || arch=$(detect_arch)
 
 case "$cmd" in
-  install)
-    ARGS=$(getopt -o '' --long link,nolink,prefix:,version:,arch: -n sbt -- "$@") || { show_usage; exit 1; }
-    eval set -- "$ARGS"
-
-    link_mode="1"
-    prefix="/opt/sbt"
-    version="3"
-
-    while true; do
-      case "$1" in
-        --link) link_mode="1"; shift ;;
-        --nolink) link_mode="0"; shift ;;
-        --prefix) prefix="$2"; shift 2 ;;
-        --prefix=*) prefix="${1#*=}"; shift ;;
-        --arch) arch="$2"; shift 2 ;;
-        --arch=*) arch="${1#*=}"; shift ;;
-        --version) version="$2"; shift 2 ;;
-        --version=*) version="${1#*=}"; shift ;;
-        --) shift; break ;;
-        *) show_usage; exit 1 ;;
-      esac
-    done
-
-    [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
-
-    pkg="$1"
-    download_link_pkg $pkg $arch $prefix $link_mode $version
-    ;;
-
-  download)
-    ARGS=$(getopt -o '' --long version:,arch: -n sbt -- "$@") || { show_usage; exit 1; }
-    eval set -- "$ARGS"
-
-    version="3"
-
-    while true; do
-      case "$1" in
-        --arch) arch="$2"; shift 2 ;;
-        --arch=*) arch="${1#*=}"; shift ;;
-        --version) version="$2"; shift 2 ;;
-        --version=*) version="${1#*=}"; shift ;;
-        --) shift; break ;;
-        *) show_usage; exit 1 ;;
-      esac
-    done
-
-    [ $# -lt 1 ] && { echo "Error: missing package."; show_usage; exit 1; }
-
-    pkg="$1"
-    download_pkg_from_ghcr $pkg $arch $PWD/$pkg $version
-    ;;
-
-  *)
-    echo "Error: Unknown subcommand '$cmd'"
+install)
+  [ -n "$positional" ] || {
+    echo "Error: missing package." >&2
     show_usage
     exit 1
-    ;;
+  }
+  cmd_install "$prefix" "$arch" "$linked" "$force" "$positional"
+  ;;
+remove)
+  [ -n "$positional" ] || {
+    echo "Error: missing package." >&2
+    show_usage
+    exit 1
+  }
+  cmd_remove "$prefix" "$positional"
+  ;;
+upgrade)
+  cmd_upgrade "$prefix" "$positional"
+  ;;
+info)
+  [ -n "$positional" ] || {
+    echo "Error: missing package." >&2
+    show_usage
+    exit 1
+  }
+  cmd_info "$prefix" "$arch" "$positional"
+  ;;
+list)
+  cmd_list "$prefix"
+  ;;
+outdated)
+  cmd_outdated "$prefix"
+  ;;
+-h | --help | help)
+  show_usage
+  ;;
+*)
+  echo "Error: unknown subcommand '$cmd'" >&2
+  show_usage
+  exit 1
+  ;;
 esac

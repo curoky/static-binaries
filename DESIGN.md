@@ -140,6 +140,42 @@ Workflows publish the tarball to `ghcr.io` using `oras push`, tagged as:
 
 The flake also configures a Cachix substituter; CI pushes build closures to Cachix to speed up subsequent builds.
 
+## Client Install / Upgrade Model (`tools/sbt`)
+
+[tools/sbt](file:///workspace/static-binaries/tools/sbt) is a dependency-light package manager (a brew/apt-style client) for **minimal environments that have no Nix/Homebrew/package manager**. It pulls the published tarballs straight from the `ghcr.io/curoky/static-binaries-v4` OCI registry (reusing the `<name>-<arch>` tag -> layer blob digest flow described above) and installs them locally.
+
+### Design principles (v2)
+
+- **Minimal host dependencies.** Only `bash`, `curl` and `tar` are required. Argument parsing is hand-rolled, so there is **no GNU `getopt`** dependency and **no coreutils/getopt bootstrap download** on macOS. The same script runs unchanged on Linux and macOS (including the stock bash 3.2 on macOS). `sed` is used for metadata/manifest parsing; no `oras`/`jq`/Nix on the target host.
+- **Relocatable installs.** Everything a package exposes under the prefix is a **relative** symlink, computed in pure bash (no GNU `ln -r` / `realpath --relative-to`). Because links are relative, the entire prefix can be moved anywhere with **zero repair**.
+- **Independent packages.** Every package is treated as fully self-contained; sbt does **no dependency resolution**. Each package is installed, removed, and relocated on its own. Runtime-heavy packages (node/python/perl tools) carry their own relative-path wrappers, so an individual `store/<name>/` directory is self-contained as well.
+- **Platforms.** Auto-detected arch tag is `linux-x86_64` (Linux/x86_64) or `darwin-arm64` (macOS/arm64), matching the published OCI tags; override with `--arch`.
+
+### Local layout
+
+Packages are installed under a prefix (default `/opt/sbt`):
+
+- `store/<name>/`: the extracted package contents.
+- `store/<name>/.sbt-meta`: per-package metadata, kept **inside** the package directory so it is created and removed atomically with the package. It is a plain `key=value` file (`name`, `arch`, `digest`, `linked`, `installed_at`) parsed with `sed`.
+- `bin/`, `lib/`, `share/`, ...: when installed with `--link` (default), **relative** symlinks into `store/<name>/` (the `.sbt-meta` file is excluded from linking). `--nolink` installs into the store only.
+
+### Upgrade semantics (digest comparison)
+
+There is no human-readable version embedded in the OCI tag (`<name>-<arch>`), so "needs update" is decided by **OCI blob digest comparison**: the client resolves the remote manifest's layer digest (`remote_digest`) and compares it against the `digest` recorded in the local `.sbt-meta`. If they differ, the package is re-downloaded and re-extracted; otherwise it is skipped (`install` is idempotent unless `--force` is given).
+
+### Subcommands
+
+- `install <pkg>`: install/refresh a package; skips when the local digest already matches the remote (override with `--force`). `--link`/`--nolink` control symlink exposure.
+- `remove <pkg>`: remove a package's symlinks (when linked) and delete its `store/<name>/` directory.
+- `upgrade [pkg]`: upgrade a single package, or all installed packages when no name is given (reuses the install digest-skip logic).
+- `info <pkg>`: show a package's recorded metadata (or its registry coordinates if not installed) and whether it is up to date vs. the remote digest.
+- `list`: list installed packages and their recorded digests by reading each `store/*/.sbt-meta`.
+- `outdated`: report installed packages whose remote digest has changed.
+
+Common options: `--prefix PATH|--prefix=PATH` and `--arch ARCH|--arch=ARCH` (both `--opt value` and `--opt=value` forms accepted; options may appear before or after the package name).
+
+This is a client-only concern: the CI/publishing model above is unchanged, because the comparison relies on the layer digest that `ghcr.io` already computes during `oras push`.
+
 ## How to Make Changes
 
 ### Add a new upstream tool from nixpkgs
