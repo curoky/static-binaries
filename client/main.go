@@ -1,9 +1,9 @@
-// Command psb is a tiny package manager for the prebuilt-standalone-binaries
-// published at ghcr.io/curoky/prebuilt-standalone-binaries.
+// Command sb is a tiny package manager for the standalone-binaries
+// published at ghcr.io/curoky/standalone-binaries.
 //
 // Design goals (see DESIGN.md "Client Install / Upgrade Model"):
 //
-//   - Single static binary. psb is one statically-linked binary (built with
+//   - Single static binary. sb is one statically-linked binary (built with
 //     CGO_ENABLED=0), cross-compiled for linux-x86_64 and darwin-arm64. OCI
 //     access is delegated to go-containerregistry (crane), so neither curl,
 //     tar, oras nor jq is required on the target host.
@@ -12,7 +12,7 @@
 //     Because every link is relative, the whole prefix can be moved anywhere
 //     with zero repair.
 //   - Independent packages. Every package is treated as fully self-contained;
-//     psb performs no dependency resolution.
+//     sb performs no dependency resolution.
 //
 // Commands: install | remove | upgrade | info | list | outdated
 //
@@ -46,9 +46,9 @@ import (
 )
 
 const (
-	defaultRegistry = "ghcr.io/curoky/prebuilt-standalone-binaries"
-	metaFile        = ".psb-meta"
-	defaultPrefix   = "/opt/psb"
+	defaultRegistry = "ghcr.io/curoky/standalone-binaries"
+	metaFile        = ".sb-meta"
+	defaultPrefix   = "/opt/sb"
 	maxParallel     = 8 // cap concurrent registry requests / downloads
 )
 
@@ -84,7 +84,7 @@ func isNotFound(err error) bool {
 }
 
 // remoteLayer returns the single content layer of a package's image. The layer
-// digest is what we record in .psb-meta and compare for upgrades; the layer's
+// digest is what we record in .sb-meta and compare for upgrades; the layer's
 // Compressed() stream is the package tarball.
 func remoteLayer(name, arch string) (v1.Layer, error) {
 	img, err := crane.Pull(ref(name, arch))
@@ -145,7 +145,7 @@ func cachePath(arch, name string) string {
 	if base == "" {
 		base = filepath.Join(os.Getenv("HOME"), ".cache")
 	}
-	return filepath.Join(base, "psb", arch, name+".tar.gz")
+	return filepath.Join(base, "sb", arch, name+".tar.gz")
 }
 
 // ---------------------------------------------------------------------------
@@ -549,8 +549,8 @@ func main() {
 	}
 
 	root := &cobra.Command{
-		Use:           "psb",
-		Short:         "package manager for ghcr.io/curoky/prebuilt-standalone-binaries",
+		Use:           "sb",
+		Short:         "package manager for ghcr.io/curoky/standalone-binaries",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}

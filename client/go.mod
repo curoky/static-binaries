@@ -1,4 +1,4 @@
-module github.com/curoky/prebuilt-standalone-binaries/client
+module github.com/curoky/standalone-binaries/client
 
 go 1.26
 

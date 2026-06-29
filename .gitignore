@@ -2,5 +2,5 @@
 tmp
 *.tar.gz
 result
-client/psb
+client/sb
 client/client

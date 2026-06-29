@@ -38,24 +38,24 @@ The flake is intentionally thin; logic lives in `lib/` and the package definitio
 
 ## Repository Layout
 
-- [flake.nix](file:///workspace/prebuilt-standalone-binaries/flake.nix): Thin entry point. Declares inputs, builds per-system envs, wires helpers, and exposes outputs.
-- [lib/](file:///workspace/prebuilt-standalone-binaries/lib): Reusable build helpers.
-  - [make-manifest-packages.nix](file:///workspace/prebuilt-standalone-binaries/lib/make-manifest-packages.nix): Turns a manifest attrset into a set of upstream nixpkgs derivations.
-  - [make-standalone.nix](file:///workspace/prebuilt-standalone-binaries/lib/make-standalone.nix): Wraps a derivation with the normalization step (runs `scripts/normalize.sh`).
-  - [make-bundle.nix](file:///workspace/prebuilt-standalone-binaries/lib/make-bundle.nix): Bundles a derivation into a single self-extracting executable via `nix bundle` (matthewbauer/nix-bundle), for tools that cannot be statically compiled. Linux only. Bundle outputs skip the standalone normalization step.
-- [manifests/](file:///workspace/prebuilt-standalone-binaries/manifests): Declarative selection of upstream nixpkgs packages.
-  - [default.nix](file:///workspace/prebuilt-standalone-binaries/manifests/default.nix): Single manifest keyed by package name; each entry declares its target `platforms` and optional per-platform config overrides.
-- [packages/](file:///workspace/prebuilt-standalone-binaries/packages): Locally-defined derivations and overrides, organized **one directory per package**.
-  - [local.nix](file:///workspace/prebuilt-standalone-binaries/packages/local.nix): Explicit manifest that aggregates local packages into `{ common; linux; darwin; }` via `callPackage ./<pkg>`.
+- [flake.nix](file:///workspace/standalone-binaries/flake.nix): Thin entry point. Declares inputs, builds per-system envs, wires helpers, and exposes outputs.
+- [lib/](file:///workspace/standalone-binaries/lib): Reusable build helpers.
+  - [make-manifest-packages.nix](file:///workspace/standalone-binaries/lib/make-manifest-packages.nix): Turns a manifest attrset into a set of upstream nixpkgs derivations.
+  - [make-standalone.nix](file:///workspace/standalone-binaries/lib/make-standalone.nix): Wraps a derivation with the normalization step (runs `scripts/normalize.sh`).
+  - [make-bundle.nix](file:///workspace/standalone-binaries/lib/make-bundle.nix): Bundles a derivation into a single self-extracting executable via `nix bundle` (matthewbauer/nix-bundle), for tools that cannot be statically compiled. Linux only. Bundle outputs skip the standalone normalization step.
+- [manifests/](file:///workspace/standalone-binaries/manifests): Declarative selection of upstream nixpkgs packages.
+  - [default.nix](file:///workspace/standalone-binaries/manifests/default.nix): Single manifest keyed by package name; each entry declares its target `platforms` and optional per-platform config overrides.
+- [packages/](file:///workspace/standalone-binaries/packages): Locally-defined derivations and overrides, organized **one directory per package**.
+  - [local.nix](file:///workspace/standalone-binaries/packages/local.nix): Explicit manifest that aggregates local packages into `{ common; linux; darwin; }` via `callPackage ./<pkg>`.
   - `packages/<pkg>/default.nix`: One directory per local package; the directory also holds that package's own resources (patches, wrapper scripts, vendored configs, e.g. `packages/podman/{bin,conf,*.patch}`, `packages/python/311/Setup.local`).
   - Multi-version applications are grouped under a single application directory with one subdirectory per version: `packages/cmake/{default,3_27_9,4_1_2}`, `packages/python/{311,312,313}`, `packages/clang-tools/{18,19,20,21,22}`, `packages/protobuf/{3_8_0,3_9_2}`. The default/current version of an app lives in `default/`.
   - `packages/protobuf/generic-v3.nix`: A shared builder reused by the protobuf version directories; shared builders are not given their own version subdirectory.
-- [scripts/normalize.sh](file:///workspace/prebuilt-standalone-binaries/scripts/normalize.sh): Output normalization used by the standalone wrapper.
+- [scripts/normalize.sh](file:///workspace/standalone-binaries/scripts/normalize.sh): Output normalization used by the standalone wrapper.
 - CI workflows:
-  - [build-linux.yaml](file:///workspace/prebuilt-standalone-binaries/.github/workflows/build-linux.yaml)
-  - [build-darwin.yaml](file:///workspace/prebuilt-standalone-binaries/.github/workflows/build-darwin.yaml)
-  - [build-llvm-tools.yaml](file:///workspace/prebuilt-standalone-binaries/.github/workflows/build-llvm-tools.yaml): dedicated builder for clang-tools / lld (excluded from the main Linux matrix).
-  - [build-psb.yaml](file:///workspace/prebuilt-standalone-binaries/.github/workflows/build-psb.yaml): cross-compiles and publishes the Go `psb` client itself (`psb-<arch>`).
+  - [build-linux.yaml](file:///workspace/standalone-binaries/.github/workflows/build-linux.yaml)
+  - [build-darwin.yaml](file:///workspace/standalone-binaries/.github/workflows/build-darwin.yaml)
+  - [build-llvm-tools.yaml](file:///workspace/standalone-binaries/.github/workflows/build-llvm-tools.yaml): dedicated builder for clang-tools / lld (excluded from the main Linux matrix).
+  - [build-sb.yaml](file:///workspace/standalone-binaries/.github/workflows/build-sb.yaml): cross-compiles and publishes the Go `sb` client itself (`sb-<arch>`).
 
 ## Flake Outputs and Package Selection
 
@@ -97,7 +97,7 @@ In addition to per-package outputs, the flake provides an `all` output using a `
 
 Every derivation in the final package set is wrapped by `make-standalone.nix`, which:
 - Copies the derivation output into a fresh, writable `$out`.
-- Runs [scripts/normalize.sh](file:///workspace/prebuilt-standalone-binaries/scripts/normalize.sh) over the output tree.
+- Runs [scripts/normalize.sh](file:///workspace/standalone-binaries/scripts/normalize.sh) over the output tree.
 
 Bundle packages (`bundle = true` in the manifest) are the exception: they are produced by `make-bundle.nix` as a single self-extracting executable and skip normalization entirely (stripping / nuke-refs / shebang rewriting would corrupt the archive).
 
@@ -136,48 +136,48 @@ In both Linux and Darwin workflows:
 ### Publishing
 
 Workflows publish the tarball to `ghcr.io` using `oras push`, tagged as:
-- `ghcr.io/curoky/prebuilt-standalone-binaries:<name>-linux-x86_64`
-- `ghcr.io/curoky/prebuilt-standalone-binaries:<name>-darwin-arm64`
+- `ghcr.io/curoky/standalone-binaries:<name>-linux-x86_64`
+- `ghcr.io/curoky/standalone-binaries:<name>-darwin-arm64`
 
 The flake also configures a Cachix substituter; CI pushes build closures to Cachix to speed up subsequent builds.
 
 ## Client Install / Upgrade Model (`client/`)
 
-[client/](file:///workspace/prebuilt-standalone-binaries/client) is a small package manager (a brew/apt-style client) for **minimal environments that have no Nix/Homebrew/package manager**. It is written in **Go** as a single, statically-linked binary (`psb`), cross-compiled for `linux-x86_64` and `darwin-arm64`. It pulls the published tarballs straight from the `ghcr.io/curoky/prebuilt-standalone-binaries` OCI registry (reusing the `<name>-<arch>` tag -> layer blob digest flow described above) and installs them locally.
+[client/](file:///workspace/standalone-binaries/client) is a small package manager (a brew/apt-style client) for **minimal environments that have no Nix/Homebrew/package manager**. It is written in **Go** as a single, statically-linked binary (`sb`), cross-compiled for `linux-x86_64` and `darwin-arm64`. It pulls the published tarballs straight from the `ghcr.io/curoky/standalone-binaries` OCI registry (reusing the `<name>-<arch>` tag -> layer blob digest flow described above) and installs them locally.
 
 ### Design principles
 
-- **No host runtime dependencies.** psb is one static binary built with `CGO_ENABLED=0`; **nothing** (`curl`/`tar`/`oras`/`jq`/Nix) is needed on the target host. It leans on well-maintained Go libraries rather than hand-rolled plumbing: [go-containerregistry](https://github.com/google/go-containerregistry) (`crane`) for all OCI access (auth, manifest, layer pull, digest), [cobra](https://github.com/spf13/cobra) for the CLI, and [`x/sync/errgroup`](https://pkg.go.dev/golang.org/x/sync/errgroup) for bounded-parallel fan-out. Tarball extraction uses the standard library (`archive/tar` + `compress/gzip`). The same source cross-compiles to both platforms.
+- **No host runtime dependencies.** sb is one static binary built with `CGO_ENABLED=0`; **nothing** (`curl`/`tar`/`oras`/`jq`/Nix) is needed on the target host. It leans on well-maintained Go libraries rather than hand-rolled plumbing: [go-containerregistry](https://github.com/google/go-containerregistry) (`crane`) for all OCI access (auth, manifest, layer pull, digest), [cobra](https://github.com/spf13/cobra) for the CLI, and [`x/sync/errgroup`](https://pkg.go.dev/golang.org/x/sync/errgroup) for bounded-parallel fan-out. Tarball extraction uses the standard library (`archive/tar` + `compress/gzip`). The same source cross-compiles to both platforms.
 - **Relocatable installs.** Everything a package exposes under the prefix is a **relative** symlink. Because links are relative, the entire prefix can be moved anywhere with **zero repair**.
-- **Independent packages.** Every package is treated as fully self-contained; psb does **no dependency resolution**. Each package is installed, removed, and relocated on its own. Runtime-heavy packages (node/python/perl tools) carry their own relative-path wrappers, so an individual `store/<name>/` directory is self-contained as well.
+- **Independent packages.** Every package is treated as fully self-contained; sb does **no dependency resolution**. Each package is installed, removed, and relocated on its own. Runtime-heavy packages (node/python/perl tools) carry their own relative-path wrappers, so an individual `store/<name>/` directory is self-contained as well.
 - **Platforms.** Auto-detected arch tag is `linux-x86_64` (Linux/x86_64) or `darwin-arm64` (macOS/arm64), matching the published OCI tags; override with `--arch`.
-- **Self-publishing.** psb is itself published to the registry as `psb-<arch>` by [build-psb.yaml](file:///workspace/prebuilt-standalone-binaries/.github/workflows/build-psb.yaml), so it can be bootstrapped with a single `curl` and afterwards upgraded like any other package.
+- **Self-publishing.** sb is itself published to the registry as `sb-<arch>` by [build-sb.yaml](file:///workspace/standalone-binaries/.github/workflows/build-sb.yaml), so it can be bootstrapped with a single `curl` and afterwards upgraded like any other package.
 
 ### Source layout
 
-[client/](file:///workspace/prebuilt-standalone-binaries/client) is a Go module:
-- [main.go](file:///workspace/prebuilt-standalone-binaries/client/main.go): the entire client (OCI access, store/meta/link, commands, CLI).
-- [main_test.go](file:///workspace/prebuilt-standalone-binaries/client/main_test.go): offline unit tests (tar extraction + relative-link relocation + arg parsing + metadata round-trip).
+[client/](file:///workspace/standalone-binaries/client) is a Go module:
+- [main.go](file:///workspace/standalone-binaries/client/main.go): the entire client (OCI access, store/meta/link, commands, CLI).
+- [main_test.go](file:///workspace/standalone-binaries/client/main_test.go): offline unit tests (tar extraction + relative-link relocation + arg parsing + metadata round-trip).
 
 ### Local layout
 
-Packages are installed under a prefix (default `/opt/psb`):
+Packages are installed under a prefix (default `/opt/sb`):
 
 - `store/<name>/`: the extracted package contents.
-- `store/<name>/.psb-meta`: per-package metadata, kept **inside** the package directory so it is created and removed atomically with the package. It is a plain `key=value` file (`name`, `arch`, `digest`, `linked`, `installed_at`).
-- `bin/`, `lib/`, `share/`, ...: when installed with `--link` (default), **relative** symlinks into `store/<name>/` (the `.psb-meta` file is excluded from linking). `--nolink` installs into the store only.
+- `store/<name>/.sb-meta`: per-package metadata, kept **inside** the package directory so it is created and removed atomically with the package. It is a plain `key=value` file (`name`, `arch`, `digest`, `linked`, `installed_at`).
+- `bin/`, `lib/`, `share/`, ...: when installed with `--link` (default), **relative** symlinks into `store/<name>/` (the `.sb-meta` file is excluded from linking). `--nolink` installs into the store only.
 
 ### Upgrade semantics (digest comparison)
 
-There is no human-readable version embedded in the OCI tag (`<name>-<arch>`), so "needs update" is decided by **OCI blob digest comparison**: the client resolves the remote manifest's layer digest and compares it against the `digest` recorded in the local `.psb-meta`. If they differ, the package is re-downloaded and re-extracted; otherwise it is skipped (`install` is idempotent unless `--force` is given).
+There is no human-readable version embedded in the OCI tag (`<name>-<arch>`), so "needs update" is decided by **OCI blob digest comparison**: the client resolves the remote manifest's layer digest and compares it against the `digest` recorded in the local `.sb-meta`. If they differ, the package is re-downloaded and re-extracted; otherwise it is skipped (`install` is idempotent unless `--force` is given).
 
 ### Subcommands
 
-- `install <pkg>...`: install/refresh **one or more** packages; skips packages whose local digest already matches the remote (override with `--force`). `--link`/`--nolink` control symlink exposure. Multi-package installs run in three phases: (1) resolve every package's remote digest **in parallel** — if any package is missing, psb aborts with the full list and installs nothing; (2) download the needed blobs **in parallel** into the cache; (3) extract + link **serially**.
+- `install <pkg>...`: install/refresh **one or more** packages; skips packages whose local digest already matches the remote (override with `--force`). `--link`/`--nolink` control symlink exposure. Multi-package installs run in three phases: (1) resolve every package's remote digest **in parallel** — if any package is missing, sb aborts with the full list and installs nothing; (2) download the needed blobs **in parallel** into the cache; (3) extract + link **serially**.
 - `remove <pkg>`: remove a package's symlinks (when linked) and delete its `store/<name>/` directory.
 - `upgrade [pkg...]`: upgrade the given packages, or all installed packages when none is given (reuses the install digest-skip logic, preserving each package's recorded arch/linked).
 - `info <pkg>`: show a package's recorded metadata (or its registry coordinates if not installed) and whether it is up to date vs. the remote digest.
-- `list`: list installed packages and their recorded digests by reading each `store/*/.psb-meta`.
+- `list`: list installed packages and their recorded digests by reading each `store/*/.sb-meta`.
 - `outdated`: report installed packages whose remote digest has changed.
 
 Common options: `--prefix PATH|--prefix=PATH` and `--arch ARCH|--arch=ARCH` (both `--opt value` and `--opt=value` forms accepted; options may appear before or after the package names).
@@ -188,7 +188,7 @@ This is a client-only concern: the CI/publishing model above is unchanged, becau
 
 ### Add a new upstream tool from nixpkgs
 
-1. Add an entry to [manifests/default.nix](file:///workspace/prebuilt-standalone-binaries/manifests/default.nix):
+1. Add an entry to [manifests/default.nix](file:///workspace/standalone-binaries/manifests/default.nix):
    - Omit `platforms` for an all-platform package, or set `platforms = [ "x86_64-linux" ]` / `[ "aarch64-darwin" ]` to restrict it.
    - For a package that exists everywhere but needs a different config per system, add a per-platform key, e.g. `aria2 = { "aarch64-darwin" = { version = "24.11"; }; };`.
 2. Decide whether it should use `pkgsStatic` (`isStatic = true`, default) or regular `pkgs` (`isStatic = false`).
@@ -207,7 +207,7 @@ Example — Node.js tools (`packages/pnpm`, `packages/prettier`, `packages/markd
 
 ### Change normalization behavior
 
-Edit [scripts/normalize.sh](file:///workspace/prebuilt-standalone-binaries/scripts/normalize.sh). Treat this script as a compatibility surface:
+Edit [scripts/normalize.sh](file:///workspace/standalone-binaries/scripts/normalize.sh). Treat this script as a compatibility surface:
 - Changing removals/rewrites can break tools in subtle ways.
 - Prefer incremental changes and validate on a representative sample of packages.
 

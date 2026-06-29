@@ -1,13 +1,13 @@
-name: build psb
+name: build sb
 
-# Builds the psb client itself (client/, Go) and publishes it to the same
+# Builds the sb client itself (client/, Go) and publishes it to the same
 # ghcr registry as the packages, so it can be bootstrapped with a single curl
 # and later self-upgraded like any other package.
 
 on:
   push:
     paths:
-      - '.github/workflows/build-psb.yaml'
+      - '.github/workflows/build-sb.yaml'
       - 'client/**'
   workflow_dispatch:
 
@@ -40,9 +40,9 @@ jobs:
         run: |
           go vet ./...
           go test ./...
-          mkdir -p ./psb
-          go build -trimpath -ldflags="-s -w" -o ./psb/psb .
-          tar -czvf ./psb.${{ matrix.tag }}.tar.gz ./psb
+          mkdir -p ./sb
+          go build -trimpath -ldflags="-s -w" -o ./sb/sb .
+          tar -czvf ./sb.${{ matrix.tag }}.tar.gz ./sb
 
       - uses: oras-project/setup-oras@v1
 
@@ -50,5 +50,5 @@ jobs:
 
       - working-directory: client
         run: >
-          oras push ghcr.io/curoky/prebuilt-standalone-binaries:psb-${{ matrix.tag }}
-          ./psb.${{ matrix.tag }}.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+          oras push ghcr.io/curoky/standalone-binaries:sb-${{ matrix.tag }}
+          ./sb.${{ matrix.tag }}.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip

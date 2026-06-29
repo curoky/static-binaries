@@ -1,4 +1,4 @@
-# Prebuilt Standalone Binaries
+# Standalone Binaries
 
 This repository hosts a collection of **standalone, portable tool binaries** built
 with Nix. The goal is binaries you can drop into a minimal or foreign
@@ -27,12 +27,12 @@ static ELF. The order of preference is:
 ## 📥 Download
 
 Prebuilt artifacts are published per-tool to an OCI registry
-(`ghcr.io/curoky/prebuilt-standalone-binaries`) and on the GitHub Releases page.
+(`ghcr.io/curoky/standalone-binaries`) and on the GitHub Releases page.
 
 ### Release v1.0
 
 Access the assets for version `v1.0` directly here:
-> **https://github.com/curoky/prebuilt-standalone-binaries/releases/tag/v1.0**
+> **https://github.com/curoky/standalone-binaries/releases/tag/v1.0**
 
 ## 📂 Repository Layout
 

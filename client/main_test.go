@@ -85,7 +85,7 @@ func TestStripFirstComponent(t *testing.T) {
 
 func TestExtractLinkRelocate(t *testing.T) {
 	root := t.TempDir()
-	prefix := filepath.Join(root, "opt", "psb")
+	prefix := filepath.Join(root, "opt", "sb")
 	pkg := "ripgrep"
 
 	tgz := filepath.Join(root, "cache", pkg+".tar.gz")
@@ -124,11 +124,11 @@ func TestExtractLinkRelocate(t *testing.T) {
 		t.Fatalf("bin link does not resolve: %v", err)
 	}
 	if _, err := os.Lstat(filepath.Join(prefix, metaFile)); !os.IsNotExist(err) {
-		t.Fatalf(".psb-meta leaked into prefix")
+		t.Fatalf(".sb-meta leaked into prefix")
 	}
 
 	// Relocate the whole prefix; relative links must still resolve.
-	moved := filepath.Join(root, "moved", "psb")
+	moved := filepath.Join(root, "moved", "sb")
 	if err := os.MkdirAll(filepath.Dir(moved), 0o755); err != nil {
 		t.Fatal(err)
 	}
