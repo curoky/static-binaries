@@ -2,14 +2,15 @@
 #
 # markdownlint-cli2 running on our fully-static (musl) `nodejs-slim24` package,
 # instead of being `nix bundle`'d into a self-extracting executable. Same
-# approach as packages/pnpm: the interpreter is overridden upstream-style in
-# packages/local.nix (it is a buildNpmPackage tool, so its `buildNpmPackage` is
-# overridden with `nodejs = nodejs-slim24`), so the `markdownlint-cli2` argument
-# here is already built against our static node. This derivation reuses that
-# tool's JS distribution and ships a relative-path wrapper that invokes the
-# sibling static node explicitly, so the static node travels with the deployed
-# tool instead of depending on a node on the host PATH after the standalone
-# normalize pass.
+# runtime approach as packages/pnpm: reuse the upstream nixpkgs JS distribution
+# and ship a relative-path wrapper that invokes the sibling static node
+# explicitly, so the static node travels with the deployed tool instead of
+# depending on a node on the host PATH after the standalone normalize pass.
+#
+# Unlike pnpm/prettier, the interpreter is NOT overridden at build time: this is
+# an npm-based buildNpmPackage tool whose build needs `npm`, which nodejs-slim
+# lacks. So it is built with the regular node and only switches to the sibling
+# static node at runtime via the wrapper below.
 #
 # Upstream nixpkgs ships markdownlint-cli2 as:
 #   $out/bin/markdownlint-cli2                          (wrapper invoking node)
@@ -29,6 +30,7 @@
   stdenvNoCC,
   writeText,
   markdownlint-cli2,
+  nodejs-slim24,
 }:
 
 let
@@ -60,6 +62,21 @@ stdenvNoCC.mkDerivation {
     chmod +x $out/bin/markdownlint-cli2
 
     runHook postInstall
+  '';
+
+  # Even though markdownlint-cli2 is *built* with the regular node (it needs
+  # npm), make sure the shipped JS actually runs on the static `nodejs-slim24`
+  # we deploy alongside it — i.e. the exact command the runtime wrapper issues.
+  # markdownlint-cli2 has no --version/--help that exits 0, so lint a trivial
+  # clean markdown file and assert success.
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    check_dir=$(mktemp -d)
+    printf '# Title\n\nHello world.\n' > "$check_dir/ok.md"
+    ( cd "$check_dir" && ${nodejs-slim24}/bin/node \
+        $out/libexec/markdownlint-cli2/markdownlint-cli2-bin.mjs ok.md )
+    runHook postInstallCheck
   '';
 
   meta = {

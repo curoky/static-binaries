@@ -147,19 +147,21 @@ in
     # set of Node CLI tools that run on it. The runtime is shipped as its own
     # package (deploy dir `nodejs-slim24`) so the tools can reference it as a
     # sibling directory at deploy time — the same convention dool/netron use for
-    # `python311`.
+    # `python311`. Each ./<tool> wrapper reuses the tool's JS distribution and
+    # ships a relative-path wrapper that invokes the sibling `nodejs-slim24`
+    # package ($store/nodejs-slim24/bin/node) explicitly, so the static node
+    # travels with the deployed tool instead of depending on a node on the host
+    # PATH after the standalone normalize pass. This supersedes the previous
+    # `bundle = true` manifest entries.
     #
-    # Like `pnpm`, every tool is built against our static node (overriding the
-    # upstream `nodejs`/`nodejs-slim` interpreter), which also exercises the
-    # static runtime end-to-end. The ./<tool> wrapper then reuses that tool's JS
-    # distribution and ships a relative-path wrapper that invokes the sibling
-    # `nodejs-slim24` package ($store/nodejs-slim24/bin/node) explicitly, so the
-    # static node travels with the deployed tool instead of depending on a node
-    # on the host PATH after the standalone normalize pass. This supersedes the
-    # previous `bundle = true` manifest entries.
-    #
-    # prettier exposes a `nodejs` arg directly; markdownlint-cli2/opencommit are
-    # buildNpmPackage tools, so we override `nodejs` on their `buildNpmPackage`.
+    # pnpm/prettier additionally build against our static node by overriding the
+    # upstream interpreter (pnpm only unpacks JS; prettier uses pnpm to fetch
+    # deps), which exercises the static runtime end-to-end. markdownlint-cli2 and
+    # opencommit are npm-based buildNpmPackage tools whose build needs `npm`
+    # (absent from nodejs-slim), so they are *built* with the regular node and
+    # only switch to the sibling static node at runtime via the wrapper. Their
+    # wrapper derivations add an installCheck that runs the shipped JS under
+    # `nodejs-slim24` to confirm the tool actually works on the static runtime.
     nodejs-slim24 = pkgsStatic.callPackage ./nodejs/24 { };
     pnpm = pkgsStatic.callPackage ./pnpm {
       pnpm = pkgs.pnpm.override { nodejs-slim = nodejs-slim24; };
@@ -168,14 +170,12 @@ in
       prettier = pkgs.prettier.override { nodejs = nodejs-slim24; };
     };
     markdownlint-cli2 = pkgsStatic.callPackage ./markdownlint-cli2 {
-      markdownlint-cli2 = pkgs.markdownlint-cli2.override {
-        buildNpmPackage = pkgs.buildNpmPackage.override { nodejs = nodejs-slim24; };
-      };
+      inherit nodejs-slim24;
+      inherit (pkgs) markdownlint-cli2;
     };
     opencommit = pkgsStatic.callPackage ./opencommit {
-      opencommit = pkgs.opencommit.override {
-        buildNpmPackage = pkgs.buildNpmPackage.override { nodejs = nodejs-slim24; };
-      };
+      inherit nodejs-slim24;
+      inherit (pkgs) opencommit;
     };
   };
 
