@@ -30,6 +30,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -49,8 +50,34 @@ const (
 	defaultRegistry = "ghcr.io/curoky/standalone-binaries"
 	metaFile        = ".sb-meta"
 	defaultPrefix   = "/opt/sb"
+	logFile         = "sb.log"
 	maxParallel     = 8 // cap concurrent registry requests / downloads
 )
+
+// logger carries the detailed, structured log. It always writes to
+// <prefix>/sb.log; with --verbose it also mirrors to stderr. CLI key-step
+// output (the "> ..." lines) keeps going straight to stdout via fmt.
+var logger = slog.New(slog.NewTextHandler(io.Discard, nil))
+
+// setupLogger points logger at <prefix>/sb.log, creating the prefix if needed.
+// When verbose is set, log records are also written to stderr. The returned
+// closer flushes/closes the underlying file.
+func setupLogger(prefix string, verbose bool) (io.Closer, error) {
+	if err := os.MkdirAll(prefix, 0o755); err != nil {
+		return nil, fmt.Errorf("cannot create prefix %s: %w", prefix, err)
+	}
+	path := filepath.Join(prefix, logFile)
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return nil, fmt.Errorf("cannot open log file %s: %w", path, err)
+	}
+	var w io.Writer = f
+	if verbose {
+		w = io.MultiWriter(f, os.Stderr)
+	}
+	logger = slog.New(slog.NewTextHandler(w, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	return f, nil
+}
 
 // detectArch returns the publish arch tag for the current platform. Only
 // linux-x86_64 and darwin-arm64 are published; anything else must be passed
@@ -315,9 +342,15 @@ type installOpts struct {
 
 // installPackages runs the three-phase multi-package install.
 func installPackages(names []string, o installOpts) error {
+	start := time.Now()
+	logger.Info("install started", "packages", names, "arch", o.arch,
+		"prefix", o.prefix, "linked", o.linked, "force", o.force)
+	fmt.Printf("> Resolving %d package(s) for %s...\n", len(names), o.arch)
+
 	// Phase 1: resolve every package's layer digest in parallel. errgroup
 	// collects the first error per goroutine; we gather *all* missing packages
 	// so the user sees the complete list before anything is installed.
+	phase1 := time.Now()
 	digests := make([]string, len(names))
 	errs := make([]error, len(names))
 	var g errgroup.Group
@@ -327,11 +360,18 @@ func installPackages(names []string, o installOpts) error {
 		g.Go(func() error {
 			d, err := remoteDigest(name, o.arch)
 			digests[i], errs[i] = d, err
+			if err != nil {
+				logger.Error("resolve failed", "package", name, "arch", o.arch, "err", err)
+			} else {
+				logger.Debug("resolved digest", "package", name, "digest", d)
+			}
 			return nil
 		})
 	}
 	_ = g.Wait()
+	logger.Info("phase 1 (resolve) done", "count", len(names), "took", time.Since(phase1).String())
 	if joined := errors.Join(errs...); joined != nil {
+		logger.Error("install aborted: unresolved packages", "err", joined)
 		return fmt.Errorf("aborting, some packages could not be resolved:\n%w", joined)
 	}
 
@@ -339,10 +379,13 @@ func installPackages(names []string, o installOpts) error {
 	// --force).
 	digestOf := make(map[string]string, len(names))
 	var toFetch []string
+	var skipped int
 	for i, name := range names {
 		digestOf[name] = digests[i]
 		if !o.force {
 			if m, err := readMeta(o.prefix, name); err == nil && m.Digest == digests[i] {
+				skipped++
+				logger.Info("skip up-to-date", "package", name, "digest", digests[i])
 				fmt.Printf("> %s (%s) is already up to date, skipping. Use --force to reinstall.\n", name, o.arch)
 				continue
 			}
@@ -351,20 +394,36 @@ func installPackages(names []string, o installOpts) error {
 	}
 
 	// Phase 2: download the needed layers in parallel into the cache.
+	phase2 := time.Now()
+	if len(toFetch) > 0 {
+		fmt.Printf("> Downloading %d package(s)...\n", len(toFetch))
+	}
 	var dg errgroup.Group
 	dg.SetLimit(maxParallel)
 	for _, name := range toFetch {
 		name := name
-		dg.Go(func() error { return downloadLayer(name, o.arch, cachePath(o.arch, name)) })
+		dg.Go(func() error {
+			logger.Debug("download started", "package", name)
+			err := downloadLayer(name, o.arch, cachePath(o.arch, name))
+			if err != nil {
+				logger.Error("download failed", "package", name, "err", err)
+			} else {
+				logger.Debug("download done", "package", name)
+			}
+			return err
+		})
 	}
 	if err := dg.Wait(); err != nil {
 		return fmt.Errorf("download failed: %w", err)
 	}
+	logger.Info("phase 2 (download) done", "count", len(toFetch), "took", time.Since(phase2).String())
 
 	// Phase 3: extract + link serially.
+	phase3 := time.Now()
 	for _, name := range toFetch {
 		store := storePath(o.prefix, name)
 		fmt.Printf("> Installing %s (%s) -> %s (linked=%t)\n", name, o.arch, store, o.linked)
+		logger.Info("extract started", "package", name, "store", store, "linked", o.linked)
 		if err := os.RemoveAll(store); err != nil {
 			return err
 		}
@@ -372,6 +431,7 @@ func installPackages(names []string, o installOpts) error {
 			return err
 		}
 		if err := extractTarGz(cachePath(o.arch, name), store); err != nil {
+			logger.Error("extract failed", "package", name, "err", err)
 			return fmt.Errorf("%s: extract failed: %w", name, err)
 		}
 		if err := writeMeta(o.prefix, meta{Name: name, Arch: o.arch, Digest: digestOf[name], Linked: o.linked}); err != nil {
@@ -379,11 +439,19 @@ func installPackages(names []string, o installOpts) error {
 		}
 		if o.linked {
 			if err := linkPkg(o.prefix, name); err != nil {
+				logger.Error("link failed", "package", name, "err", err)
 				return fmt.Errorf("%s: link failed: %w", name, err)
 			}
 		}
+		logger.Info("package installed", "package", name, "digest", digestOf[name])
 		fmt.Printf("> Installed %s.\n", name)
 	}
+	logger.Info("phase 3 (extract+link) done", "count", len(toFetch), "took", time.Since(phase3).String())
+
+	total := time.Since(start)
+	logger.Info("install finished", "installed", len(toFetch), "skipped", skipped, "took", total.String())
+	fmt.Printf("> Done: %d installed, %d up-to-date in %s.\n", len(toFetch), skipped, total.Round(time.Millisecond))
+
 	return nil
 }
 
@@ -534,11 +602,13 @@ func short(digest string) string {
 
 func main() {
 	var (
-		prefix string
-		arch   string
-		link   bool
-		force  bool
+		prefix  string
+		arch    string
+		link    bool
+		force   bool
+		verbose bool
 	)
+	var logCloser io.Closer
 
 	// resolveArch returns the explicit --arch or the auto-detected platform.
 	resolveArch := func() (string, error) {
@@ -553,10 +623,26 @@ func main() {
 		Short:         "package manager for ghcr.io/curoky/standalone-binaries",
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			c, err := setupLogger(prefix, verbose)
+			if err != nil {
+				return err
+			}
+			logCloser = c
+			logger.Info("sb invoked", "command", cmd.Name(), "args", args,
+				"prefix", prefix, "arch", arch, "verbose", verbose)
+			return nil
+		},
+		PersistentPostRun: func(cmd *cobra.Command, args []string) {
+			if logCloser != nil {
+				_ = logCloser.Close()
+			}
+		},
 	}
 	pf := root.PersistentFlags()
 	pf.StringVar(&prefix, "prefix", defaultPrefix, "install prefix")
 	pf.StringVar(&arch, "arch", "", "arch tag: linux-x86_64 | darwin-arm64 (auto-detected)")
+	pf.BoolVar(&verbose, "verbose", false, "also print the detailed log to stderr")
 
 	install := &cobra.Command{
 		Use:   "install <package>...",

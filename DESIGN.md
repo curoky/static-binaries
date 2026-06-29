@@ -181,7 +181,11 @@ There is no human-readable version embedded in the OCI tag (`<name>-<arch>`), so
 - `list`: list installed packages and their recorded digests by reading each `store/*/.sb-meta`.
 - `outdated`: report installed packages whose remote digest has changed.
 
-Common options: `--prefix PATH|--prefix=PATH` and `--arch ARCH|--arch=ARCH` (both `--opt value` and `--opt=value` forms accepted; options may appear before or after the package names).
+Common options: `--prefix PATH|--prefix=PATH` and `--arch ARCH|--arch=ARCH` (both `--opt value` and `--opt=value` forms accepted; options may appear before or after the package names). `--verbose` additionally mirrors the detailed log to stderr.
+
+### Logging
+
+Every invocation writes a detailed, structured (slog text) log to `<prefix>/sb.log` (the prefix is created if missing). The terminal only shows simplified key-step output (the `> ...` lines, including install progress and an end-of-run summary with elapsed time); the full per-package resolve/download/extract/link events and phase timings go to the log file. Pass `--verbose` to also stream that log to stderr.
 
 This is a client-only concern: the CI/publishing model above is unchanged, because the comparison relies on the layer digest that `ghcr.io` already computes during `oras push`.
 
