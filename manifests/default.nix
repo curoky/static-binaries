@@ -334,11 +334,6 @@
   #   isStatic = false;
   #   bundle = true;
   # };
-  # pnpm = {
-  #   platforms = [ "x86_64-linux" ];
-  #   isStatic = false;
-  #   bundle = true;
-  # };
   # markdownlint-cli2 = {
   #   platforms = [ "x86_64-linux" ];
   #   isStatic = false;

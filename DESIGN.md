@@ -150,7 +150,7 @@ The flake also configures a Cachix substituter; CI pushes build closures to Cach
 2. Decide whether it should use `pkgsStatic` (`isStatic = true`, default) or regular `pkgs` (`isStatic = false`).
 3. If the package has multiple outputs, pick the right one(s) via `output = [ "bin" ]` (or list several to merge them).
 4. If the nixpkgs attribute name is awkward, use `alias` to export a better public name.
-5. If the tool cannot be statically compiled and has no practical patch+bundle (e.g. a Node.js tool), set `bundle = true` with `isStatic = false` and `platforms = [ "x86_64-linux" ]` to `nix bundle` it into a single self-extracting executable (see `prettier` / `pnpm`).
+5. If the tool cannot be statically compiled and has no practical patch+bundle (e.g. a Node.js tool), set `bundle = true` with `isStatic = false` and `platforms = [ "x86_64-linux" ]` to `nix bundle` it into a single self-extracting executable (see `prettier`). Prefer a from-source static build over bundling when a tool's runtime can itself be built static (see `pnpm` under "local override", below).
 
 ### Add a local override / patched build
 
@@ -158,6 +158,8 @@ The flake also configures a Cachix substituter; CI pushes build closures to Cach
 2. Wire it into the appropriate set in `packages/local.nix` (`common`, `linux`, or `darwin`) via `callPackage ./<pkg> { }`. `local.nix` remains the explicit manifest of local packages (no auto-discovery).
 3. Follow the standalone strategy: prefer static; otherwise patch + bundle; use `nix bundle` only when static is impossible.
 4. Prefer minimal diffs: only patch what is necessary to improve portability, reduce dynamic deps, or fix runtime paths.
+
+Example — `pnpm` (`packages/pnpm-static/`): instead of `nix bundle`, it is built from source as a single static (musl) ELF by injecting the pnpm JS into `pkgsStatic.nodejs-slim` via Node's Single Executable Application (SEA) feature (the same approach as the upstream `@pnpm/exe` artifact, reproduced with nixpkgs). The blob is added with `objcopy` and the SEA fuse is flipped in-place (nixpkgs has no `postject`). This supersedes the previous `bundle = true` pnpm entry in the manifest.
 
 ### Change normalization behavior
 

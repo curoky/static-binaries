@@ -141,6 +141,33 @@ in
     cloc = pkgsStatic.callPackage ./cloc { };
     parallel = pkgsStatic.callPackage ./parallel { };
     miniserve = pkgsStatic.callPackage ./miniserve { };
+
+    # Standalone fully-static (musl) Node.js 24 runtime, shipped as its own
+    # package (deploy dir `nodejs-slim24`) so other packages (e.g. pnpm) can
+    # reference it as a sibling directory at deploy time — the same convention
+    # dool/netron use for the `python311` package. The package patches
+    # nodejs-slim directly (overlay + .overrideAttrs) for the static build; see
+    # packages/nodejs/24/default.nix.
+    nodejs-slim24 = pkgsStatic.callPackage ./nodejs/24 { };
+
+    # pnpm running on our static `nodejs-slim24`. We use the upstream nixpkgs
+    # pnpm package as-is, just overriding its `nodejs-slim` argument with our
+    # static node (upstream explicitly documents "Override nodejs-slim instead
+    # of nodejs"). The pnpm package itself only unpacks the pnpm JS — no native
+    # build — so building it from `pkgs` is fine; only the interpreter matters.
+    # Building it this way also exercises the static node end-to-end (its
+    # postInstall runs `node pnpm completion ...` and its passthru tests run on
+    # the static node), validating that the static runtime actually works.
+    #
+    # The ./pnpm wrapper then replaces upstream's $out/bin/pnpm symlink (which
+    # relies on pnpm.mjs's shebang to find node) with a relative-path wrapper
+    # that invokes the sibling `nodejs-slim24` package
+    # ($store/nodejs-slim24/bin/node), so the static node travels with the
+    # deployed pnpm instead of depending on a node on the host PATH after the
+    # standalone normalize pass.
+    pnpm = pkgsStatic.callPackage ./pnpm {
+      pnpm = pkgs.pnpm.override { nodejs-slim = nodejs-slim24; };
+    };
   };
 
   # Darwin-only local packages.
