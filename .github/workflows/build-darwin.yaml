@@ -22,20 +22,13 @@ on:
 env:
   CACHIX_NAME: curoky-static-binaries-v2
   CACHIX_STORE: https://curoky-static-binaries-v2.cachix.org
-  # Packages that fail to build on darwin (kept out of the matrix in the previous
-  # version of this workflow); excluded so discover never selects them.
+  # Cross-platform packages that are exposed on darwin but fail to build there;
+  # excluded so discover never selects them. Linux-only packages are already
+  # absent from `.#packages.aarch64-darwin` (filtered by their manifest
+  # `platforms` / the localPackages.linux split), so they don't need listing.
   # Space-separated.
   EXCLUDE_PKGS: >-
-    cloc cmake cronie ethtool exiftool git glibcLocales gnupg gost indent
-    inetutils iproute2 iptables iputils krb5 lsb-release lua man miniserve
-    music-decrypto nettools nixfmt nsight-systems numactl openssh_gssapi
-    parallel perl python311 python312 python313 smartmontools strace tmux wget
-    zellij crun runc podman conmon catatonit gpgme
-    s6 s6-rc s6-linux-init s6-linux-utils s6-portable-utils s6-networking s6-dns
-    skalibs execline
-    clang-tools-18 clang-tools-19 clang-tools-20 clang-tools-21 clang-tools-22
-    clang18 clang19 clang20 clang21 clang22
-    lld_18 lld_19 lld_20 lld_21 lld_22
+    inetutils gnupg music-decrypto
 
 jobs:
   discover:
