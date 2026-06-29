@@ -136,13 +136,6 @@ in
     perl = pkgsStatic.callPackage ./perl { };
     cloc = pkgsStatic.callPackage ./cloc { };
 
-    # JVM based tool: shipped as a normal multi-file package whose thin
-    # wrapper locates a JRE at runtime from the co-located sibling package
-    # `jre21` (`$store/jre21`), instead of `nix bundle`'ing a full JRE closure
-    # into a single self-extracting executable.
-    jre21 = pkgs.callPackage ./jre/21 { };
-    lemminx = pkgs.callPackage ./lemminx { };
-
     # Node.js stack: a standalone fully-static (musl) Node.js 24 runtime plus a
     # set of Node CLI tools that run on it. The runtime is shipped as its own
     # package (deploy dir `nodejs-slim24`) so the tools can reference it as a
