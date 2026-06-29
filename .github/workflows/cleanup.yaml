@@ -19,7 +19,7 @@ jobs:
         with:
           dry-run: false
           delete-untagged: true
-          packages: static-binaries-v4
+          packages: standalone-binaries
 
   # cache-cleanup:
   #   runs-on: ubuntu-latest

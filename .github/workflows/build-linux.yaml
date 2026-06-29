@@ -152,5 +152,5 @@ jobs:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - run: >
-          oras push ghcr.io/curoky/static-binaries-v4:${{ matrix.name }}-linux-x86_64
+          oras push ghcr.io/curoky/standalone-binaries:${{ matrix.name }}-linux-x86_64
           ./${{ matrix.name }}.linux-x86_64.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
