@@ -19,6 +19,18 @@ The primary goals are:
 2. **Manual patch + bundle** when full static linking isn't practical: rewrite hard-coded paths, vendor configuration, and bundle required resources (see `packages/`).
 3. **`nix bundle`** only as a last resort, for tools that genuinely cannot be statically compiled (e.g. Node.js-based tools). Implemented via `lib/make-bundle.nix` (matthewbauer/nix-bundle); produces a single self-extracting executable and is **Linux only** (relies on user namespaces). Its main downside is that the archive embeds the whole closure into one large file and exposes a single entry point (`meta.mainProgram`), so it cannot ship multiple binaries.
 
+#### Portability requirement (the hard rule)
+
+The shipped binary must be portable and **must not depend on any dynamic library under `/nix`**.
+
+- **Linux:** full static is the goal (`pkgsStatic`).
+- **macOS:** full static is impossible (no static libSystem/libc), so the goal is: **every nix dependency statically linked; only macOS system libraries (e.g. `/usr/lib/libSystem.B.dylib`) may stay dynamic.** Apply this ladder:
+  1. Full static where it works (`pkgsStatic`).
+  2. Otherwise, link every other dependency statically; let only system libs stay dynamic.
+  3. Copy the dylibs (the dylib-bundle variant below) only when a dependency cannot be statically linked — **requires explicit confirmation**.
+
+If a build retains `/nix/store` dylibs, fix it (`CGO_ENABLED=0`, patch install names / rpaths, or — with confirmation — copy the dylib).
+
 For runtimes that are not statically linkable but are reusable across tools (e.g. a Python interpreter), prefer the **shared-sibling wrapper** variant of strategy 2 instead of `nix bundle`: ship the heavy runtime as its own package (e.g. `packages/python/311`) and give each tool a thin wrapper that resolves the runtime at execution time from the co-located sibling under a shared `$store` parent (e.g. `netron` -> `$store/python311`). This keeps tools as ordinary multi-file packages (so they can expose several binaries when needed), shares one runtime across tools instead of duplicating it, and still goes through normal standalone normalization.
 
 Non-goals:
