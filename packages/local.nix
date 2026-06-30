@@ -86,14 +86,10 @@ in
     };
     # cloc is a perl script; its wrapper runs against the sibling `perl` package
     # at deploy time (falling back to a system perl), so it ships cross-platform
-    # alongside perl above. On darwin the fully-static perl/perlPackages it pulls
-    # in as build inputs fail to build, and cloc needs no static linking anyway,
-    # so build it from the native pkgs there; Linux keeps the static set.
-    cloc =
-      if pkgs.stdenv.hostPlatform.isDarwin then
-        pkgs.callPackage ./cloc { }
-      else
-        pkgsStatic.callPackage ./cloc { };
+    # alongside perl above. It needs no static linking (and the fully-static
+    # perl/perlPackages it would pull in fail to build on darwin), so build it
+    # from the native pkgs on both platforms.
+    cloc = pkgs.callPackage ./cloc { };
   };
 
   # Linux-only local packages (patched tooling, container stack, multiple

@@ -15,7 +15,12 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
     store=$root/..
 
+    # The bundled CPAN modules are laid out under lib/perl5/site_perl/<version>
+    # (perlPackages adds a version subdir), so add it as well as the base dir.
     export PERL5LIB=$root/lib/perl5/site_perl
+    for d in "$root"/lib/perl5/site_perl/*/; do
+      [ -d "$d" ] && PERL5LIB=$d:$PERL5LIB
+    done
     if [[ -f $store/perl/bin/perl ]]; then
       exec -a "$0" $store/perl/bin/perl "$root/bin/_cloc" "$@"
     else
