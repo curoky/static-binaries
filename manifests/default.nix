@@ -150,6 +150,11 @@
   yazi-unwrapped = {
     alias = "yazi";
   };
+  smartmontools = {
+    "aarch64-darwin" = {
+      isStatic = false;
+    };
+  };
 
   ## ---- linux only -------------------------------------------------------
   cronie = {
@@ -192,9 +197,6 @@
     platforms = [ "x86_64-linux" ];
   };
   nettools = {
-    platforms = [ "x86_64-linux" ];
-  };
-  smartmontools = {
     platforms = [ "x86_64-linux" ];
   };
   lua = {
