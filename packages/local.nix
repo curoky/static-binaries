@@ -207,5 +207,13 @@ in
     # where executables must dynamically link the system dylibs. Exposed under
     # the same deploy dir name so consumers reference it identically.
     nodejs-slim26 = pkgs.callPackage ./nodejs/26/darwin.nix { };
+
+    # macOS wget: built from native pkgs.wget with each non-system dynamic
+    # dependency swapped for its pkgsStatic archive, so only /usr/lib system
+    # libs stay dynamic (the Linux wget is fully static via pkgsStatic — see
+    # ./wget/default.nix vs ./wget/darwin.nix).
+    wget = pkgs.callPackage ./wget/darwin.nix {
+      inherit pkgsStatic;
+    };
   };
 }
