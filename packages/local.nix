@@ -215,5 +215,10 @@ in
     wget = pkgs.callPackage ./wget/darwin.nix {
       inherit pkgsStatic;
     };
+
+    # macOS krb5: fully static via pkgsStatic, with two upstream darwin
+    # static-link defects patched (USE_CCAPI_MACOS / mit_des_zeroblock — see
+    # ./krb5/darwin.nix). On Linux krb5 comes straight from the manifest.
+    krb5 = pkgsStatic.callPackage ./krb5/darwin.nix { };
   };
 }

@@ -25,7 +25,7 @@ The shipped binary must be portable and **must not depend on any dynamic library
 
 - **Linux:** full static is the goal (`pkgsStatic`).
 - **macOS:** full static is impossible (no static libSystem/libc), so the goal is: **every nix dependency statically linked; only macOS system libraries (e.g. `/usr/lib/libSystem.B.dylib`) may stay dynamic.** Apply this ladder:
-  1. Full static where it works (`pkgsStatic`).
+  1. Full static where it works (`pkgsStatic`) — sometimes needs small upstream patches to make a static link succeed on darwin (e.g. `packages/krb5/darwin.nix` builds the fully-static `pkgsStatic.krb5` but disables the macOS CCAPI ccache backend and moves a DES const definition so static archive linking of `libkrb5.a`/`libk5crypto.a` resolves; the result depends only on `/usr/lib/libSystem`).
   2. Otherwise, link every other dependency statically; let only system libs stay dynamic.
   3. Copy the dylibs (the dylib-bundle variant below) only when a dependency cannot be statically linked — **requires explicit confirmation**.
 

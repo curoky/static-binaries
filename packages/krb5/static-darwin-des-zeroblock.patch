@@ -1,0 +1,33 @@
+Move the `mit_des_zeroblock` definition into d3_aead.c (its referencing
+translation unit) so it is always pulled into a static link.
+
+In a static (archive) build, macOS `ld` only links an archive member when it
+provides a symbol that is currently undefined. `mit_des_zeroblock` was defined
+in f_aead.o, but nothing else references f_aead.o's symbols, so the linker never
+pulls f_aead.o and `_krb5int_c_mit_des_zeroblock` ends up undefined when
+d3_aead.o (DES3 AEAD) references it. Defining the symbol in d3_aead.c — which is
+always pulled when DES3 is used — fixes the undefined-symbol link error for
+static darwin builds without changing behavior (it is the same all-zero const).
+
+--- a/lib/crypto/builtin/des/d3_aead.c
++++ b/lib/crypto/builtin/des/d3_aead.c
+@@ -28,6 +28,8 @@
+ 
+ #ifdef K5_BUILTIN_DES
+ 
++const mit_des_cblock mit_des_zeroblock /* = all zero */;
++
+ void
+ krb5int_des3_cbc_encrypt(krb5_crypto_iov *data, unsigned long num_data,
+                          const mit_des_key_schedule ks1,
+--- a/lib/crypto/builtin/des/f_aead.c
++++ b/lib/crypto/builtin/des/f_aead.c
+@@ -28,8 +28,6 @@
+ 
+ #ifdef K5_BUILTIN_DES
+ 
+-const mit_des_cblock mit_des_zeroblock /* = all zero */;
+-
+ void
+ krb5int_des_cbc_encrypt(krb5_crypto_iov *data, unsigned long num_data,
+                         const mit_des_key_schedule schedule,
