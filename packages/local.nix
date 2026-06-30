@@ -79,15 +79,13 @@ in
     zsh-plugins = pkgsStatic.callPackage ./zsh-plugins { };
     music-decrypto = pkgs.callPackage ./music-decrypto { };
 
-    perl = pkgs.callPackage ./perl {
-      perlStatic = pkgsStatic.perl;
-      libxcryptStatic = pkgsStatic.libxcrypt;
-    };
     # cloc is a perl script; its wrapper runs against the sibling `perl` package
-    # at deploy time (falling back to a system perl), so it ships cross-platform
-    # alongside perl above. It needs no static linking (and the fully-static
-    # perl/perlPackages it would pull in fail to build on darwin), so build it
-    # from the native pkgs on both platforms.
+    # at deploy time (falling back to a system perl), so it ships cross-platform.
+    # The `perl` package itself is defined per-platform in the linux/darwin sets
+    # below (./perl/default.nix on Linux, ./perl/darwin.nix on macOS). cloc needs
+    # no static linking (and the fully-static perl/perlPackages it would pull in
+    # fail to build on darwin), so build it from the native pkgs on both
+    # platforms.
     cloc = pkgs.callPackage ./cloc { };
     parallel = pkgs.callPackage ./parallel { };
   };
@@ -98,6 +96,7 @@ in
     glibcLocales = pkgs.glibcLocales.override {
       allLocales = false;
     };
+    perl = pkgsStatic.callPackage ./perl { };
     nsight-systems = pkgsStatic.callPackage ./nsight-systems { };
     cmake = pkgsStatic.callPackage ./cmake/default { };
     cmake_3_27_9 = pkgsStatic.callPackage ./cmake/3_27_9 { };
@@ -191,6 +190,9 @@ in
 
   # Darwin-only local packages.
   darwin = goWithoutCgo // {
+    perl = pkgs.callPackage ./perl/darwin.nix {
+      libxcryptStatic = pkgsStatic.libxcrypt;
+    };
     # macOS counterpart of the Linux nodejs-slim26 (./nodejs/26): a standalone
     # Node.js 26 that statically embeds its third-party deps (openssl/zlib/
     # libuv/sqlite + small-icu) but is not fully static — impossible on macOS,
