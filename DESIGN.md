@@ -99,7 +99,7 @@ The final package set merges three sources:
 2. **Local packages** — `packages/local.nix` returns `{ common; linux; darwin; }`:
    - `common`: cross-platform pinned/patched/wrapped builds (e.g. specific protobuf versions, `coreutils`, vim/zsh/curl wrappers).
    - `linux`: Linux-only patched tooling (podman stack, multiple clang-tools versions, static Python variants, etc.).
-   - `darwin`: a subset of Go tools rebuilt with `CGO_ENABLED=0` to reduce dynamic library dependence.
+   - `darwin`: a subset of Go tools rebuilt with `CGO_ENABLED=0` to reduce dynamic library dependence, plus `nodejs-slim26` (a mostly-static Node.js 26 — see below).
 
 3. **Platform merge** — the flake merges `upstreamPackages // local.common // (local.linux | local.darwin)` depending on the target system.
 
