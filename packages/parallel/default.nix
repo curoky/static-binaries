@@ -19,17 +19,8 @@ let
     store=$bindir/../..
 
     name=$(basename "$0")
-    # `sem` is a symlink to `parallel`; the real script is `_parallel` and it
-    # switches to sem mode based on $0. Fall back to `_parallel` for any name
-    # without a matching `_<name>` script.
-    target=$bindir/_$name
-    [[ -f $target ]] || target=$bindir/_parallel
     export PATH=$bindir:$PATH
-    if [[ -f $store/perl/bin/perl ]]; then
-      exec -a "$0" $store/perl/bin/perl "$target" "$@"
-    else
-      exec -a "$0" "$target" "$@"
-    fi
+    exec -a "$0" $store/perl/bin/perl "$bindir/_$name" "$@"
   '';
 in
 
@@ -43,13 +34,15 @@ parallel.overrideAttrs (oldAttrs: {
     rm -f $out/bin/sem
     chmod +w $out/bin
 
-    # Re-wrap every bundled perl script to run under a sibling/system perl.
-    for name in parallel niceload parcat parsort sql; do
-      mv $out/bin/$name $out/bin/_$name
+    # `sem` is the same script as `parallel`, selected via $0. Give it its own
+    # `_sem` (a symlink to `_parallel`) so the wrapper needs no special-casing.
+    ln -s _parallel $out/bin/_sem
+
+    # Re-wrap every bundled perl command to run under a sibling/system perl.
+    for name in parallel sem niceload parcat parsort sql; do
+      [ -e $out/bin/_$name ] || mv $out/bin/$name $out/bin/_$name
       cp ${wrapperScript} $out/bin/$name
       chmod +x $out/bin/$name
     done
-
-    ln -s parallel $out/bin/sem
   '';
 })

@@ -64,7 +64,9 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
 
     export PERL5LIB=$root/lib/perl5:$PERL5LIB
-
+    for d in "$root"/lib/perl5/site_perl/*/; do
+      [ -d "$d" ] && PERL5LIB=$d:$PERL5LIB
+    done
     exec -a "$0" "$root/bin/_perl" "$@"
   '';
 in

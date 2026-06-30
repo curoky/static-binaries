@@ -90,10 +90,6 @@ in
     # perl/perlPackages it would pull in fail to build on darwin), so build it
     # from the native pkgs on both platforms.
     cloc = pkgs.callPackage ./cloc { };
-    # parallel is a perl script (plus bundled perl helper scripts); like cloc it
-    # wraps each command to run under the sibling `perl` package at deploy time
-    # (falling back to a system perl), so it ships cross-platform from native
-    # pkgs on both platforms.
     parallel = pkgs.callPackage ./parallel { };
   };
 
