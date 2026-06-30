@@ -39,7 +39,7 @@ let
 in
 
 stdenv.mkDerivation rec {
-  pname = "netron-py";
+  pname = "netron";
   version = "1.0.0";
 
   src = fetchurl {
