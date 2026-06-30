@@ -12,17 +12,17 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
     store=$root/..
 
-    # python_bin_path=/home/x/.nix-profile/bin/python3.11
-    # pathon_lib_root=/nix/var/nix/profiles/py311-static/lib/python3.11/
+    # python_bin_path=/home/x/.nix-profile/bin/python3.14
+    # pathon_lib_root=/nix/var/nix/profiles/py314-static/lib/python3.14/
     if [[ "$(uname)" == "Darwin" ]]; then
       exec -a "$0" python3 "$root/bin/_dool_main.py" --bytes "$@"
     else
-      export PYTHONHOME=$store/python311
-      export PYTHONPATH=$PYTHONHOME/lib/python3.11
-      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/site-packages
-      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/lib-dynload
-      export PYTHONPATH=$PYTHONPATH:$root/lib/python3.11/site-packages
-      exec -a "$0" "$PYTHONHOME/bin/python3.11" "$root/bin/_dool_main.py" --bytes "$@"
+      export PYTHONHOME=$store/python314
+      export PYTHONPATH=$PYTHONHOME/lib/python3.14
+      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.14/site-packages
+      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.14/lib-dynload
+      export PYTHONPATH=$PYTHONPATH:$root/lib/python3.14/site-packages
+      exec -a "$0" "$PYTHONHOME/bin/python3.14" "$root/bin/_dool_main.py" --bytes "$@"
     fi
   '';
 in

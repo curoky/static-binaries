@@ -28,12 +28,12 @@ let
     if [[ "$(uname)" == "Darwin" ]]; then
       exec -a "$0" python3 "$root/bin/_netron_main.py" "$@"
     else
-      export PYTHONHOME=$store/python311
-      export PYTHONPATH=$PYTHONHOME/lib/python3.11
-      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/site-packages
-      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.11/lib-dynload
-      export PYTHONPATH=$PYTHONPATH:$root/lib/python3.11/site-packages
-      exec -a "$0" "$PYTHONHOME/bin/python3.11" "$root/bin/_netron_main.py" "$@"
+      export PYTHONHOME=$store/python314
+      export PYTHONPATH=$PYTHONHOME/lib/python3.14
+      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.14/site-packages
+      export PYTHONPATH=$PYTHONPATH:$PYTHONHOME/lib/python3.14/lib-dynload
+      export PYTHONPATH=$PYTHONPATH:$root/lib/python3.14/site-packages
+      exec -a "$0" "$PYTHONHOME/bin/python3.14" "$root/bin/_netron_main.py" "$@"
     fi
   '';
 in
@@ -58,8 +58,8 @@ stdenv.mkDerivation rec {
   '';
 
   installPhase = ''
-    mkdir -p $out/lib/python3.11/site-packages
-    cp -r wheel-unpacked/* $out/lib/python3.11/site-packages/
+    mkdir -p $out/lib/python3.14/site-packages
+    cp -r wheel-unpacked/* $out/lib/python3.14/site-packages/
 
     mkdir -p $out/bin
     cp ${mainPyScript} $out/bin/_netron_main.py
