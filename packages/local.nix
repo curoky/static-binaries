@@ -60,7 +60,6 @@ in
     p7zip = pkgsStatic.callPackage ./p7zip { };
     rsync = pkgsStatic.callPackage ./rsync { };
 
-    dool = pkgs.callPackage ./dool { };
     netron = pkgs.callPackage ./netron { };
     git-filter-repo = pkgs.callPackage ./git-filter-repo { };
 
@@ -141,6 +140,8 @@ in
     python313 = pkgsStatic.callPackage ./python/313 { };
     python314 = pkgsStatic.callPackage ./python/314 { };
     python315 = pkgsStatic.callPackage ./python/315 { };
+
+    dool = pkgs.callPackage ./dool { };
 
     openssh_gssapi = pkgsStatic.callPackage ./openssh_gssapi { };
     wget = pkgsStatic.callPackage ./wget { };
