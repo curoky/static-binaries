@@ -197,12 +197,6 @@
   lua = {
     platforms = [ "x86_64-linux" ];
   };
-  exiftool = {
-    platforms = [ "x86_64-linux" ];
-    "x86_64-linux" = {
-      version = "25.05";
-    };
-  };
   tmux = {
     platforms = [ "x86_64-linux" ];
   };

@@ -87,6 +87,14 @@ in
     # fail to build on darwin), so build it from the native pkgs on both
     # platforms.
     cloc = pkgs.callPackage ./cloc { };
+    # exiftool is a perl tool like cloc: it runs against the sibling `perl`
+    # package at deploy time. Its only non-portable bits are the optional
+    # compression XS modules, which are rebuilt against `pkgsStatic` so the
+    # compression libs link statically (only /usr/lib system libs stay dynamic
+    # on darwin). Built from native pkgs.perlPackages on both platforms.
+    exiftool = pkgs.callPackage ./exiftool {
+      inherit pkgsStatic;
+    };
     parallel = pkgs.callPackage ./parallel { };
   };
 
