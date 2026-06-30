@@ -39,12 +39,12 @@ let
 in
 
 stdenv.mkDerivation rec {
-  pname = "netron";
+  pname = "netron-py";
   version = "1.0.0";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/cb/a3/051d987c3357c752d1f7cf9438092d4ed1e4f0e270a5b2ab49191e5e46c2/netron-8.2.7-py3-none-any.whl";
-    sha256 = "sha256-rnADQLpVrn5lmmr8hg9xoU9QIdgUADuDUn9AVcH9AUQ=";
+    url = "https://files.pythonhosted.org/packages/62/d1/9609fcce7bf2b6d2d2cbc3f13736c2f696d66170c247157e39c7245934b6/netron-9.1.3-py3-none-any.whl";
+    sha256 = "sha256-SoTMbCn45cDc5OXIRdxXRzDwhjIaBpa3p9WSpZ3HhkE=";
   };
 
   unpackPhase = ":";

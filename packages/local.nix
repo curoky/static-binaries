@@ -61,7 +61,7 @@ in
     rsync = pkgsStatic.callPackage ./rsync { };
 
     dool = pkgs.callPackage ./dool { };
-    netron = pkgs.callPackage ./netron { };
+    netron-py = pkgs.callPackage ./netron/py { };
     git-filter-repo = pkgs.callPackage ./git-filter-repo { };
 
     vim = pkgsStatic.callPackage ./vim { };
