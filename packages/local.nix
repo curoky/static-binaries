@@ -60,9 +60,9 @@ in
     p7zip = pkgsStatic.callPackage ./p7zip { };
     rsync = pkgsStatic.callPackage ./rsync { };
 
-    dool = pkgsStatic.callPackage ./dool { };
-    netron = pkgsStatic.callPackage ./netron { };
-    git-filter-repo = pkgsStatic.callPackage ./git-filter-repo { };
+    dool = pkgs.callPackage ./dool { };
+    netron = pkgs.callPackage ./netron { };
+    git-filter-repo = pkgs.callPackage ./git-filter-repo { };
 
     vim = pkgsStatic.callPackage ./vim { };
     curl = pkgsStatic.callPackage ./curl { };
