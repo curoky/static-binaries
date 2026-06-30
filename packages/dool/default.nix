@@ -1,23 +1,10 @@
 {
-  lib,
   stdenv,
-  fetchurl,
   writeText,
-  unzip,
+  dool,
 }:
 
 let
-  mainPyScript = writeText "main.py" ''
-    import re
-    import sys
-
-    from dool import __main__
-
-    if __name__ == "__main__":
-        sys.argv[0] = re.sub(r"(-script\.pyw|\.exe)?$", "", sys.argv[0])
-        sys.exit(__main__.__main())
-  '';
-
   wrapperScript = writeText "wrapper.sh" ''
     #!/usr/bin/env bash
 
@@ -40,31 +27,18 @@ let
   '';
 in
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "dool";
-  version = "1.0.0";
+  inherit (dool) version;
 
-  src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/24/66/3c81d509ce2658d9abf6950eca40b6bd765d677b48abdddee19ef83daac6/dool-1.3.4-py3-none-any.whl";
-    sha256 = "sha256-OKHABl+2z93f79NUPqtVrS/WM6YZyZ26mCQXntpqoa4=";
-  };
-
-  unpackPhase = ":";
-
-  nativeBuildInputs = [ unzip ];
-
-  buildPhase = ''
-    echo "Unzipping wheel file..."
-    mkdir -p wheel-unpacked
-    unzip $src -d wheel-unpacked
-  '';
+  dontUnpack = true;
 
   installPhase = ''
-    mkdir -p $out/lib/python3.11/site-packages
-    cp -r wheel-unpacked/* $out/lib/python3.11/site-packages/
-
     mkdir -p $out/bin
-    cp ${mainPyScript} $out/bin/_dool_main.py
+    # dool ships as a single self-contained, stdlib-only python script; reuse it
+    # directly as the entry point. The wrapper invokes a relative python
+    # interpreter explicitly, so the upstream nix-store shebang is inert.
+    cp ${dool}/bin/dool $out/bin/_dool_main.py
     cp ${wrapperScript} $out/bin/dool
     chmod +x $out/bin/dool
   '';
