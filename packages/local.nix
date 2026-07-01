@@ -205,11 +205,13 @@ in
       libxcryptStatic = pkgsStatic.libxcrypt;
     };
     # macOS counterpart of the Linux nodejs-slim26 (./nodejs/26): a standalone
-    # Node.js 26 that statically embeds its third-party deps (openssl/zlib/
-    # libuv/sqlite + small-icu) but is not fully static — impossible on macOS,
-    # where executables must dynamically link the system dylibs. Exposed under
-    # the same deploy dir name so consumers reference it identically.
-    nodejs-slim26 = pkgs.callPackage ./nodejs/26/darwin.nix { };
+    # Node.js 26 built via pkgsStatic so every nix dependency links as a static
+    # archive, leaving only macOS system libs dynamic (full static is
+    # impossible on macOS). Exposed under the same deploy dir name so consumers
+    # reference it identically.
+    nodejs-slim26 = pkgsStatic.callPackage ./nodejs/26/darwin.nix {
+      inherit (pkgs) python3;
+    };
 
     # macOS wget: take the fully-static `pkgsStatic.wget` (same set as Linux) and
     # only override its build-time perl to the native one — the darwin static
