@@ -14,11 +14,11 @@
 
 stdenv.mkDerivation rec {
   pname = "cacert";
-  version = "2024-09-24";
+  version = "2026-05-14";
 
   src = fetchurl {
     url = "https://curl.se/ca/cacert-${version}.pem";
-    sha256 = "sha256-GJ089tEDGF+6BtdsGvkVJjxtQiJUgaF1noU7M6yFdUA=";
+    sha256 = "sha256-hqHzNmr6x8b4rp88d5rCIRKTKMQ/CrK4gX6y82KlAlw=";
   };
 
   unpackPhase = ":";
