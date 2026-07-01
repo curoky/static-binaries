@@ -44,6 +44,16 @@
   # a nativeBuildInput here, so it never needs to be static — inject the native
   # one (same pattern wget uses for its build-time perl).
   python3,
+  # Apple's `libtool` (the Mach-O static-archive tool, part of cctools — not GNU
+  # libtool). node's darwin build calls `gyp-mac-tool ExecFilterLibtool`, which
+  # shells out to a bare `libtool` to bundle .o files into .a archives. The
+  # normal darwin stdenv puts that bare `libtool` on PATH, but the pkgsStatic
+  # static-adapted stdenv only exposes the target-prefixed
+  # `arm64-apple-darwin-libtool`, so the bare invocation fails with
+  # "FileNotFoundError: ... 'libtool'". cctools is a build-time tool (never
+  # linked into node), so inject the native (non-static) one — same rationale as
+  # python3 above.
+  cctools,
 }:
 
 let
@@ -143,6 +153,11 @@ let
       && !(lib.hasInfix "merve" (p.name or ""))
       && !(lib.hasInfix "icu" (p.name or ""))
     ) (old.buildInputs or [ ]);
+    # Put a bare `libtool` (Apple's Mach-O archive tool from native cctools) on
+    # PATH for `gyp-mac-tool ExecFilterLibtool`; the pkgsStatic stdenv only
+    # provides the target-prefixed `arm64-apple-darwin-libtool`. See the
+    # `cctools` argument comment above.
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ cctools ];
     # Skip node's `test-ci-js` check suite: it fails on the SEA test
     # (test-single-executable-application-*), which is sensitive to the binary
     # layout and flaky in the Nix sandbox on macOS (nixpkgs' own comment notes

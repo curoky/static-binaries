@@ -210,7 +210,7 @@ in
     # impossible on macOS). Exposed under the same deploy dir name so consumers
     # reference it identically.
     nodejs-slim26 = pkgsStatic.callPackage ./nodejs/26/darwin.nix {
-      inherit (pkgs) python3;
+      inherit (pkgs) python3 cctools;
     };
 
     # macOS wget: take the fully-static `pkgsStatic.wget` (same set as Linux) and
