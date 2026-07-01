@@ -103,6 +103,7 @@ let
     root=$(cd "$(dirname "$script_path")" && pwd)/..
     store=$root/..
 
+    export PERL5LIB=$root/lib/perl5/site_perl/${perlPackages.perl.version}:$root/lib/perl5:$PERL5LIB
     exec -a "$0" "$store/perl/bin/perl" "$root/bin/_exiftool" "$@"
   '';
 in
