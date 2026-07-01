@@ -19,7 +19,7 @@ let
   # perl as a build tool, so pointing `perlPackages` at the native (cache-prebuilt)
   # set sidesteps the broken static perl while the wget binary itself still links
   # every nix dep statically — leaving only /usr/lib system libs dynamic. On Linux
-  # wget builds straight from pkgsStatic (see ./default.nix); this is the macOS
+  # wget builds straight from pkgsStatic (see ./linux.nix); this is the macOS
   # equivalent with that single build-tool tweak.
   wget_static = wget.override {
     inherit perlPackages;

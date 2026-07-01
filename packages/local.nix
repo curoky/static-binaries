@@ -83,7 +83,7 @@ in
     # cloc is a perl script; its wrapper runs against the sibling `perl` package
     # at deploy time (falling back to a system perl), so it ships cross-platform.
     # The `perl` package itself is defined per-platform in the linux/darwin sets
-    # below (./perl/default.nix on Linux, ./perl/darwin.nix on macOS). cloc needs
+    # below (./perl/linux.nix on Linux, ./perl/darwin.nix on macOS). cloc needs
     # no static linking (and the fully-static perl/perlPackages it would pull in
     # fail to build on darwin), so build it from the native pkgs on both
     # platforms.
@@ -106,20 +106,20 @@ in
     cmake_4_1_2 = pkgsStatic.callPackage ./cmake/4_1_2 { };
     git = pkgsStatic.callPackage ./git { };
     openssh_gssapi = pkgsStatic.callPackage ./openssh_gssapi { };
-    wget = pkgsStatic.callPackage ./wget { };
+    wget = pkgsStatic.callPackage ./wget/linux.nix { };
 
     # Rust
     miniserve = pkgsStatic.callPackage ./miniserve { };
 
     # Perl (static perl interpreter, sibling-wrapper base)
-    perl = pkgsStatic.callPackage ./perl { };
+    perl = pkgsStatic.callPackage ./perl/linux.nix { };
     # exiftool is a perl tool like cloc: it runs against the sibling static
     # `perl` at deploy time. That perl (-Uusedl) cannot dlopen XS .so, so its
     # optional compression XS modules are compiled into the interpreter itself
-    # (see ./perl/default.nix). This package therefore ships only the pure-Perl
+    # (see ./perl/linux.nix). This package therefore ships only the pure-Perl
     # pieces (script, Image::ExifTool, Archive::Zip) and needs no static linking,
     # so it builds from the native pkgs.perlPackages.
-    exiftool = pkgs.callPackage ./exiftool { };
+    exiftool = pkgs.callPackage ./exiftool/linux.nix { };
 
     # LLVM / clang tooling
     clang-tools-18 = pkgsStatic.callPackage ./clang-tools/18 { };
@@ -190,7 +190,7 @@ in
     # `pkgsStatic` passed in here is the musl64 *cross* set (see flake.nix /
     # mkEnv), which instead reuses the cached glibc rustc/LLVM via rust's
     # `fastCross` path. The node output is still a fully-static musl binary.
-    nodejs-slim26 = pkgsStatic.callPackage ./nodejs/26 { };
+    nodejs-slim26 = pkgsStatic.callPackage ./nodejs/26/linux.nix { };
     pnpm = pkgsStatic.callPackage ./pnpm {
       pnpm = pkgs.pnpm.override { nodejs-slim = nodejs-slim26; };
     };
@@ -256,7 +256,7 @@ in
     };
 
     # Node.js stack
-    # macOS counterpart of the Linux nodejs-slim26 (./nodejs/26): a standalone
+    # macOS counterpart of the Linux nodejs-slim26 (./nodejs/26/linux.nix): a standalone
     # Node.js 26 built via pkgsStatic so every nix dependency links as a static
     # archive, leaving only macOS system libs dynamic (full static is
     # impossible on macOS). Exposed under the same deploy dir name so consumers

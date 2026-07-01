@@ -14,7 +14,7 @@ let
   # depending only on /usr/lib system libs and the macOS frameworks. This mirrors
   # the darwin portability ladder (DESIGN.md strategy 2): every nix dependency
   # linked statically, only system libraries stay dynamic. On Linux wget is built
-  # from the fully-static `pkgsStatic` set instead (see ./default.nix).
+  # from the fully-static `pkgsStatic` set instead (see ./linux.nix).
   #
   # NOTE: this dependency-by-dependency variant is kept as an alternative; the
   # active darwin build uses ./darwin-static.nix (the pkgsStatic route with only

@@ -8,7 +8,7 @@
 #
 # A fully static Mach-O is impossible on macOS (Apple ships no static libSystem),
 # so `pkgsStatic` on darwin is inherently a "partial static" build — which is
-# exactly the desired shape here. This is the darwin counterpart of ./default.nix
+# exactly the desired shape here. This is the darwin counterpart of ./linux.nix
 # (the Linux/musl *fully* static build) and is exposed under the same deploy dir
 # name `nodejs-slim26` so consumers reference it identically as a sibling
 # directory at deploy time ($store/nodejs-slim26/bin/node).
@@ -20,10 +20,10 @@
 # violating the no-/nix-dylib rule. `pkgsStatic` is what makes those deps ship a
 # `.a` so node links them statically.
 #
-# The static-build patches below mirror ./default.nix: they must be applied to
+# The static-build patches below mirror ./linux.nix: they must be applied to
 # the *dependencies* node compiles against (not overridable args of nodejs-slim),
 # so we extend the static package set with a local overlay and take its patched
-# nodejs-slim. See ./default.nix for the full rationale of each dependency tweak;
+# nodejs-slim. See ./linux.nix for the full rationale of each dependency tweak;
 # they are build fixes that let the dependency produce a usable static archive
 # and are not darwin-specific.
 #
@@ -57,8 +57,8 @@
 }:
 
 let
-  # pkgsStatic with the same static-build patches ./default.nix applies so the
-  # node dependencies compile as static archives. See ./default.nix for the
+  # pkgsStatic with the same static-build patches ./linux.nix applies so the
+  # node dependencies compile as static archives. See ./linux.nix for the
   # per-dependency rationale (ada / libuv tests, uvwasi / hdrhistogram_c shared
   # targets, lief python bindings, temporal_capi install check).
   pkgsStaticNode = pkgsStatic.extend (
@@ -119,9 +119,7 @@ let
   # python is only a nativeBuildInput (runs configure.py), never linked into
   # node, so it needn't be static. Overriding it here (rather than in the
   # package-set overlay) avoids perturbing the darwin stdenv bootstrap.
-  patchedNode =
-    (pkgsStaticNode.nodejs-slim_26.override { python3 = python3; }).overrideAttrs
-      (old: {
+  patchedNode = (pkgsStaticNode.nodejs-slim_26.override { python3 = python3; }).overrideAttrs (old: {
     configureFlags =
       builtins.filter (
         f:
@@ -132,7 +130,7 @@ let
         f != "--enable-static"
         && f != "--disable-shared"
         # Make node use its own bundled brotli / simdutf / merve (cjs-module-
-        # lexer) instead of the system static libraries — see ./default.nix for
+        # lexer) instead of the system static libraries — see ./linux.nix for
         # why these three specifically fail to link against the system static
         # archives.
         && f != "--shared-brotli"

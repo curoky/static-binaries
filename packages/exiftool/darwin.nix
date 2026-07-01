@@ -25,7 +25,7 @@ let
   #
   # macOS-only: on Linux the sibling static perl (-Uusedl) cannot dlopen any XS
   # .so, so these modules are instead compiled straight into the interpreter —
-  # see ./default.nix and packages/perl/default.nix.
+  # see ./linux.nix and packages/perl/linux.nix.
   CompressRawZlib = perlPackages.CompressRawZlib.overrideAttrs (_: {
     preConfigure = ''
       cat > config.in <<EOC

@@ -13,7 +13,7 @@ let
   # Linux strategy: the sibling static `perl` (-Uusedl) cannot dlopen any XS
   # .so, so we do NOT ship separate compiled compression modules here. Instead
   # every XS compression module is compiled straight into that static perl
-  # interpreter (see packages/perl/default.nix, which vendors Compress::Raw::Lzma
+  # interpreter (see packages/perl/linux.nix, which vendors Compress::Raw::Lzma
   # and IO::Compress::Brotli on top of the Zlib/Bzip2/IO::Compress that upstream
   # pkgsStatic.perl already builds in). So this package only needs to ship the
   # pure-Perl pieces: the exiftool script, the Image::ExifTool modules, and
