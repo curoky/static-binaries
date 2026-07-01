@@ -48,6 +48,42 @@ find "$prefix" -type f -print0 | while IFS= read -r -d '' f; do
   fi
 done
 
+# Portability check (the hard rule from DESIGN.md): the shipped binary must not
+# depend on any dynamic library under /nix. Walk every ELF (Linux) / Mach-O
+# (Darwin) file and print its dynamic dependencies via `patchelf --print-needed`
+# + rpath / `otool -L`; fail the build if any dependency resolves under /nix.
+bad=0
+while IFS= read -r -d '' f; do
+  FTYPE=$(file --brief "$f")
+  if echo "$FTYPE" | grep -q 'ELF'; then
+    echo "==> deps: $f"
+    deps=$(patchelf --print-needed "$f" 2>/dev/null || true)
+    rpath=$(patchelf --print-rpath "$f" 2>/dev/null || true)
+    echo "$deps"
+    [[ -n $rpath ]] && echo "rpath: $rpath"
+    if echo "$rpath" | grep -q '/nix'; then
+      echo "ERROR: $f has an rpath under /nix: $rpath" >&2
+      bad=1
+    fi
+  elif echo "$FTYPE" | grep -q 'Mach-O'; then
+    echo "==> deps: $f"
+    deps=$(otool -L "$f" 2>/dev/null || true)
+    echo "$deps"
+    # otool -L prints the file's own path as the first line (which lives under
+    # the /nix/store build output dir); only the indented dependency lines that
+    # follow matter, so drop the header before matching.
+    if echo "$deps" | tail -n +2 | grep -q '/nix'; then
+      echo "ERROR: $f links a dynamic library under /nix" >&2
+      bad=1
+    fi
+  fi
+done < <(find "$prefix" -type f -print0)
+
+if [[ $bad -ne 0 ]]; then
+  echo "ERROR: portability check failed: one or more binaries depend on /nix" >&2
+  exit 1
+fi
+
 # # remove path which contain nix
 # for f in $(find $prefix -type f); do
 #   if file --brief "$f" | grep -q 'text'; then

@@ -126,6 +126,7 @@ This wrapper is purely post-processing; it does not change how a package is comp
 - For ELF binaries: `strip --strip-unneeded` (best-effort) and `nuke-refs`.
 - Rename `.*-wrapped` executables by removing the `-wrapped` suffix and leading dot.
 - Remove `.a` and `.pyc` files.
+- **Final portability check (the hard rule):** walk every ELF (Linux) / Mach-O (Darwin) file, print its dynamic dependencies (`patchelf --print-needed` + `--print-rpath` on Linux, `otool -L` on Darwin — the tools are added to the standalone wrapper's `nativeBuildInputs` per platform in `make-standalone.nix`), and **fail the build** if any dependency (or ELF rpath) resolves under `/nix`. This enforces "the shipped binary must not depend on any dynamic library under `/nix`" at build time. `otool -L`'s first line is the file's own path (under the `/nix/store` output dir) and is skipped before matching.
 
 Design intent: keep runtime payloads small and remove implicit dependence on the Nix store layout.
 
