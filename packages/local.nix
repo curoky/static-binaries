@@ -106,6 +106,11 @@ in
     cmake_4_1_2 = pkgsStatic.callPackage ./cmake/4_1_2 { };
     git = pkgsStatic.callPackage ./git { };
     openssh_gssapi = pkgsStatic.callPackage ./openssh_gssapi { };
+    # postgresql: only the PostgreSQL client (psql), fully-static musl.
+    # pkgsStatic.postgresql fails here (its gcc->clang switch hits a broken
+    # clang in the musl-cross set); see ./postgresql/default.nix for the
+    # gcc-kept + libpq-static-only build.
+    postgresql = pkgsStatic.callPackage ./postgresql { };
     wget = pkgsStatic.callPackage ./wget/linux.nix { };
 
     # Rust
